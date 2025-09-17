@@ -114,5 +114,131 @@ namespace Sale_Management.Forms
                 txt_nameSearch.Text = string.Empty;
             }
         }
+
+        private void btn_Add_Click(object sender, EventArgs e)
+        {
+            ProductEditForm editForm = new ProductEditForm(false);
+            if (editForm.ShowDialog() == DialogResult.OK)
+            {
+                LoadProducts(); // Tải lại danh sách sản phẩm
+            }
+        }
+
+        private void btn_Edit_Click(object sender, EventArgs e)
+        {
+            if (dgv_Products.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn sản phẩm cần sửa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DataGridViewRow selectedRow = dgv_Products.SelectedRows[0];
+            int productId = Convert.ToInt32(selectedRow.Cells["ProductID"].Value);
+
+            ProductEditForm editForm = new ProductEditForm(true, productId);
+            if (editForm.ShowDialog() == DialogResult.OK)
+            {
+                LoadProducts(); // Tải lại danh sách sản phẩm
+            }
+        }
+
+        private void btn_Delete_Click(object sender, EventArgs e)
+        {
+            if (dgv_Products.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn sản phẩm cần xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DataGridViewRow selectedRow = dgv_Products.SelectedRows[0];
+            int productId = Convert.ToInt32(selectedRow.Cells["ProductID"].Value);
+            string productName = selectedRow.Cells["ProductName"].Value.ToString();
+
+            DialogResult result = MessageBox.Show(
+                $"Bạn có chắc chắn muốn xóa sản phẩm '{productName}' không?\n\nLưu ý: Không thể xóa sản phẩm đã có trong hóa đơn.",
+                "Xác nhận xóa",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    bool success = productRepository.DeleteProduct(productId);
+                    if (success)
+                    {
+                        MessageBox.Show("Xóa sản phẩm thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadProducts(); // Tải lại danh sách sản phẩm
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi xóa sản phẩm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void btn_AddProduct_Click(object sender, EventArgs e)
+        {
+            ProductEditForm editForm = new ProductEditForm(false);
+            if (editForm.ShowDialog() == DialogResult.OK)
+            {
+                LoadProducts(); // Tải lại danh sách sản phẩm
+            }
+        }
+
+        private void btn_DeleteProduct_Click(object sender, EventArgs e)
+        {
+            if (dgv_Products.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn sản phẩm cần xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DataGridViewRow selectedRow = dgv_Products.SelectedRows[0];
+            int productId = Convert.ToInt32(selectedRow.Cells["ProductID"].Value);
+            string productName = selectedRow.Cells["ProductName"].Value.ToString();
+
+            DialogResult result = MessageBox.Show(
+                $"Bạn có chắc chắn muốn xóa sản phẩm '{productName}' không?\n\nLưu ý: Không thể xóa sản phẩm đã có trong hóa đơn.",
+                "Xác nhận xóa",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    bool success = productRepository.DeleteProduct(productId);
+                    if (success)
+                    {
+                        MessageBox.Show("Xóa sản phẩm thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadProducts(); // Tải lại danh sách sản phẩm
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi xóa sản phẩm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void btn_EditProduct_Click(object sender, EventArgs e)
+        {
+            if (dgv_Products.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn sản phẩm cần sửa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DataGridViewRow selectedRow = dgv_Products.SelectedRows[0];
+            int productId = Convert.ToInt32(selectedRow.Cells["ProductID"].Value);
+
+            ProductEditForm editForm = new ProductEditForm(true, productId);
+            if (editForm.ShowDialog() == DialogResult.OK)
+            {
+                LoadProducts(); // Tải lại danh sách sản phẩm
+            }
+        }
     }
 }

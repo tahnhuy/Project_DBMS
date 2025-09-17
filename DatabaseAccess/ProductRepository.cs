@@ -47,5 +47,93 @@ namespace Sale_Management.DatabaseAccess
                 throw new Exception("Lỗi khi lấy sản phẩm theo ID: " + ex.Message);
             }
         }
+
+        public bool AddProduct(string productName, decimal price, int stockQuantity, string unit)
+        {
+            try
+            {
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@ProductName", SqlDbType.NVarChar, 100) { Value = productName },
+                    new SqlParameter("@Price", SqlDbType.Decimal) { Value = price },
+                    new SqlParameter("@StockQuantity", SqlDbType.Int) { Value = stockQuantity },
+                    new SqlParameter("@Unit", SqlDbType.NVarChar, 50) { Value = unit }
+                };
+
+                DataTable result = DatabaseConnection.ExecuteQuery("AddProduct", CommandType.StoredProcedure, parameters);
+                
+                if (result.Rows.Count > 0)
+                {
+                    string resultStatus = result.Rows[0]["Result"].ToString();
+                    if (resultStatus == "SUCCESS")
+                        return true;
+                    else
+                        throw new Exception(result.Rows[0]["Message"].ToString());
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi thêm sản phẩm: " + ex.Message);
+            }
+        }
+
+        public bool UpdateProduct(int productId, string productName, decimal price, int stockQuantity, string unit)
+        {
+            try
+            {
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@ProductID", SqlDbType.Int) { Value = productId },
+                    new SqlParameter("@ProductName", SqlDbType.NVarChar, 100) { Value = productName },
+                    new SqlParameter("@Price", SqlDbType.Decimal) { Value = price },
+                    new SqlParameter("@StockQuantity", SqlDbType.Int) { Value = stockQuantity },
+                    new SqlParameter("@Unit", SqlDbType.NVarChar, 50) { Value = unit }
+                };
+
+                DataTable result = DatabaseConnection.ExecuteQuery("UpdateProduct", CommandType.StoredProcedure, parameters);
+                
+                if (result.Rows.Count > 0)
+                {
+                    string resultStatus = result.Rows[0]["Result"].ToString();
+                    if (resultStatus == "SUCCESS")
+                        return true;
+                    else
+                        throw new Exception(result.Rows[0]["Message"].ToString());
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi cập nhật sản phẩm: " + ex.Message);
+            }
+        }
+
+        public bool DeleteProduct(int productId)
+        {
+            try
+            {
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@ProductID", SqlDbType.Int) { Value = productId }
+                };
+
+                DataTable result = DatabaseConnection.ExecuteQuery("DeleteProduct", CommandType.StoredProcedure, parameters);
+                
+                if (result.Rows.Count > 0)
+                {
+                    string resultStatus = result.Rows[0]["Result"].ToString();
+                    if (resultStatus == "SUCCESS")
+                        return true;
+                    else
+                        throw new Exception(result.Rows[0]["Message"].ToString());
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi xóa sản phẩm: " + ex.Message);
+            }
+        }
     }
 }

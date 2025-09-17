@@ -33,6 +33,9 @@
             this.lbl_nameSearch = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.txt_idSearch = new System.Windows.Forms.TextBox();
+            this.btn_AddProduct = new System.Windows.Forms.Button();
+            this.btn_DeleteProduct = new System.Windows.Forms.Button();
+            this.btn_EditProduct = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Products)).BeginInit();
             this.SuspendLayout();
             // 
@@ -84,11 +87,45 @@
             this.txt_idSearch.TabIndex = 4;
             this.txt_idSearch.TextChanged += new System.EventHandler(this.txt_idSearch_TextChanged);
             // 
+            // btn_AddProduct
+            // 
+            this.btn_AddProduct.Location = new System.Drawing.Point(684, 67);
+            this.btn_AddProduct.Name = "btn_AddProduct";
+            this.btn_AddProduct.Size = new System.Drawing.Size(174, 71);
+            this.btn_AddProduct.TabIndex = 8;
+            this.btn_AddProduct.Text = "Thêm";
+            this.btn_AddProduct.UseVisualStyleBackColor = true;
+            this.btn_AddProduct.Click += new System.EventHandler(this.btn_AddProduct_Click);
+            // 
+            // btn_DeleteProduct
+            // 
+            this.btn_DeleteProduct.Location = new System.Drawing.Point(907, 69);
+            this.btn_DeleteProduct.Name = "btn_DeleteProduct";
+            this.btn_DeleteProduct.Size = new System.Drawing.Size(174, 71);
+            this.btn_DeleteProduct.TabIndex = 9;
+            this.btn_DeleteProduct.Text = "Xóa";
+            this.btn_DeleteProduct.UseVisualStyleBackColor = true;
+            this.btn_DeleteProduct.Click += new System.EventHandler(this.btn_DeleteProduct_Click);
+            // 
+            // btn_EditProduct
+            // 
+            this.btn_EditProduct.Location = new System.Drawing.Point(1131, 69);
+            this.btn_EditProduct.Name = "btn_EditProduct";
+            this.btn_EditProduct.Size = new System.Drawing.Size(174, 71);
+            this.btn_EditProduct.TabIndex = 10;
+            this.btn_EditProduct.Text = "Sửa";
+            this.btn_EditProduct.UseVisualStyleBackColor = true;
+            this.btn_EditProduct.UseWaitCursor = true;
+            this.btn_EditProduct.Click += new System.EventHandler(this.btn_EditProduct_Click);
+            // 
             // ProductForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1346, 823);
+            this.Controls.Add(this.btn_EditProduct);
+            this.Controls.Add(this.btn_DeleteProduct);
+            this.Controls.Add(this.btn_AddProduct);
             this.Controls.Add(this.txt_idSearch);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lbl_nameSearch);
@@ -109,5 +146,8 @@
         private System.Windows.Forms.Label lbl_nameSearch;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txt_idSearch;
+        private System.Windows.Forms.Button btn_AddProduct;
+        private System.Windows.Forms.Button btn_DeleteProduct;
+        private System.Windows.Forms.Button btn_EditProduct;
     }
 }
