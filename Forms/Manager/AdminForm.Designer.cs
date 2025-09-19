@@ -1,6 +1,6 @@
 ﻿namespace Sale_Management
 {
-    partial class Form1
+    partial class AdminForm
     {
         /// <summary>
         /// Required designer variable.
@@ -31,8 +31,11 @@
             this.components = new System.ComponentModel.Container();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.msi_Product = new System.Windows.Forms.ToolStripMenuItem();
+            this.msi_Customer = new System.Windows.Forms.ToolStripMenuItem();
+            this.msi_Discount = new System.Windows.Forms.ToolStripMenuItem();
+            this.msi_AccManage = new System.Windows.Forms.ToolStripMenuItem();
+            this.msi_createAcc = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.kháchHàngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel_Container = new System.Windows.Forms.Panel();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -43,7 +46,10 @@
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.msi_Product,
-            this.kháchHàngToolStripMenuItem});
+            this.msi_Customer,
+            this.msi_Discount,
+            this.msi_AccManage,
+            this.msi_createAcc});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1341, 40);
@@ -57,17 +63,39 @@
             this.msi_Product.Text = "Sản phẩm";
             this.msi_Product.Click += new System.EventHandler(this.msi_Product_Click);
             // 
+            // msi_Customer
+            // 
+            this.msi_Customer.Name = "msi_Customer";
+            this.msi_Customer.Size = new System.Drawing.Size(160, 38);
+            this.msi_Customer.Text = "Khách hàng";
+            this.msi_Customer.Click += new System.EventHandler(this.kháchHàngToolStripMenuItem_Click);
+            // 
+            // msi_Discount
+            // 
+            this.msi_Discount.Name = "msi_Discount";
+            this.msi_Discount.Size = new System.Drawing.Size(128, 38);
+            this.msi_Discount.Text = "Giảm giá";
+            this.msi_Discount.Click += new System.EventHandler(this.msi_Discount_Click);
+            // 
+            // msi_AccManage
+            // 
+            this.msi_AccManage.Name = "msi_AccManage";
+            this.msi_AccManage.Size = new System.Drawing.Size(217, 38);
+            this.msi_AccManage.Text = "Quản lí tài khoản";
+            this.msi_AccManage.Click += new System.EventHandler(this.msi_AccManage_Click);
+            // 
+            // msi_createAcc
+            // 
+            this.msi_createAcc.Name = "msi_createAcc";
+            this.msi_createAcc.Size = new System.Drawing.Size(179, 38);
+            this.msi_createAcc.Text = "Tạo tài khoản";
+            this.msi_createAcc.Click += new System.EventHandler(this.msi_createAcc_Click);
+            // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
-            // 
-            // kháchHàngToolStripMenuItem
-            // 
-            this.kháchHàngToolStripMenuItem.Name = "kháchHàngToolStripMenuItem";
-            this.kháchHàngToolStripMenuItem.Size = new System.Drawing.Size(160, 36);
-            this.kháchHàngToolStripMenuItem.Text = "Khách hàng";
             // 
             // panel_Container
             // 
@@ -76,7 +104,7 @@
             this.panel_Container.Size = new System.Drawing.Size(1341, 775);
             this.panel_Container.TabIndex = 2;
             // 
-            // Form1
+            // AdminForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -84,8 +112,8 @@
             this.Controls.Add(this.panel_Container);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "AdminForm";
+            this.Text = "Quản lí bản hàng Minimart";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -97,9 +125,12 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem msi_Product;
-        private System.Windows.Forms.ToolStripMenuItem kháchHàngToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem msi_Customer;
+        private System.Windows.Forms.ToolStripMenuItem msi_Discount;
+        private System.Windows.Forms.ToolStripMenuItem msi_createAcc;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.Panel panel_Container;
+        private System.Windows.Forms.ToolStripMenuItem msi_AccManage;
     }
 }
 

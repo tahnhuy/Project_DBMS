@@ -14,11 +14,13 @@ namespace Sale_Management.Forms
     public partial class ProductForm : Form
     {
         private ProductRepository productRepository;
+        private DiscountRepository discountRepository;
         
         public ProductForm()
         {
             InitializeComponent();
             productRepository = new ProductRepository();
+            discountRepository = new DiscountRepository();
             LoadProducts();
         }
 
@@ -26,7 +28,8 @@ namespace Sale_Management.Forms
         {
             try
             {
-                DataTable dt = DatabaseConnection.ExecuteQuery("GetAllProducts", CommandType.StoredProcedure, null);
+                // Sử dụng view ProductsWithDiscounts để hiển thị sản phẩm có giảm giá
+                DataTable dt = discountRepository.GetProductsWithDiscounts();
                 dgv_Products.DataSource = dt;
                 ConfigureDataGridView();
             }
@@ -38,13 +41,93 @@ namespace Sale_Management.Forms
         
         private void ConfigureDataGridView()
         {
-            if (dgv_Products.Columns.Count > 0)
+            try
             {
-                dgv_Products.Columns["ProductID"].HeaderText = "Mã sản phẩm";
-                dgv_Products.Columns["ProductName"].HeaderText = "Tên sản phẩm";
-                dgv_Products.Columns["StockQuantity"].HeaderText = "Số lượng tồn";
-                dgv_Products.Columns["Price"].HeaderText = "Giá";
-                dgv_Products.Columns["Unit"].HeaderText = "Đơn vị";
+                if (dgv_Products == null) return;
+                
+                if (dgv_Products.Columns != null && dgv_Products.Columns.Count > 0)
+                {
+                    // Kiểm tra từng cột có tồn tại không trước khi thiết lập
+                    if (dgv_Products.Columns.Contains("ProductID"))
+                    {
+                        var productIdColumn = dgv_Products.Columns["ProductID"];
+                        if (productIdColumn != null) productIdColumn.HeaderText = "Mã sản phẩm";
+                    }
+                    if (dgv_Products.Columns.Contains("ProductName"))
+                    {
+                        var productNameColumn = dgv_Products.Columns["ProductName"];
+                        if (productNameColumn != null) productNameColumn.HeaderText = "Tên sản phẩm";
+                    }
+                    if (dgv_Products.Columns.Contains("OriginalPrice"))
+                    {
+                        var originalPriceColumn = dgv_Products.Columns["OriginalPrice"];
+                        if (originalPriceColumn != null)
+                        {
+                            originalPriceColumn.HeaderText = "Giá gốc";
+                            originalPriceColumn.DefaultCellStyle.Format = "N0";
+                        }
+                    }
+                    if (dgv_Products.Columns.Contains("DiscountedPrice"))
+                    {
+                        var discountedPriceColumn = dgv_Products.Columns["DiscountedPrice"];
+                        if (discountedPriceColumn != null)
+                        {
+                            discountedPriceColumn.HeaderText = "Giá sau giảm";
+                            discountedPriceColumn.DefaultCellStyle.Format = "N0";
+                        }
+                    }
+                    if (dgv_Products.Columns.Contains("StockQuantity"))
+                    {
+                        var stockColumn = dgv_Products.Columns["StockQuantity"];
+                        if (stockColumn != null) stockColumn.HeaderText = "Số lượng tồn";
+                    }
+                    if (dgv_Products.Columns.Contains("Unit"))
+                    {
+                        var unitColumn = dgv_Products.Columns["Unit"];
+                        if (unitColumn != null) unitColumn.HeaderText = "Đơn vị";
+                    }
+                    if (dgv_Products.Columns.Contains("HasDiscount"))
+                    {
+                        var hasDiscountColumn = dgv_Products.Columns["HasDiscount"];
+                        if (hasDiscountColumn != null) hasDiscountColumn.HeaderText = "Có giảm giá";
+                    }
+                    if (dgv_Products.Columns.Contains("DiscountType"))
+                    {
+                        var discountTypeColumn = dgv_Products.Columns["DiscountType"];
+                        if (discountTypeColumn != null) discountTypeColumn.HeaderText = "Loại giảm giá";
+                    }
+                    if (dgv_Products.Columns.Contains("DiscountValue"))
+                    {
+                        var discountValueColumn = dgv_Products.Columns["DiscountValue"];
+                        if (discountValueColumn != null) discountValueColumn.HeaderText = "Giá trị giảm";
+                    }
+                
+                // Ẩn một số cột không cần thiết
+                if (dgv_Products.Columns.Contains("DiscountStartDate"))
+                    dgv_Products.Columns["DiscountStartDate"].Visible = false;
+                if (dgv_Products.Columns.Contains("DiscountEndDate"))
+                    dgv_Products.Columns["DiscountEndDate"].Visible = false;
+                
+                // Đổi màu cho những sản phẩm có giảm giá
+                if (dgv_Products.Columns.Contains("HasDiscount") && dgv_Products.Columns.Contains("DiscountedPrice"))
+                {
+                    foreach (DataGridViewRow row in dgv_Products.Rows)
+                    {
+                        if (row.Cells["HasDiscount"].Value != null && 
+                            Convert.ToBoolean(row.Cells["HasDiscount"].Value))
+                        {
+                            row.DefaultCellStyle.BackColor = Color.LightYellow;
+                            row.Cells["DiscountedPrice"].Style.ForeColor = Color.Red;
+                            row.Cells["DiscountedPrice"].Style.Font = new Font(dgv_Products.Font, FontStyle.Bold);
+                        }
+                    }
+                }
+            }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thiết lập DataGridView: {ex.Message}\n\nChi tiết: {ex.StackTrace}", 
+                    "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         

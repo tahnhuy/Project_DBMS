@@ -14,6 +14,18 @@ namespace Sale_Management.DatabaseAccess
 {
     public class ProductRepository
     {
+        public DataTable GetAllProducts()
+        {
+            try
+            {
+                return DatabaseConnection.ExecuteQuery("GetAllProducts", CommandType.StoredProcedure, null);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy danh sách sản phẩm: " + ex.Message);
+            }
+        }
+
         public DataTable GetProductByName(string productName)
         {
             try

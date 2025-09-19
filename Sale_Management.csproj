@@ -46,41 +46,171 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseAccess\AccountRepository.cs" />
+    <Compile Include="DatabaseAccess\CustomerRepository.cs" />
     <Compile Include="DatabaseAccess\DatabaseConnection.cs" />
+    <Compile Include="DatabaseAccess\DiscountRepository.cs" />
     <Compile Include="DatabaseAccess\ProductRepository.cs" />
-    <Compile Include="Forms\Form1.cs">
+    <Compile Include="DatabaseAccess\SaleRepository.cs" />
+    <!-- Common Forms -->
+    <Compile Include="Forms\Common\AccountCreateForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Forms\Common\AccountCreateForm.Designer.cs">
+      <DependentUpon>AccountCreateForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ProductEditForm.cs">
+    <Compile Include="Forms\Common\AccountForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ProductEditForm.Designer.cs">
+    <Compile Include="Forms\Common\AccountForm.Designer.cs">
+      <DependentUpon>AccountForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Common\LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Common\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
+    <!-- Customer Forms -->
+    <Compile Include="Forms\Customer\CustomerEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Customer\CustomerEditForm.Designer.cs">
+      <DependentUpon>CustomerEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Customer\CustomerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Customer\CustomerForm.Designer.cs">
+      <DependentUpon>CustomerForm.cs</DependentUpon>
+    </Compile>
+    <!-- Manager Forms -->
+    <Compile Include="Forms\Manager\AccountManageEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Manager\AccountManageEditForm.Designer.cs">
+      <DependentUpon>AccountManageEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Manager\AccountManageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Manager\AccountManageForm.Designer.cs">
+      <DependentUpon>AccountManageForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Manager\AdminForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Manager\AdminForm.Designer.cs">
+      <DependentUpon>AdminForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Manager\AdminDiscountEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Manager\AdminDiscountEditForm.Designer.cs">
+      <DependentUpon>AdminDiscountEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Manager\AdminDiscountForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Manager\AdminDiscountForm.Designer.cs">
+      <DependentUpon>AdminDiscountForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Manager\CustomerManageEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Manager\CustomerManageEditForm.Designer.cs">
+      <DependentUpon>CustomerManageEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Manager\CustomerManageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Manager\CustomerManageForm.Designer.cs">
+      <DependentUpon>CustomerManageForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Manager\ProductEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Manager\ProductEditForm.Designer.cs">
       <DependentUpon>ProductEditForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ProductForm.cs">
+    <Compile Include="Forms\Manager\ProductForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ProductForm.Designer.cs">
+    <Compile Include="Forms\Manager\ProductForm.Designer.cs">
       <DependentUpon>ProductForm.cs</DependentUpon>
+    </Compile>
+    <!-- Saler Forms -->
+    <Compile Include="Forms\Saler\SalerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Saler\SalerForm.Designer.cs">
+      <DependentUpon>SalerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Saler\SalerProductForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Saler\SalerProductForm.Designer.cs">
+      <DependentUpon>SalerProductForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Saler\SalerProductEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Saler\SalerProductEditForm.Designer.cs">
+      <DependentUpon>SalerProductEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Saler\SalerCustomerViewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Saler\SalerCustomerViewForm.Designer.cs">
+      <DependentUpon>SalerCustomerViewForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Saler\SalerInvoiceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Saler\SalerInvoiceForm.Designer.cs">
+      <DependentUpon>SalerInvoiceForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MInimart_SalesDBDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MInimart_SalesDBDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="MInimart_SalesDBDataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MInimart_SalesDBDataSet1.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Common\AccountCreateForm.resx">
+      <DependentUpon>AccountCreateForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ProductEditForm.resx">
+    <EmbeddedResource Include="Forms\Common\AccountForm.resx">
+      <DependentUpon>AccountForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Common\LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Customer\CustomerForm.resx">
+      <DependentUpon>CustomerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Manager\AccountManageForm.resx">
+      <DependentUpon>AccountManageForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Manager\CustomerManageForm.resx">
+      <DependentUpon>CustomerManageForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Manager\AdminForm.resx">
+      <DependentUpon>AdminForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Manager\ProductEditForm.resx">
       <DependentUpon>ProductEditForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ProductForm.resx">
+    <EmbeddedResource Include="Forms\Manager\ProductForm.resx">
       <DependentUpon>ProductForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Saler\SalerForm.resx">
+      <DependentUpon>SalerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -101,6 +231,17 @@
     </None>
     <None Include="MInimart_SalesDBDataSet.xss">
       <DependentUpon>MInimart_SalesDBDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="MInimart_SalesDBDataSet1.xsc">
+      <DependentUpon>MInimart_SalesDBDataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="MInimart_SalesDBDataSet1.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>MInimart_SalesDBDataSet1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="MInimart_SalesDBDataSet1.xss">
+      <DependentUpon>MInimart_SalesDBDataSet1.xsd</DependentUpon>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

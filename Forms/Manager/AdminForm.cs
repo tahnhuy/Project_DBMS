@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Sale_Management
 {
-    public partial class Form1 : Form
+    public partial class AdminForm : Form
     {
-        public Form1()
+        public AdminForm()
         {
             InitializeComponent();
 
@@ -35,5 +35,28 @@ namespace Sale_Management
         {
             ShowFormInPanel(new Forms.ProductForm());
         }
+
+        private void kháchHàngToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowFormInPanel(new Forms.CustomerManageForm());
+        }
+
+
+
+        private void msi_createAcc_Click(object sender, EventArgs e)
+        {
+            ShowFormInPanel(new Forms.AccountCreateForm());
+        }
+
+        private void msi_AccManage_Click(object sender, EventArgs e)
+        {
+            ShowFormInPanel(new Forms.AccountForm());
+        }
+
+        private void msi_Discount_Click(object sender, EventArgs e)
+        {
+            ShowFormInPanel(new Forms.AdminDiscountForm());
+        }
+
     }
 }
