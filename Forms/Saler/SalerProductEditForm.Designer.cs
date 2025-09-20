@@ -37,7 +37,7 @@ namespace Sale_Management.Forms
             this.txt_ProductName = new System.Windows.Forms.TextBox();
             this.txt_Price = new System.Windows.Forms.TextBox();
             this.txt_Quantity = new System.Windows.Forms.TextBox();
-            this.txt_Description = new System.Windows.Forms.TextBox();
+            this.txt_Unit = new System.Windows.Forms.TextBox();
             this.btn_Save = new System.Windows.Forms.Button();
             this.btn_Cancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -85,7 +85,7 @@ namespace Sale_Management.Forms
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(48, 13);
             this.label5.TabIndex = 4;
-            this.label5.Text = "Mô tả:";
+            this.label5.Text = "Đơn vị:";
             // 
             // txt_ProductId
             // 
@@ -116,17 +116,16 @@ namespace Sale_Management.Forms
             this.txt_Quantity.Size = new System.Drawing.Size(200, 20);
             this.txt_Quantity.TabIndex = 8;
             // 
-            // txt_Description
+            // txt_Unit
             // 
-            this.txt_Description.Location = new System.Drawing.Point(120, 137);
-            this.txt_Description.Multiline = true;
-            this.txt_Description.Name = "txt_Description";
-            this.txt_Description.Size = new System.Drawing.Size(200, 60);
-            this.txt_Description.TabIndex = 9;
+            this.txt_Unit.Location = new System.Drawing.Point(120, 137);
+            this.txt_Unit.Name = "txt_Unit";
+            this.txt_Unit.Size = new System.Drawing.Size(200, 20);
+            this.txt_Unit.TabIndex = 9;
             // 
             // btn_Save
             // 
-            this.btn_Save.Location = new System.Drawing.Point(120, 220);
+            this.btn_Save.Location = new System.Drawing.Point(120, 180);
             this.btn_Save.Name = "btn_Save";
             this.btn_Save.Size = new System.Drawing.Size(75, 23);
             this.btn_Save.TabIndex = 10;
@@ -136,7 +135,7 @@ namespace Sale_Management.Forms
             // 
             // btn_Cancel
             // 
-            this.btn_Cancel.Location = new System.Drawing.Point(201, 220);
+            this.btn_Cancel.Location = new System.Drawing.Point(201, 180);
             this.btn_Cancel.Name = "btn_Cancel";
             this.btn_Cancel.Size = new System.Drawing.Size(75, 23);
             this.btn_Cancel.TabIndex = 11;
@@ -148,10 +147,10 @@ namespace Sale_Management.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(350, 260);
+            this.ClientSize = new System.Drawing.Size(350, 220);
             this.Controls.Add(this.btn_Cancel);
             this.Controls.Add(this.btn_Save);
-            this.Controls.Add(this.txt_Description);
+            this.Controls.Add(this.txt_Unit);
             this.Controls.Add(this.txt_Quantity);
             this.Controls.Add(this.txt_Price);
             this.Controls.Add(this.txt_ProductName);
@@ -179,7 +178,7 @@ namespace Sale_Management.Forms
         private System.Windows.Forms.TextBox txt_ProductName;
         private System.Windows.Forms.TextBox txt_Price;
         private System.Windows.Forms.TextBox txt_Quantity;
-        private System.Windows.Forms.TextBox txt_Description;
+        private System.Windows.Forms.TextBox txt_Unit;
         private System.Windows.Forms.Button btn_Save;
         private System.Windows.Forms.Button btn_Cancel;
     }

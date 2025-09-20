@@ -46,10 +46,10 @@ begin
     begin try
         insert into dbo.Products (ProductName, Price, StockQuantity, Unit)
         values (@ProductName, @Price, @StockQuantity, @Unit)
-        select 'SUCCESS' as Result, N'Thêm sản phẩm thành công' as Message
+        select 'SUCCESS' as [Result], N'Thêm sản phẩm thành công' as [Message]
     end try
     begin catch
-        select 'ERROR' as Result, ERROR_MESSAGE() as Message
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message]
     end catch
 end
 go
@@ -71,12 +71,12 @@ begin
         where ProductID = @ProductID
 
         if @@ROWCOUNT = 0
-            select 'ERROR' as Result, N'Không tìm thấy sản phẩm để cập nhật' as Message
+            select 'ERROR' as [Result], N'Không tìm thấy sản phẩm để cập nhật' as [Message]
         else
-            select 'SUCCESS' as Result, N'Cập nhật sản phẩm thành công' as Message
+            select 'SUCCESS' as [Result], N'Cập nhật sản phẩm thành công' as [Message]
     end try
     begin catch
-        select 'ERROR' as Result, ERROR_MESSAGE() as Message
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message]
     end catch
 end
 go
@@ -88,18 +88,18 @@ begin
     begin try
         if exists (select 1 from dbo.SaleDetails where ProductID = @ProductID)
         begin
-            select 'ERROR' as Result, N'Không thể xóa sản phẩm vì đã có trong hóa đơn' as Message
+            select 'ERROR' as [Result], N'Không thể xóa sản phẩm vì đã có trong hóa đơn' as [Message]
             return
         end
         delete from dbo.Products where ProductID = @ProductID
 
         if @@ROWCOUNT = 0
-            select 'ERROR' as Result, N'Không tìm thấy sản phẩm để xóa' as Message
+            select 'ERROR' as [Result], N'Không tìm thấy sản phẩm để xóa' as [Message]
         else
-            select 'SUCCESS' as Result, N'Xóa sản phẩm thành công' as Message
+            select 'SUCCESS' as [Result], N'Xóa sản phẩm thành công' as [Message]
     end try
     begin catch
-        select 'ERROR' as Result, ERROR_MESSAGE() as Message
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message]
     end catch
 end
 go
@@ -143,10 +143,10 @@ begin
     begin try
         insert into dbo.Customers (CustomerName, Phone, Address, LoyaltyPoints)
         values (@CustomerName, @Phone, @Address, @LoyaltyPoints)
-        select 'SUCCESS' as Result, N'Thêm khách hàng thành công' as Message
+        select 'SUCCESS' as [Result], N'Thêm khách hàng thành công' as [Message]
     end try
     begin catch
-        select 'ERROR' as Result, ERROR_MESSAGE() as Message
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message]
     end catch
 end
 go
@@ -168,12 +168,12 @@ begin
         where CustomerID = @CustomerID
 
         if @@ROWCOUNT = 0
-            select 'ERROR' as Result, N'Không tìm thấy khách hàng để cập nhật' as Message
+            select 'ERROR' as [Result], N'Không tìm thấy khách hàng để cập nhật' as [Message]
         else
-            select 'SUCCESS' as Result, N'Cập nhật khách hàng thành công' as Message
+            select 'SUCCESS' as [Result], N'Cập nhật khách hàng thành công' as [Message]
     end try
     begin catch
-        select 'ERROR' as Result, ERROR_MESSAGE() as Message
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message]
     end catch
 end
 go
@@ -185,18 +185,18 @@ begin
     begin try
         if exists (select 1 from dbo.Sales where CustomerID = @CustomerID)
         begin
-            select 'ERROR' as Result, N'Không thể xóa khách hàng vì đã phát sinh giao dịch' as Message
+            select 'ERROR' as [Result], N'Không thể xóa khách hàng vì đã phát sinh giao dịch' as [Message]
             return
         end
         delete from dbo.Customers where CustomerID = @CustomerID
 
         if @@ROWCOUNT = 0
-            select 'ERROR' as Result, N'Không tìm thấy khách hàng để xóa' as Message
+            select 'ERROR' as [Result], N'Không tìm thấy khách hàng để xóa' as [Message]
         else
-            select 'SUCCESS' as Result, N'Xóa khách hàng thành công' as Message
+            select 'SUCCESS' as [Result], N'Xóa khách hàng thành công' as [Message]
     end try
     begin catch
-        select 'ERROR' as Result, ERROR_MESSAGE() as Message
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message]
     end catch
 end
 go
@@ -219,9 +219,9 @@ begin
     declare @Role nvarchar(20)
     select @Role = Role from dbo.Account where Username = @Username and Password = @Password
     if @Role is null
-        select 'ERROR' as Result, N'Tên đăng nhập hoặc mật khẩu không đúng' as Message
+        select 'ERROR' as [Result], N'Tên đăng nhập hoặc mật khẩu không đúng' as [Message]
     else
-        select 'SUCCESS' as Result, N'Đăng nhập thành công' as Message, @Username as Username, @Role as Role
+        select 'SUCCESS' as [Result], N'Đăng nhập thành công' as [Message], @Username as Username, @Role as Role
 end
 go
 
@@ -246,14 +246,14 @@ begin
     set nocount on;
     if not exists (select 1 from dbo.Account where Username = @Username)
     begin
-        select 'ERROR' as Result, N'Không tìm thấy tài khoản' as Message; return;
+        select 'ERROR' as [Result], N'Không tìm thấy tài khoản' as [Message]; return;
     end
     if not exists (select 1 from dbo.Customers where CustomerID = @CustomerID)
     begin
-        select 'ERROR' as Result, N'Không tìm thấy khách hàng' as Message; return;
+        select 'ERROR' as [Result], N'Không tìm thấy khách hàng' as [Message]; return;
     end
     update dbo.Account set CustomerID = @CustomerID where Username = @Username;
-    select 'SUCCESS' as Result, N'Liên kết tài khoản với khách hàng thành công' as Message;
+    select 'SUCCESS' as [Result], N'Liên kết tài khoản với khách hàng thành công' as [Message];
 end
 go
 
@@ -302,7 +302,7 @@ begin
     select @CustomerID = CustomerID from dbo.Account where Username = @Username;
     if @CustomerID is null
     begin
-        select 'ERROR' as Result, N'Tài khoản chưa liên kết với khách hàng' as Message; return;
+        select 'ERROR' as [Result], N'Tài khoản chưa liên kết với khách hàng' as [Message]; return;
     end
     update dbo.Customers
     set CustomerName = @CustomerName,
@@ -310,9 +310,9 @@ begin
         Address = @Address
     where CustomerID = @CustomerID;
     if @@ROWCOUNT = 0
-        select 'ERROR' as Result, N'Không cập nhật được thông tin khách hàng' as Message;
+        select 'ERROR' as [Result], N'Không cập nhật được thông tin khách hàng' as [Message];
     else
-        select 'SUCCESS' as Result, N'Cập nhật thông tin khách hàng thành công' as Message;
+        select 'SUCCESS' as [Result], N'Cập nhật thông tin khách hàng thành công' as [Message];
 end
 go
 
@@ -373,19 +373,19 @@ begin
         -- Validate product exists
         if not exists (select 1 from dbo.Products where ProductID = @ProductID)
         begin
-            select 'ERROR' as Result, N'Sản phẩm không tồn tại' as Message; return;
+            select 'ERROR' as [Result], N'Sản phẩm không tồn tại' as [Message]; return;
         end
         
         -- Validate date range
         if @EndDate <= @StartDate
         begin
-            select 'ERROR' as Result, N'Ngày kết thúc phải sau ngày bắt đầu' as Message; return;
+            select 'ERROR' as [Result], N'Ngày kết thúc phải sau ngày bắt đầu' as [Message]; return;
         end
         
         -- Validate percentage discount
         if @DiscountType = 'percentage' and @DiscountValue > 100
         begin
-            select 'ERROR' as Result, N'Giảm giá phần trăm không được vượt quá 100%' as Message; return;
+            select 'ERROR' as [Result], N'Giảm giá phần trăm không được vượt quá 100%' as [Message]; return;
         end
         
         -- Check for overlapping active discounts for the same product
@@ -401,16 +401,16 @@ begin
               )
         )
         begin
-            select 'ERROR' as Result, N'Đã có chương trình giảm giá khác cho sản phẩm này trong khoảng thời gian này' as Message; return;
+            select 'ERROR' as [Result], N'Đã có chương trình giảm giá khác cho sản phẩm này trong khoảng thời gian này' as [Message]; return;
         end
         
         insert into dbo.Discounts (ProductID, DiscountType, DiscountValue, StartDate, EndDate, IsActive, CreatedBy)
         values (@ProductID, @DiscountType, @DiscountValue, @StartDate, @EndDate, @IsActive, @CreatedBy);
         
-        select 'SUCCESS' as Result, N'Thêm chương trình giảm giá thành công' as Message;
+        select 'SUCCESS' as [Result], N'Thêm chương trình giảm giá thành công' as [Message];
     end try
     begin catch
-        select 'ERROR' as Result, ERROR_MESSAGE() as Message;
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
     end catch
 end
 go
@@ -430,25 +430,25 @@ begin
         -- Validate discount exists
         if not exists (select 1 from dbo.Discounts where DiscountID = @DiscountID)
         begin
-            select 'ERROR' as Result, N'Không tìm thấy chương trình giảm giá' as Message; return;
+            select 'ERROR' as [Result], N'Không tìm thấy chương trình giảm giá' as [Message]; return;
         end
         
         -- Validate product exists
         if not exists (select 1 from dbo.Products where ProductID = @ProductID)
         begin
-            select 'ERROR' as Result, N'Sản phẩm không tồn tại' as Message; return;
+            select 'ERROR' as [Result], N'Sản phẩm không tồn tại' as [Message]; return;
         end
         
         -- Validate date range
         if @EndDate <= @StartDate
         begin
-            select 'ERROR' as Result, N'Ngày kết thúc phải sau ngày bắt đầu' as Message; return;
+            select 'ERROR' as [Result], N'Ngày kết thúc phải sau ngày bắt đầu' as [Message]; return;
         end
         
         -- Validate percentage discount
         if @DiscountType = 'percentage' and @DiscountValue > 100
         begin
-            select 'ERROR' as Result, N'Giảm giá phần trăm không được vượt quá 100%' as Message; return;
+            select 'ERROR' as [Result], N'Giảm giá phần trăm không được vượt quá 100%' as [Message]; return;
         end
         
         -- Check for overlapping active discounts for the same product (excluding current discount)
@@ -465,7 +465,7 @@ begin
               )
         )
         begin
-            select 'ERROR' as Result, N'Đã có chương trình giảm giá khác cho sản phẩm này trong khoảng thời gian này' as Message; return;
+            select 'ERROR' as [Result], N'Đã có chương trình giảm giá khác cho sản phẩm này trong khoảng thời gian này' as [Message]; return;
         end
         
         update dbo.Discounts 
@@ -478,12 +478,12 @@ begin
         where DiscountID = @DiscountID;
         
         if @@ROWCOUNT = 0
-            select 'ERROR' as Result, N'Không thể cập nhật chương trình giảm giá' as Message;
+            select 'ERROR' as [Result], N'Không thể cập nhật chương trình giảm giá' as [Message];
         else
-            select 'SUCCESS' as Result, N'Cập nhật chương trình giảm giá thành công' as Message;
+            select 'SUCCESS' as [Result], N'Cập nhật chương trình giảm giá thành công' as [Message];
     end try
     begin catch
-        select 'ERROR' as Result, ERROR_MESSAGE() as Message;
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
     end catch
 end
 go
@@ -496,15 +496,15 @@ begin
     begin try
         if not exists (select 1 from dbo.Discounts where DiscountID = @DiscountID)
         begin
-            select 'ERROR' as Result, N'Không tìm thấy chương trình giảm giá để xóa' as Message; return;
+            select 'ERROR' as [Result], N'Không tìm thấy chương trình giảm giá để xóa' as [Message]; return;
         end
         
         delete from dbo.Discounts where DiscountID = @DiscountID;
         
-        select 'SUCCESS' as Result, N'Xóa chương trình giảm giá thành công' as Message;
+        select 'SUCCESS' as [Result], N'Xóa chương trình giảm giá thành công' as [Message];
     end try
     begin catch
-        select 'ERROR' as Result, ERROR_MESSAGE() as Message;
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
     end catch
 end
 go
@@ -593,4 +593,481 @@ BEGIN
 END
 go
 
+-- ========== Account Management Procedures ==========
+create or alter procedure AddAccount
+    @CreatorUsername nvarchar(50),
+    @NewUsername nvarchar(50),
+    @NewPassword nvarchar(255),
+    @NewRole nvarchar(20)
+as
+begin
+    set nocount on;
+    begin try
+        -- Kiểm tra quyền của người tạo
+        if not exists (select 1 from dbo.Account where Username = @CreatorUsername and Role in ('admin', 'manager'))
+        begin
+            select 'ERROR' as [Result], N'Không có quyền tạo tài khoản' as [Message]; return;
+        end
+        
+        -- Kiểm tra username đã tồn tại chưa
+        if exists (select 1 from dbo.Account where Username = @NewUsername)
+        begin
+            select 'ERROR' as [Result], N'Tên đăng nhập đã tồn tại' as [Message]; return;
+        end
+        
+        insert into dbo.Account (Username, Password, Role, CreatedDate)
+        values (@NewUsername, @NewPassword, @NewRole, getdate());
+        
+        select 'SUCCESS' as [Result], N'Tạo tài khoản thành công' as [Message];
+    end try
+    begin catch
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    end catch
+end
+go
+
+create or alter procedure UpdateAccount
+    @Username nvarchar(50),
+    @NewPassword nvarchar(255) = null,
+    @NewRole nvarchar(20) = null
+as
+begin
+    set nocount on;
+    begin try
+        if not exists (select 1 from dbo.Account where Username = @Username)
+        begin
+            select 'ERROR' as [Result], N'Không tìm thấy tài khoản' as [Message]; return;
+        end
+        
+        update dbo.Account 
+        set Password = isnull(@NewPassword, Password),
+            Role = isnull(@NewRole, Role)
+        where Username = @Username;
+        
+        select 'SUCCESS' as [Result], N'Cập nhật tài khoản thành công' as [Message];
+    end try
+    begin catch
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    end catch
+end
+go
+
+create or alter procedure DeleteAccount
+    @Username nvarchar(50)
+as
+begin
+    set nocount on;
+    begin try
+        if not exists (select 1 from dbo.Account where Username = @Username)
+        begin
+            select 'ERROR' as [Result], N'Không tìm thấy tài khoản để xóa' as [Message]; return;
+        end
+        
+        delete from dbo.Account where Username = @Username;
+        select 'SUCCESS' as [Result], N'Xóa tài khoản thành công' as [Message];
+    end try
+    begin catch
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    end catch
+end
+go
+
+create or alter procedure GetAccountDetails
+    @Username nvarchar(50)
+as
+begin
+    set nocount on;
+    select Username, Role, CreatedDate, CustomerID
+    from dbo.Account 
+    where Username = @Username;
+end
+go
+
+create or alter procedure CheckAccountExists
+    @Username nvarchar(50)
+as
+begin
+    set nocount on;
+    if exists (select 1 from dbo.Account where Username = @Username)
+        select 1 as [Exists], N'Tài khoản đã tồn tại' as [Message];
+    else
+        select 0 as [Exists], N'Tài khoản không tồn tại' as [Message];
+end
+go
+
+create or alter procedure SearchAccounts
+    @SearchTerm nvarchar(50)
+as
+begin
+    set nocount on;
+    select Username, Role, CreatedDate, CustomerID
+    from dbo.Account
+    where Username like '%' + @SearchTerm + '%'
+       or Role like '%' + @SearchTerm + '%'
+    order by CreatedDate desc;
+end
+go
+
+create or alter procedure GetAccountsByRole
+    @Role nvarchar(20)
+as
+begin
+    set nocount on;
+    select Username, Role, CreatedDate, CustomerID
+    from dbo.Account
+    where Role = @Role
+    order by CreatedDate desc;
+end
+go
+
+create or alter procedure CountAccountsByRole
+    @Role nvarchar(20)
+as
+begin
+    set nocount on;
+    select count(*) as [AccountCount]
+    from dbo.Account
+    where Role = @Role;
+end
+go
+
+create or alter procedure CheckUserPermission
+    @Username nvarchar(50),
+    @Action nvarchar(50)
+as
+begin
+    set nocount on;
+    declare @Role nvarchar(20);
+    select @Role = Role from dbo.Account where Username = @Username;
+    
+    if @Role = 'admin'
+        select 1 as [HasPermission], N'Admin có tất cả quyền' as [Message];
+    else if @Role = 'manager' and @Action in ('view', 'create', 'update')
+        select 1 as [HasPermission], N'Manager có quyền thực hiện' as [Message];
+    else if @Role = 'employee' and @Action in ('view', 'create')
+        select 1 as [HasPermission], N'Employee có quyền thực hiện' as [Message];
+    else if @Role = 'customer' and @Action = 'view'
+        select 1 as [HasPermission], N'Customer có quyền xem' as [Message];
+    else
+        select 0 as [HasPermission], N'Không có quyền thực hiện' as [Message];
+end
+go
+
+create or alter procedure ChangePassword
+    @Username nvarchar(50),
+    @OldPassword nvarchar(255),
+    @NewPassword nvarchar(255)
+as
+begin
+    set nocount on;
+    begin try
+        if not exists (select 1 from dbo.Account where Username = @Username and Password = @OldPassword)
+        begin
+            select 'ERROR' as [Result], N'Mật khẩu cũ không đúng' as [Message]; return;
+        end
+        
+        update dbo.Account 
+        set Password = @NewPassword
+        where Username = @Username;
+        
+        select 'SUCCESS' as [Result], N'Đổi mật khẩu thành công' as [Message];
+    end try
+    begin catch
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    end catch
+end
+go
+
+create or alter procedure ResetPassword
+    @ManagerUsername nvarchar(50),
+    @TargetUsername nvarchar(50),
+    @NewPassword nvarchar(255)
+as
+begin
+    set nocount on;
+    begin try
+        -- Kiểm tra quyền manager
+        if not exists (select 1 from dbo.Account where Username = @ManagerUsername and Role in ('admin', 'manager'))
+        begin
+            select 'ERROR' as [Result], N'Không có quyền reset mật khẩu' as [Message]; return;
+        end
+        
+        if not exists (select 1 from dbo.Account where Username = @TargetUsername)
+        begin
+            select 'ERROR' as [Result], N'Không tìm thấy tài khoản cần reset' as [Message]; return;
+        end
+        
+        update dbo.Account 
+        set Password = @NewPassword
+        where Username = @TargetUsername;
+        
+        select 'SUCCESS' as [Result], N'Reset mật khẩu thành công' as [Message];
+    end try
+    begin catch
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    end catch
+end
+go
+
+create or alter procedure GetAccountStatistics
+as
+begin
+    set nocount on;
+    select 
+        count(*) as TotalAccounts,
+        sum(case when Role = 'admin' then 1 else 0 end) as AdminCount,
+        sum(case when Role = 'manager' then 1 else 0 end) as ManagerCount,
+        sum(case when Role = 'employee' then 1 else 0 end) as EmployeeCount,
+        sum(case when Role = 'customer' then 1 else 0 end) as CustomerCount
+    from dbo.Account;
+end
+go
+
+create or alter procedure GetAccountActivity
+    @Username nvarchar(50)
+as
+begin
+    set nocount on;
+    -- Lấy hoạt động từ bảng Transactions
+    select 
+        TransactionID,
+        TransactionType,
+        Amount,
+        Description,
+        TransactionDate
+    from dbo.Transactions
+    where CreatedBy = @Username
+    order by TransactionDate desc;
+end
+go
+
+create or alter procedure ValidateUsername
+    @Username nvarchar(50)
+as
+begin
+    set nocount on;
+    if len(@Username) < 3
+        select 0 as [IsValid], N'Username phải có ít nhất 3 ký tự' as [Message];
+    else if len(@Username) > 50
+        select 0 as [IsValid], N'Username không được vượt quá 50 ký tự' as [Message];
+    else if @Username like '%[^a-zA-Z0-9_]%'
+        select 0 as [IsValid], N'Username chỉ được chứa chữ, số và dấu gạch dưới' as [Message];
+    else
+        select 1 as [IsValid], N'Username hợp lệ' as [Message];
+end
+go
+
+create or alter procedure ValidatePassword
+    @Password nvarchar(255)
+as
+begin
+    set nocount on;
+    if len(@Password) < 6
+        select 0 as [IsValid], N'Mật khẩu phải có ít nhất 6 ký tự' as [Message];
+    else if len(@Password) > 255
+        select 0 as [IsValid], N'Mật khẩu quá dài' as [Message];
+    else
+        select 1 as [IsValid], N'Mật khẩu hợp lệ' as [Message];
+end
+go
+
+create or alter procedure GetAccountsWithDetails
+as
+begin
+    set nocount on;
+    select 
+        a.Username,
+        a.Role,
+        a.CreatedDate,
+        c.CustomerName,
+        c.Phone,
+        c.LoyaltyPoints
+    from dbo.Account a
+    left join dbo.Customers c on a.CustomerID = c.CustomerID
+    order by a.CreatedDate desc;
+end
+go
+
+create or alter procedure BackupAccounts
+as
+begin
+    set nocount on;
+    -- Tạo backup bảng Account
+    select 
+        Username,
+        Role,
+        CreatedDate,
+        CustomerID,
+        getdate() as BackupDate
+    from dbo.Account;
+end
+go
+
+-- ========== Sales Management Procedures ==========
+create or alter procedure GetAllSales
+as
+begin
+    set nocount on;
+    select 
+        s.SaleID,
+        s.CustomerID,
+        c.CustomerName,
+        s.SaleDate,
+        s.TotalAmount,
+        s.PaymentMethod
+    from dbo.Sales s
+    left join dbo.Customers c on s.CustomerID = c.CustomerID
+    order by s.SaleDate desc, s.SaleID desc;
+end
+go
+
+create or alter procedure GetSaleByID
+    @SaleID int
+as
+begin
+    set nocount on;
+    select 
+        s.SaleID,
+        s.CustomerID,
+        c.CustomerName,
+        s.SaleDate,
+        s.TotalAmount,
+        s.PaymentMethod
+    from dbo.Sales s
+    left join dbo.Customers c on s.CustomerID = c.CustomerID
+    where s.SaleID = @SaleID;
+end
+go
+
+create or alter procedure GetSaleDetails
+    @SaleID int
+as
+begin
+    set nocount on;
+    select 
+        sd.SaleID,
+        sd.ProductID,
+        p.ProductName,
+        p.Unit,
+        sd.Quantity,
+        sd.SalePrice,
+        sd.LineTotal
+    from dbo.SaleDetails sd
+    inner join dbo.Products p on sd.ProductID = p.ProductID
+    where sd.SaleID = @SaleID
+    order by sd.ProductID;
+end
+go
+
+create or alter procedure CreateSale
+    @CustomerID int = null,
+    @TotalAmount decimal(18,2),
+    @PaymentMethod nvarchar(50) = null
+as
+begin
+    set nocount on;
+    begin try
+        declare @SaleID int;
+        
+        insert into dbo.Sales (CustomerID, SaleDate, TotalAmount, PaymentMethod)
+        values (@CustomerID, getdate(), @TotalAmount, @PaymentMethod);
+        
+        set @SaleID = SCOPE_IDENTITY();
+        
+        select 'SUCCESS' as [Result], N'Tạo hóa đơn thành công' as [Message], @SaleID as SaleID;
+    end try
+    begin catch
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message], 0 as SaleID;
+    end catch
+end
+go
+
+create or alter procedure AddSaleDetail
+    @SaleID int,
+    @ProductID int,
+    @Quantity int,
+    @SalePrice decimal(18,2)
+as
+begin
+    set nocount on;
+    begin try
+        -- Kiểm tra hóa đơn tồn tại
+        if not exists (select 1 from dbo.Sales where SaleID = @SaleID)
+        begin
+            select 'ERROR' as [Result], N'Không tìm thấy hóa đơn' as [Message]; return;
+        end
+        
+        -- Kiểm tra sản phẩm tồn tại
+        if not exists (select 1 from dbo.Products where ProductID = @ProductID)
+        begin
+            select 'ERROR' as [Result], N'Không tìm thấy sản phẩm' as [Message]; return;
+        end
+        
+        insert into dbo.SaleDetails (SaleID, ProductID, Quantity, SalePrice, LineTotal)
+        values (@SaleID, @ProductID, @Quantity, @SalePrice, @Quantity * @SalePrice);
+        
+        select 'SUCCESS' as [Result], N'Thêm chi tiết hóa đơn thành công' as [Message];
+    end try
+    begin catch
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    end catch
+end
+go
+
+create or alter procedure UpdateSale
+    @SaleID int,
+    @CustomerID int = null,
+    @TotalAmount decimal(18,2),
+    @PaymentMethod nvarchar(50) = null
+as
+begin
+    set nocount on;
+    begin try
+        if not exists (select 1 from dbo.Sales where SaleID = @SaleID)
+        begin
+            select 'ERROR' as [Result], N'Không tìm thấy hóa đơn để cập nhật' as [Message]; return;
+        end
+        
+        update dbo.Sales 
+        set CustomerID = @CustomerID,
+            TotalAmount = @TotalAmount,
+            PaymentMethod = @PaymentMethod
+        where SaleID = @SaleID;
+        
+        select 'SUCCESS' as [Result], N'Cập nhật hóa đơn thành công' as [Message];
+    end try
+    begin catch
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    end catch
+end
+go
+
+create or alter procedure DeleteSale
+    @SaleID int
+as
+begin
+    set nocount on;
+    begin try
+        if not exists (select 1 from dbo.Sales where SaleID = @SaleID)
+        begin
+            select 'ERROR' as [Result], N'Không tìm thấy hóa đơn để xóa' as [Message]; return;
+        end
+        
+        -- Xóa chi tiết hóa đơn trước
+        delete from dbo.SaleDetails where SaleID = @SaleID;
+        
+        -- Xóa hóa đơn
+        delete from dbo.Sales where SaleID = @SaleID;
+        
+        select 'SUCCESS' as [Result], N'Xóa hóa đơn thành công' as [Message];
+    end try
+    begin catch
+        select 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    end catch
+end
+go
+
+print N'✅ Đã tạo thành công tất cả các stored procedure cần thiết!'
+print N'📋 Tổng cộng đã tạo 48 stored procedures cho hệ thống quản lý bán hàng'
+go
 

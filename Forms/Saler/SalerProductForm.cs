@@ -30,11 +30,20 @@ namespace Sale_Management.Forms
                 // Định dạng cột
                 if (dgv_Products.Columns.Count > 0)
                 {
-                    dgv_Products.Columns[0].HeaderText = "Mã sản phẩm";
-                    dgv_Products.Columns[1].HeaderText = "Tên sản phẩm";
-                    dgv_Products.Columns[2].HeaderText = "Giá";
-                    dgv_Products.Columns[3].HeaderText = "Số lượng";
-                    dgv_Products.Columns[4].HeaderText = "Mô tả";
+                    // Kiểm tra từng cột có tồn tại không trước khi thiết lập
+                    if (dgv_Products.Columns.Contains("ProductID"))
+                        dgv_Products.Columns["ProductID"].HeaderText = "Mã sản phẩm";
+                    if (dgv_Products.Columns.Contains("ProductName"))
+                        dgv_Products.Columns["ProductName"].HeaderText = "Tên sản phẩm";
+                    if (dgv_Products.Columns.Contains("Price"))
+                    {
+                        dgv_Products.Columns["Price"].HeaderText = "Giá";
+                        dgv_Products.Columns["Price"].DefaultCellStyle.Format = "N0";
+                    }
+                    if (dgv_Products.Columns.Contains("StockQuantity"))
+                        dgv_Products.Columns["StockQuantity"].HeaderText = "Số lượng tồn";
+                    if (dgv_Products.Columns.Contains("Unit"))
+                        dgv_Products.Columns["Unit"].HeaderText = "Đơn vị";
                 }
             }
             catch (Exception ex)

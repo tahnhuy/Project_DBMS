@@ -28,8 +28,12 @@ namespace Sale_Management.Forms
             {
                 ProductRepository productRepo = new ProductRepository();
                 DataTable dt = productRepo.GetAllProducts();
+                
+                // Tạo cột hiển thị kết hợp tên sản phẩm và đơn vị
+                dt.Columns.Add("ProductDisplayName", typeof(string), "ProductName + ' (' + Unit + ')'");
+                
                 cmb_Product.DataSource = dt;
-                cmb_Product.DisplayMember = "ProductName";
+                cmb_Product.DisplayMember = "ProductDisplayName";
                 cmb_Product.ValueMember = "ProductID";
             }
             catch (Exception ex)
@@ -78,11 +82,14 @@ namespace Sale_Management.Forms
                     string productId = row["ProductID"].ToString();
                     string productName = row["ProductName"].ToString();
                     decimal price = decimal.Parse(row["Price"].ToString());
-                    int availableQuantity = int.Parse(row["Quantity"].ToString());
+                    int availableQuantity = int.Parse(row["StockQuantity"].ToString());
+                    string unit = row["Unit"].ToString();
 
-                    if (quantity > availableQuantity)
+                    // Sử dụng function để kiểm tra tồn kho
+                    ProductRepository productRepo2 = new ProductRepository();
+                    if (!productRepo2.IsStockAvailable(int.Parse(productId), quantity))
                     {
-                        MessageBox.Show($"Số lượng không đủ. Còn lại: {availableQuantity}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show($"Số lượng không đủ. Còn lại: {availableQuantity} {unit}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
@@ -99,7 +106,8 @@ namespace Sale_Management.Forms
                             ProductId = productId,
                             ProductName = productName,
                             Price = price,
-                            Quantity = quantity
+                            Quantity = quantity,
+                            Unit = unit
                         });
                     }
 
@@ -121,6 +129,7 @@ namespace Sale_Management.Forms
                 Tên_sản_phẩm = x.ProductName,
                 Giá = x.Price.ToString("N0"),
                 Số_lượng = x.Quantity,
+                Đơn_vị = x.Unit,
                 Thành_tiền = (x.Price * x.Quantity).ToString("N0")
             }).ToList();
         }
@@ -206,5 +215,6 @@ namespace Sale_Management.Forms
         public string ProductName { get; set; }
         public decimal Price { get; set; }
         public int Quantity { get; set; }
+        public string Unit { get; set; }
     }
 }

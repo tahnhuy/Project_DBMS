@@ -26,6 +26,17 @@ namespace Sale_Management.DatabaseAccess
             return DatabaseConnection.ExecuteQuery(query, CommandType.StoredProcedure, parameters);
         }
 
+        /// <summary>
+        /// Kiểm tra đăng nhập và trả về role sử dụng SecurityHelper
+        /// </summary>
+        /// <param name="username">Tên đăng nhập</param>
+        /// <param name="password">Mật khẩu</param>
+        /// <returns>Role của user hoặc thông báo lỗi</returns>
+        public static string CheckLoginAndGetRole(string username, string password)
+        {
+            return SecurityHelper.CheckUserRole(username, password);
+        }
+
         public static DataTable AddAccount(string creatorUsername, string newUsername, string newPassword, string newRole)
         {
             string query = "AddAccount";

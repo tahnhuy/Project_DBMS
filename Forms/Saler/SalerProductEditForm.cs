@@ -34,8 +34,8 @@ namespace Sale_Management.Forms
                     txt_ProductId.Text = row["ProductID"].ToString();
                     txt_ProductName.Text = row["ProductName"].ToString();
                     txt_Price.Text = row["Price"].ToString();
-                    txt_Quantity.Text = row["Quantity"].ToString();
-                    txt_Description.Text = row["Description"].ToString();
+                    txt_Quantity.Text = row["StockQuantity"].ToString();
+                    txt_Unit.Text = row["Unit"].ToString();
                     
                     txt_ProductId.ReadOnly = true; // Không cho sửa mã sản phẩm
                 }
@@ -55,10 +55,10 @@ namespace Sale_Management.Forms
                     string productName = txt_ProductName.Text.Trim();
                     decimal price = decimal.Parse(txt_Price.Text);
                     int quantity = int.Parse(txt_Quantity.Text);
-                    string description = txt_Description.Text.Trim();
+                    string unit = txt_Unit.Text.Trim();
 
                     ProductRepository productRepo = new ProductRepository();
-                    bool success = productRepo.UpdateProduct(int.Parse(productId), productName, price, quantity, "cái");
+                    bool success = productRepo.UpdateProduct(int.Parse(productId), productName, price, quantity, unit);
                     
                     if (success)
                     {

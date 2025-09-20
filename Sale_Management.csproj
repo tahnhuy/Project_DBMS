@@ -52,6 +52,7 @@
     <Compile Include="DatabaseAccess\DiscountRepository.cs" />
     <Compile Include="DatabaseAccess\ProductRepository.cs" />
     <Compile Include="DatabaseAccess\SaleRepository.cs" />
+    <Compile Include="DatabaseAccess\SecurityHelper.cs" />
     <!-- Common Forms -->
     <Compile Include="Forms\Common\AccountCreateForm.cs">
       <SubType>Form</SubType>

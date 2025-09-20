@@ -30,7 +30,7 @@ namespace Sale_Management.DatabaseAccess
         {
             try
             {
-                string query = "select * from GetProductByName(@ProductName)";
+                string query = "select * from dbo.GetProductByName(@ProductName)";
                 SqlParameter[] para = new SqlParameter[]
                 {
                     new SqlParameter("@ProductName", SqlDbType.NVarChar, 100) {Value = productName ?? (object)DBNull.Value}
@@ -48,7 +48,7 @@ namespace Sale_Management.DatabaseAccess
         {
             try
             {
-                string query = "select * from GetProductByID(@ProductID)";
+                string query = "select * from dbo.GetProductByID(@ProductID)";
                 SqlParameter[] para = new SqlParameter[]
                 {
                     new SqlParameter("@ProductID", SqlDbType.Int) {Value = productId}
@@ -145,6 +145,109 @@ namespace Sale_Management.DatabaseAccess
             catch (Exception ex)
             {
                 throw new Exception("Lỗi khi xóa sản phẩm: " + ex.Message);
+            }
+        }
+
+        // Kiểm tra số lượng tồn kho có đủ không
+        public bool IsStockAvailable(int productId, int requiredQuantity)
+        {
+            try
+            {
+                string query = "SELECT dbo.IsStockAvailable(@ProductID, @RequiredQuantity) as IsAvailable";
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@ProductID", SqlDbType.Int) { Value = productId },
+                    new SqlParameter("@RequiredQuantity", SqlDbType.Int) { Value = requiredQuantity }
+                };
+
+                DataTable result = DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
+                if (result.Rows.Count > 0)
+                {
+                    return Convert.ToBoolean(result.Rows[0]["IsAvailable"]);
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi kiểm tra tồn kho: " + ex.Message);
+            }
+        }
+
+        // Lấy top sản phẩm bán chạy
+        public DataTable GetTopSellingProducts(int topCount = 10)
+        {
+            try
+            {
+                string query = "SELECT * FROM dbo.GetTopSellingProducts(@TopCount)";
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@TopCount", SqlDbType.Int) { Value = topCount }
+                };
+
+                return DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy top sản phẩm bán chạy: " + ex.Message);
+            }
+        }
+
+        // Lấy báo cáo doanh thu theo sản phẩm
+        public DataTable GetProductRevenueReport(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                string query = "SELECT * FROM dbo.GetProductRevenueReport(@StartDate, @EndDate)";
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@StartDate", SqlDbType.DateTime) { Value = startDate },
+                    new SqlParameter("@EndDate", SqlDbType.DateTime) { Value = endDate }
+                };
+
+                return DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy báo cáo doanh thu sản phẩm: " + ex.Message);
+            }
+        }
+
+        // Lấy danh sách sản phẩm với giá giảm
+        public DataTable GetProductsWithDiscounts()
+        {
+            try
+            {
+                return DatabaseConnection.ExecuteQuery("SELECT * FROM ProductsWithDiscounts", CommandType.Text, null);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy danh sách sản phẩm có giảm giá: " + ex.Message);
+            }
+        }
+
+        // Lấy thống kê bán hàng theo sản phẩm  
+        public DataTable GetProductSalesStats()
+        {
+            try
+            {
+                return DatabaseConnection.ExecuteQuery("SELECT * FROM ProductSalesStats", CommandType.Text, null);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy thống kê bán hàng sản phẩm: " + ex.Message);
+            }
+        }
+
+        // Lấy danh sách sản phẩm sắp hết hàng
+        public DataTable GetLowStockProducts()
+        {
+            try
+            {
+                return DatabaseConnection.ExecuteQuery("SELECT * FROM LowStockProducts", CommandType.Text, null);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy danh sách sản phẩm sắp hết hàng: " + ex.Message);
             }
         }
     }
