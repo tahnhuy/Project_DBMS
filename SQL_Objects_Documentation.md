@@ -188,55 +188,370 @@ public static DataTable DeleteAccount(string username)
 #### 3.6 GetAccountDetails
 **Chức năng:** Lấy chi tiết tài khoản  
 **Parameters:** @Username  
+**SQL:**
+```sql
+CREATE PROCEDURE GetAccountDetails
+    @Username nvarchar(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Username, Role, CreatedDate, CustomerID
+    FROM dbo.Account 
+    WHERE Username = @Username;
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 61-70
+public static DataTable GetAccountDetails(string username)
+```  
 
 #### 3.7 CheckAccountExists
 **Chức năng:** Kiểm tra tài khoản có tồn tại  
 **Parameters:** @Username  
+**SQL:**
+```sql
+CREATE PROCEDURE CheckAccountExists
+    @Username nvarchar(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF EXISTS (SELECT 1 FROM dbo.Account WHERE Username = @Username)
+        SELECT 1 as [Exists], N'Tài khoản đã tồn tại' as [Message];
+    ELSE
+        SELECT 0 as [Exists], N'Tài khoản không tồn tại' as [Message];
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 72-81
+public static DataTable CheckAccountExists(string username)
+```  
 
 #### 3.8 SearchAccounts
 **Chức năng:** Tìm kiếm tài khoản  
 **Parameters:** @SearchTerm  
+**SQL:**
+```sql
+CREATE PROCEDURE SearchAccounts
+    @SearchTerm nvarchar(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Username, Role, CreatedDate, CustomerID
+    FROM dbo.Account
+    WHERE Username LIKE '%' + @SearchTerm + '%'
+       OR Role LIKE '%' + @SearchTerm + '%'
+    ORDER BY CreatedDate DESC;
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 83-92
+public static DataTable SearchAccounts(string searchTerm)
+```  
 
 #### 3.9 GetAccountsByRole
 **Chức năng:** Lấy tài khoản theo vai trò  
 **Parameters:** @Role  
+**SQL:**
+```sql
+CREATE PROCEDURE GetAccountsByRole
+    @Role nvarchar(20)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Username, Role, CreatedDate, CustomerID
+    FROM dbo.Account
+    WHERE Role = @Role
+    ORDER BY CreatedDate DESC;
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 94-103
+public static DataTable GetAccountsByRole(string role)
+```  
 
 #### 3.10 CountAccountsByRole
 **Chức năng:** Đếm số tài khoản theo vai trò  
 **Parameters:** @Role  
+**SQL:**
+```sql
+CREATE PROCEDURE CountAccountsByRole
+    @Role nvarchar(20)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT COUNT(*) as [AccountCount]
+    FROM dbo.Account
+    WHERE Role = @Role;
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 105-114
+public static DataTable CountAccountsByRole(string role)
+```  
 
 #### 3.11 CheckUserPermission
 **Chức năng:** Kiểm tra quyền hạn người dùng  
 **Parameters:** @Username, @Action  
+**SQL:**
+```sql
+CREATE PROCEDURE CheckUserPermission
+    @Username nvarchar(50),
+    @Action nvarchar(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @Role nvarchar(20);
+    SELECT @Role = Role FROM dbo.Account WHERE Username = @Username;
+    
+    IF @Role = 'admin'
+        SELECT 1 as [HasPermission], N'Admin có tất cả quyền' as [Message];
+    ELSE IF @Role = 'manager' AND @Action IN ('view', 'create', 'update')
+        SELECT 1 as [HasPermission], N'Manager có quyền thực hiện' as [Message];
+    ELSE IF @Role = 'employee' AND @Action IN ('view', 'create')
+        SELECT 1 as [HasPermission], N'Employee có quyền thực hiện' as [Message];
+    ELSE IF @Role = 'customer' AND @Action = 'view'
+        SELECT 1 as [HasPermission], N'Customer có quyền xem' as [Message];
+    ELSE
+        SELECT 0 as [HasPermission], N'Không có quyền thực hiện' as [Message];
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 116-125
+public static DataTable CheckUserPermission(string username, string action)
+```  
 
 #### 3.12 ChangePassword
 **Chức năng:** Đổi mật khẩu  
 **Parameters:** @Username, @OldPassword, @NewPassword  
+**SQL:**
+```sql
+CREATE PROCEDURE ChangePassword
+    @Username nvarchar(50),
+    @OldPassword nvarchar(255),
+    @NewPassword nvarchar(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        IF NOT EXISTS (SELECT 1 FROM dbo.Account WHERE Username = @Username AND Password = @OldPassword)
+        BEGIN
+            SELECT 'ERROR' as [Result], N'Mật khẩu cũ không đúng' as [Message]; RETURN;
+        END
+        
+        UPDATE dbo.Account 
+        SET Password = @NewPassword
+        WHERE Username = @Username;
+        
+        SELECT 'SUCCESS' as [Result], N'Đổi mật khẩu thành công' as [Message];
+    END TRY
+    BEGIN CATCH
+        SELECT 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    END CATCH
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 127-136
+public static DataTable ChangePassword(string username, string oldPassword, string newPassword)
+```  
 
 #### 3.13 ResetPassword
 **Chức năng:** Reset mật khẩu (chỉ admin/manager)  
 **Parameters:** @ManagerUsername, @TargetUsername, @NewPassword  
+**SQL:**
+```sql
+CREATE PROCEDURE ResetPassword
+    @ManagerUsername nvarchar(50),
+    @TargetUsername nvarchar(50),
+    @NewPassword nvarchar(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        -- Kiểm tra quyền manager
+        IF NOT EXISTS (SELECT 1 FROM dbo.Account WHERE Username = @ManagerUsername AND Role IN ('admin', 'manager'))
+        BEGIN
+            SELECT 'ERROR' as [Result], N'Không có quyền reset mật khẩu' as [Message]; RETURN;
+        END
+        
+        IF NOT EXISTS (SELECT 1 FROM dbo.Account WHERE Username = @TargetUsername)
+        BEGIN
+            SELECT 'ERROR' as [Result], N'Không tìm thấy tài khoản cần reset' as [Message]; RETURN;
+        END
+        
+        UPDATE dbo.Account 
+        SET Password = @NewPassword
+        WHERE Username = @TargetUsername;
+        
+        SELECT 'SUCCESS' as [Result], N'Reset mật khẩu thành công' as [Message];
+    END TRY
+    BEGIN CATCH
+        SELECT 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    END CATCH
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 138-147
+public static DataTable ResetPassword(string managerUsername, string targetUsername, string newPassword)
+```  
 
 #### 3.14 GetAccountStatistics
 **Chức năng:** Thống kê tài khoản theo vai trò  
+**SQL:**
+```sql
+CREATE PROCEDURE GetAccountStatistics
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT 
+        COUNT(*) as TotalAccounts,
+        SUM(CASE WHEN Role = 'admin' THEN 1 ELSE 0 END) as AdminCount,
+        SUM(CASE WHEN Role = 'manager' THEN 1 ELSE 0 END) as ManagerCount,
+        SUM(CASE WHEN Role = 'employee' THEN 1 ELSE 0 END) as EmployeeCount,
+        SUM(CASE WHEN Role = 'customer' THEN 1 ELSE 0 END) as CustomerCount
+    FROM dbo.Account;
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 149-158
+public static DataTable GetAccountStatistics()
+```  
 
 #### 3.15 GetAccountActivity
 **Chức năng:** Lấy hoạt động của tài khoản  
 **Parameters:** @Username  
+**SQL:**
+```sql
+CREATE PROCEDURE GetAccountActivity
+    @Username nvarchar(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    -- Lấy hoạt động từ bảng Transactions
+    SELECT 
+        TransactionID,
+        TransactionType,
+        Amount,
+        Description,
+        TransactionDate
+    FROM dbo.Transactions
+    WHERE CreatedBy = @Username
+    ORDER BY TransactionDate DESC;
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 160-169
+public static DataTable GetAccountActivity(string username)
+```  
 
 #### 3.16 ValidateUsername
 **Chức năng:** Validate tên đăng nhập  
 **Parameters:** @Username  
+**SQL:**
+```sql
+CREATE PROCEDURE ValidateUsername
+    @Username nvarchar(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF LEN(@Username) < 3
+        SELECT 0 as [IsValid], N'Username phải có ít nhất 3 ký tự' as [Message];
+    ELSE IF LEN(@Username) > 50
+        SELECT 0 as [IsValid], N'Username không được vượt quá 50 ký tự' as [Message];
+    ELSE IF @Username LIKE '%[^a-zA-Z0-9_]%'
+        SELECT 0 as [IsValid], N'Username chỉ được chứa chữ, số và dấu gạch dưới' as [Message];
+    ELSE
+        SELECT 1 as [IsValid], N'Username hợp lệ' as [Message];
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 171-180
+public static DataTable ValidateUsername(string username)
+```  
 
 #### 3.17 ValidatePassword
 **Chức năng:** Validate mật khẩu  
 **Parameters:** @Password  
+**SQL:**
+```sql
+CREATE PROCEDURE ValidatePassword
+    @Password nvarchar(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF LEN(@Password) < 6
+        SELECT 0 as [IsValid], N'Mật khẩu phải có ít nhất 6 ký tự' as [Message];
+    ELSE IF LEN(@Password) > 255
+        SELECT 0 as [IsValid], N'Mật khẩu quá dài' as [Message];
+    ELSE
+        SELECT 1 as [IsValid], N'Mật khẩu hợp lệ' as [Message];
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 182-191
+public static DataTable ValidatePassword(string password)
+```  
 
 #### 3.18 GetAccountsWithDetails
 **Chức năng:** Lấy tài khoản kèm chi tiết khách hàng  
+**SQL:**
+```sql
+CREATE PROCEDURE GetAccountsWithDetails
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT 
+        a.Username,
+        a.Role,
+        a.CreatedDate,
+        c.CustomerName,
+        c.Phone,
+        c.LoyaltyPoints
+    FROM dbo.Account a
+    LEFT JOIN dbo.Customers c ON a.CustomerID = c.CustomerID
+    ORDER BY a.CreatedDate DESC;
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 193-202
+public static DataTable GetAccountsWithDetails()
+```  
 
 #### 3.19 BackupAccounts
 **Chức năng:** Backup dữ liệu tài khoản  
+**SQL:**
+```sql
+CREATE PROCEDURE BackupAccounts
+AS
+BEGIN
+    SET NOCOUNT ON;
+    -- Tạo backup bảng Account
+    SELECT 
+        Username,
+        Role,
+        CreatedDate,
+        CustomerID,
+        GETDATE() as BackupDate
+    FROM dbo.Account;
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 204-213
+public static DataTable BackupAccounts()
+```  
 
 #### 3.20 GetCustomerByUsername
 **Chức năng:** Lấy thông tin khách hàng theo username  
@@ -264,6 +579,24 @@ public bool UpdateCustomerByUsername(string username, string customerName, strin
 
 #### 4.1 GetAllSales
 **Chức năng:** Lấy danh sách tất cả hóa đơn  
+**SQL:**
+```sql
+CREATE PROCEDURE GetAllSales
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT 
+        s.SaleID,
+        s.CustomerID,
+        c.CustomerName,
+        s.SaleDate,
+        s.TotalAmount,
+        s.PaymentMethod
+    FROM dbo.Sales s
+    LEFT JOIN dbo.Customers c ON s.CustomerID = c.CustomerID
+    ORDER BY s.SaleDate DESC;
+END
+```
 **C# Code:**
 ```csharp
 // File: DatabaseAccess/SaleRepository.cs - Line 9-19
@@ -273,6 +606,25 @@ public DataTable GetAllSales()
 #### 4.2 GetSaleByID
 **Chức năng:** Lấy hóa đơn theo ID  
 **Parameters:** @SaleID  
+**SQL:**
+```sql
+CREATE PROCEDURE GetSaleByID
+    @SaleID int
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT 
+        s.SaleID,
+        s.CustomerID,
+        c.CustomerName,
+        s.SaleDate,
+        s.TotalAmount,
+        s.PaymentMethod
+    FROM dbo.Sales s
+    LEFT JOIN dbo.Customers c ON s.CustomerID = c.CustomerID
+    WHERE s.SaleID = @SaleID;
+END
+```
 **C# Code:**
 ```csharp
 // File: DatabaseAccess/SaleRepository.cs - Line 21-35
@@ -282,6 +634,26 @@ public DataTable GetSaleById(int saleId)
 #### 4.3 GetSaleDetails
 **Chức năng:** Lấy chi tiết hóa đơn  
 **Parameters:** @SaleID  
+**SQL:**
+```sql
+CREATE PROCEDURE GetSaleDetails
+    @SaleID int
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT 
+        sd.SaleID,
+        sd.ProductID,
+        p.ProductName,
+        p.Unit,
+        sd.Quantity,
+        sd.SalePrice,
+        sd.LineTotal
+    FROM dbo.SaleDetails sd
+    INNER JOIN dbo.Products p ON sd.ProductID = p.ProductID
+    WHERE sd.SaleID = @SaleID;
+END
+```
 **C# Code:**
 ```csharp
 // File: DatabaseAccess/SaleRepository.cs - Line 37-51
@@ -291,6 +663,29 @@ public DataTable GetSaleDetails(int saleId)
 #### 4.4 CreateSale
 **Chức năng:** Tạo hóa đơn mới  
 **Parameters:** @CustomerID, @TotalAmount, @PaymentMethod  
+**SQL:**
+```sql
+CREATE PROCEDURE CreateSale
+    @CustomerID int = null,
+    @TotalAmount decimal(18,2),
+    @PaymentMethod nvarchar(50) = null
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        DECLARE @SaleID int;
+        
+        INSERT INTO dbo.Sales (CustomerID, SaleDate, TotalAmount, PaymentMethod)
+        VALUES (@CustomerID, GETDATE(), @TotalAmount, @PaymentMethod);
+        
+        SET @SaleID = SCOPE_IDENTITY();
+        SELECT 'SUCCESS' as [Result], N'Tạo hóa đơn thành công' as [Message], @SaleID as [SaleID];
+    END TRY
+    BEGIN CATCH
+        SELECT 'ERROR' as [Result], ERROR_MESSAGE() as [Message], 0 as [SaleID];
+    END CATCH
+END
+```
 **C# Code:**
 ```csharp
 // File: DatabaseAccess/SaleRepository.cs - Line 53-80
@@ -300,6 +695,39 @@ public int CreateSale(int? customerId, decimal totalAmount, string paymentMethod
 #### 4.5 AddSaleDetail
 **Chức năng:** Thêm chi tiết vào hóa đơn  
 **Parameters:** @SaleID, @ProductID, @Quantity, @SalePrice  
+**SQL:**
+```sql
+CREATE PROCEDURE AddSaleDetail
+    @SaleID int,
+    @ProductID int,
+    @Quantity int,
+    @SalePrice decimal(18,2)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        -- Kiểm tra hóa đơn tồn tại
+        IF NOT EXISTS (SELECT 1 FROM dbo.Sales WHERE SaleID = @SaleID)
+        BEGIN
+            SELECT 'ERROR' as [Result], N'Không tìm thấy hóa đơn' as [Message]; RETURN;
+        END
+        
+        -- Kiểm tra sản phẩm tồn tại
+        IF NOT EXISTS (SELECT 1 FROM dbo.Products WHERE ProductID = @ProductID)
+        BEGIN
+            SELECT 'ERROR' as [Result], N'Không tìm thấy sản phẩm' as [Message]; RETURN;
+        END
+        
+        INSERT INTO dbo.SaleDetails (SaleID, ProductID, Quantity, SalePrice, LineTotal)
+        VALUES (@SaleID, @ProductID, @Quantity, @SalePrice, @Quantity * @SalePrice);
+        
+        SELECT 'SUCCESS' as [Result], N'Thêm chi tiết thành công' as [Message];
+    END TRY
+    BEGIN CATCH
+        SELECT 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    END CATCH
+END
+```
 **C# Code:**
 ```csharp
 // File: DatabaseAccess/SaleRepository.cs - Line 82-110
@@ -309,6 +737,35 @@ public bool AddSaleDetail(int saleId, int productId, int quantity, decimal saleP
 #### 4.6 UpdateSale
 **Chức năng:** Cập nhật thông tin hóa đơn  
 **Parameters:** @SaleID, @CustomerID, @TotalAmount, @PaymentMethod  
+**SQL:**
+```sql
+CREATE PROCEDURE UpdateSale
+    @SaleID int,
+    @CustomerID int = null,
+    @TotalAmount decimal(18,2),
+    @PaymentMethod nvarchar(50) = null
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        IF NOT EXISTS (SELECT 1 FROM dbo.Sales WHERE SaleID = @SaleID)
+        BEGIN
+            SELECT 'ERROR' as [Result], N'Không tìm thấy hóa đơn để cập nhật' as [Message]; RETURN;
+        END
+        
+        UPDATE dbo.Sales 
+        SET CustomerID = @CustomerID,
+            TotalAmount = @TotalAmount,
+            PaymentMethod = @PaymentMethod
+        WHERE SaleID = @SaleID;
+        
+        SELECT 'SUCCESS' as [Result], N'Cập nhật hóa đơn thành công' as [Message];
+    END TRY
+    BEGIN CATCH
+        SELECT 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    END CATCH
+END
+```
 **C# Code:**
 ```csharp
 // File: DatabaseAccess/SaleRepository.cs - Line 112-140
@@ -318,6 +775,32 @@ public bool UpdateSale(int saleId, int? customerId, decimal totalAmount, string 
 #### 4.7 DeleteSale
 **Chức năng:** Xóa hóa đơn và chi tiết  
 **Parameters:** @SaleID  
+**SQL:**
+```sql
+CREATE PROCEDURE DeleteSale
+    @SaleID int
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        IF NOT EXISTS (SELECT 1 FROM dbo.Sales WHERE SaleID = @SaleID)
+        BEGIN
+            SELECT 'ERROR' as [Result], N'Không tìm thấy hóa đơn để xóa' as [Message]; RETURN;
+        END
+        
+        -- Xóa chi tiết hóa đơn trước
+        DELETE FROM dbo.SaleDetails WHERE SaleID = @SaleID;
+        
+        -- Xóa hóa đơn
+        DELETE FROM dbo.Sales WHERE SaleID = @SaleID;
+        
+        SELECT 'SUCCESS' as [Result], N'Xóa hóa đơn thành công' as [Message];
+    END TRY
+    BEGIN CATCH
+        SELECT 'ERROR' as [Result], ERROR_MESSAGE() as [Message];
+    END CATCH
+END
+```
 **C# Code:**
 ```csharp
 // File: DatabaseAccess/SaleRepository.cs - Line 142-167
@@ -385,10 +868,49 @@ public bool DeleteDiscount(int discountId)
 #### 6.1 GetTransactionsByUsername
 **Chức năng:** Lấy giao dịch theo username  
 **Parameters:** @Username  
+**SQL:**
+```sql
+CREATE PROCEDURE GetTransactionsByUsername
+    @Username nvarchar(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT TransactionID, TransactionType, Amount, Description, TransactionDate, CreatedBy, ReferenceID, ReferenceType
+    FROM dbo.Transactions
+    WHERE CreatedBy = @Username
+    ORDER BY TransactionDate DESC, TransactionID DESC;
+END
+```
+**C# Code:**
+```csharp
+// File: DatabaseAccess/AccountRepository.cs - Line 215-224
+public static DataTable GetTransactionsByUsername(string username)
+```  
 
 #### 6.2 GetSalesByCustomerUsername
 **Chức năng:** Lấy hóa đơn của khách hàng theo username  
 **Parameters:** @Username  
+**SQL:**
+```sql
+CREATE PROCEDURE GetSalesByCustomerUsername
+    @Username nvarchar(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @CustomerID int;
+    SELECT @CustomerID = CustomerID FROM dbo.Account WHERE Username = @Username;
+    IF @CustomerID IS NULL
+    BEGIN
+        SELECT CAST(NULL as int) as SaleID, CAST(NULL as datetime) as SaleDate,
+               CAST(NULL as decimal(18,2)) as TotalAmount, CAST(NULL as nvarchar(50)) as PaymentMethod
+        WHERE 1 = 0; RETURN;
+    END
+    SELECT s.SaleID, s.SaleDate, s.TotalAmount, s.PaymentMethod
+    FROM dbo.Sales s
+    WHERE s.CustomerID = @CustomerID
+    ORDER BY s.SaleDate DESC;
+END
+```
 **C# Code:**
 ```csharp
 // File: DatabaseAccess/CustomerRepository.cs - Line 150-157
