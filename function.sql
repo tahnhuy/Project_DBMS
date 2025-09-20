@@ -341,3 +341,141 @@ print N'   14. GetDashboardStats - Thống kê tổng quan'
 print N'   15. FormatVietnamMoney - Format tiền tệ VN'
 print N'   16. GetExpenseByType - Tính tổng chi phí theo loại'
 go
+
+-- ========== CÁC FUNCTION CẦN THIẾT CHO PRODUCTREPOSITORY ==========
+-- Chạy file này trong SQL Server Management Studio hoặc sqlcmd
+
+USE MInimart_SalesDB;
+GO
+
+-- Function 1: GetDiscountedPrice - Tính giá sau giảm giá
+CREATE OR ALTER FUNCTION dbo.GetDiscountedPrice(@ProductID INT, @OriginalPrice DECIMAL(18,2))
+RETURNS DECIMAL(18,2)
+AS
+BEGIN
+    DECLARE @DiscountedPrice DECIMAL(18,2) = @OriginalPrice;
+    
+    IF EXISTS (
+        SELECT 1 FROM Discounts 
+        WHERE ProductID = @ProductID 
+        AND GETDATE() BETWEEN StartDate AND EndDate
+    )
+    BEGIN
+        SELECT @DiscountedPrice = 
+            CASE 
+                WHEN DiscountType = 'percentage' 
+                THEN @OriginalPrice * (1 - DiscountValue/100)
+                ELSE @OriginalPrice - DiscountValue
+            END
+        FROM Discounts 
+        WHERE ProductID = @ProductID 
+        AND GETDATE() BETWEEN StartDate AND EndDate;
+    END
+    
+    RETURN @DiscountedPrice;
+END;
+GO
+
+-- Function 2: GetProductByName - Tìm sản phẩm theo tên
+CREATE OR ALTER FUNCTION dbo.GetProductByName(@Name NVARCHAR(100))
+RETURNS TABLE
+AS
+RETURN (
+    SELECT 
+        p.ProductID,
+        p.ProductName,
+        p.Price,
+        p.StockQuantity,
+        p.Unit,
+        dbo.GetDiscountedPrice(p.ProductID, p.Price) as DiscountedPrice,
+        CASE WHEN dbo.GetDiscountedPrice(p.ProductID, p.Price) < p.Price THEN 1 ELSE 0 END as HasDiscount
+    FROM dbo.Products p
+    WHERE p.ProductName LIKE N'%' + @Name + '%'
+);
+GO
+
+-- Function 3: GetProductByID - Tìm sản phẩm theo ID
+CREATE OR ALTER FUNCTION dbo.GetProductByID(@ID INT)
+RETURNS TABLE 
+AS
+RETURN (
+    SELECT 
+        p.ProductID,
+        p.ProductName,
+        p.Price,
+        p.StockQuantity,
+        p.Unit,
+        dbo.GetDiscountedPrice(p.ProductID, p.Price) as DiscountedPrice,
+        CASE WHEN dbo.GetDiscountedPrice(p.ProductID, p.Price) < p.Price THEN 1 ELSE 0 END as HasDiscount
+    FROM dbo.Products p
+    WHERE p.ProductID = @ID
+);
+GO
+
+-- Function 4: IsStockAvailable - Kiểm tra tồn kho
+CREATE OR ALTER FUNCTION dbo.IsStockAvailable(@ProductID INT, @RequiredQuantity INT)
+RETURNS BIT
+AS
+BEGIN
+    DECLARE @Available BIT = 0;
+    
+    IF EXISTS (
+        SELECT 1 FROM Products 
+        WHERE ProductID = @ProductID 
+        AND StockQuantity >= @RequiredQuantity
+    )
+    BEGIN
+        SET @Available = 1;
+    END
+    
+    RETURN @Available;
+END;
+GO
+
+-- Function 5: GetTopSellingProducts - Top sản phẩm bán chạy
+CREATE OR ALTER FUNCTION dbo.GetTopSellingProducts(@TopCount INT)
+RETURNS TABLE
+AS
+RETURN (
+    SELECT TOP (@TopCount)
+        p.ProductID,
+        p.ProductName,
+        p.Price,
+        p.StockQuantity,
+        p.Unit,
+        ISNULL(SUM(sd.Quantity), 0) as TotalSold
+    FROM Products p
+    LEFT JOIN SaleDetails sd ON p.ProductID = sd.ProductID
+    LEFT JOIN Sales s ON sd.SaleID = s.SaleID
+    GROUP BY p.ProductID, p.ProductName, p.Price, p.StockQuantity, p.Unit
+    ORDER BY TotalSold DESC
+);
+GO
+
+-- Function 6: GetProductRevenueReport - Báo cáo doanh thu sản phẩm
+/*CREATE OR ALTER FUNCTION dbo.GetProductRevenueReport(@StartDate DATETIME, @EndDate DATETIME)
+RETURNS TABLE
+AS
+RETURN (
+    SELECT 
+        p.ProductID,
+        p.ProductName,
+        p.Price,
+        SUM(sd.Quantity) as TotalSold,
+        SUM(sd.Quantity * sd.Price) as TotalRevenue
+    FROM Products p
+    INNER JOIN SaleDetails sd ON p.ProductID = sd.ProductID
+    INNER JOIN Sales s ON sd.SaleID = s.SaleID
+    WHERE s.SaleDate BETWEEN @StartDate AND @EndDate
+    GROUP BY p.ProductID, p.ProductName, p.Price
+);
+GO */
+
+PRINT 'Đã tạo thành công tất cả các function cần thiết!';
+PRINT 'Danh sách function đã tạo:';
+PRINT '   1. GetDiscountedPrice - Tính giá sau giảm giá';
+PRINT '   2. GetProductByName - Tìm sản phẩm theo tên';
+PRINT '   3. GetProductByID - Tìm sản phẩm theo ID';
+PRINT '   4. IsStockAvailable - Kiểm tra tồn kho';
+PRINT '   5. GetTopSellingProducts - Top sản phẩm bán chạy';
+PRINT '   6. GetProductRevenueReport - Báo cáo doanh thu sản phẩm';

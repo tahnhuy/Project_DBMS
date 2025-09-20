@@ -18,11 +18,21 @@ namespace Sale_Management.DatabaseAccess
         {
             try
             {
-                return DatabaseConnection.ExecuteQuery("GetAllProducts", CommandType.StoredProcedure, null);
+                string query = @"
+                    SELECT 
+                        ProductID,
+                        ProductName,
+                        Price,
+                        StockQuantity,
+                        Unit
+                    FROM Products
+                    ORDER BY ProductID";
+                return DatabaseConnection.ExecuteQuery(query, CommandType.Text, null);
             }
             catch (Exception ex)
             {
-                throw new Exception("Lỗi khi lấy danh sách sản phẩm: " + ex.Message);
+                MessageBox.Show($"Lỗi khi lấy danh sách sản phẩm: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new DataTable(); // Trả về DataTable rỗng thay vì null
             }
         }
 
@@ -30,17 +40,18 @@ namespace Sale_Management.DatabaseAccess
         {
             try
             {
-                string query = "select * from dbo.GetProductByName(@ProductName)";
+                string query = "SELECT * FROM dbo.GetProductByName(@ProductName)";
                 SqlParameter[] para = new SqlParameter[]
                 {
-                    new SqlParameter("@ProductName", SqlDbType.NVarChar, 100) {Value = productName ?? (object)DBNull.Value}
+                    new SqlParameter("@ProductName", SqlDbType.NVarChar, 100) {Value = productName ?? ""}
                 };
                     
                 return DatabaseConnection.ExecuteQuery(query, CommandType.Text, para);
             }
             catch (Exception ex) 
             {
-                throw new Exception("Lỗi khi lấy sản phẩm theo tên: " + ex.Message);
+                MessageBox.Show($"Lỗi khi lấy sản phẩm theo tên: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new DataTable();
             }
         }
 
@@ -48,7 +59,7 @@ namespace Sale_Management.DatabaseAccess
         {
             try
             {
-                string query = "select * from dbo.GetProductByID(@ProductID)";
+                string query = "SELECT * FROM dbo.GetProductByID(@ProductID)";
                 SqlParameter[] para = new SqlParameter[]
                 {
                     new SqlParameter("@ProductID", SqlDbType.Int) {Value = productId}
@@ -56,7 +67,8 @@ namespace Sale_Management.DatabaseAccess
                 return DatabaseConnection.ExecuteQuery(query, CommandType.Text, para);
             } catch (Exception ex)
             {
-                throw new Exception("Lỗi khi lấy sản phẩm theo ID: " + ex.Message);
+                MessageBox.Show($"Lỗi khi lấy sản phẩm theo ID: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new DataTable();
             }
         }
 
@@ -169,7 +181,8 @@ namespace Sale_Management.DatabaseAccess
             }
             catch (Exception ex)
             {
-                throw new Exception("Lỗi khi kiểm tra tồn kho: " + ex.Message);
+                MessageBox.Show($"Lỗi khi kiểm tra tồn kho: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
         }
 
@@ -188,7 +201,8 @@ namespace Sale_Management.DatabaseAccess
             }
             catch (Exception ex)
             {
-                throw new Exception("Lỗi khi lấy top sản phẩm bán chạy: " + ex.Message);
+                MessageBox.Show($"Lỗi khi lấy top sản phẩm bán chạy: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new DataTable();
             }
         }
 
@@ -197,7 +211,19 @@ namespace Sale_Management.DatabaseAccess
         {
             try
             {
-                string query = "SELECT * FROM dbo.GetProductRevenueReport(@StartDate, @EndDate)";
+                string query = @"
+                    SELECT 
+                        p.ProductID,
+                        p.ProductName,
+                        p.Price,
+                        SUM(sd.Quantity) as TotalSold,
+                        SUM(sd.Quantity * sd.Price) as TotalRevenue
+                    FROM Products p
+                    INNER JOIN SaleDetails sd ON p.ProductID = sd.ProductID
+                    INNER JOIN Sales s ON sd.SaleID = s.SaleID
+                    WHERE s.SaleDate BETWEEN @StartDate AND @EndDate
+                    GROUP BY p.ProductID, p.ProductName, p.Price
+                    ORDER BY TotalRevenue DESC";
                 SqlParameter[] parameters = new SqlParameter[]
                 {
                     new SqlParameter("@StartDate", SqlDbType.DateTime) { Value = startDate },
@@ -208,7 +234,8 @@ namespace Sale_Management.DatabaseAccess
             }
             catch (Exception ex)
             {
-                throw new Exception("Lỗi khi lấy báo cáo doanh thu sản phẩm: " + ex.Message);
+                MessageBox.Show($"Lỗi khi lấy báo cáo doanh thu sản phẩm: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new DataTable();
             }
         }
 

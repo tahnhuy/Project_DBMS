@@ -7,14 +7,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Sale_Management.Forms;
 
 namespace Sale_Management.Forms
 {
     public partial class SalerForm : Form
     {
-        public SalerForm()
+        private string currentUsername;
+        private string currentRole;
+
+        public SalerForm(string username = null, string role = null)
         {
             InitializeComponent();
+            currentUsername = username ?? "";
+            currentRole = role ?? "";
             
             // Hiển thị form mặc định khi khởi động
             ShowFormInPanel(new SalerProductForm());
@@ -48,7 +54,12 @@ namespace Sale_Management.Forms
             ShowFormInPanel(new SalerInvoiceForm());
         }
 
-        private void đăngXuấtToolStripMenuItem_Click(object sender, EventArgs e)
+        private void msi_AccountInfo_Click(object sender, EventArgs e)
+        {
+            ShowFormInPanel(new AccountInfoForm(currentUsername, currentRole));
+        }
+
+        private void msi_Logout_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận", 
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question);

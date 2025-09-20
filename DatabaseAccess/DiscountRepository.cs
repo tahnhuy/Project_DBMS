@@ -50,7 +50,8 @@ namespace Sale_Management.DatabaseAccess
         {
             try
             {
-                return DatabaseConnection.ExecuteQuery("SELECT * FROM ProductsWithDiscounts", CommandType.Text, null);
+                // Sử dụng stored procedure GetAllProducts thay vì view
+                return DatabaseConnection.ExecuteQuery("GetAllProducts", CommandType.StoredProcedure, null);
             }
             catch (Exception ex)
             {

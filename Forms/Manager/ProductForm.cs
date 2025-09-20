@@ -18,24 +18,33 @@ namespace Sale_Management.Forms
         
         public ProductForm()
         {
-            InitializeComponent();
-            productRepository = new ProductRepository();
-            discountRepository = new DiscountRepository();
-            LoadProducts();
+            try
+            {
+                InitializeComponent();
+                productRepository = new ProductRepository();
+                discountRepository = new DiscountRepository();
+                LoadProducts();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khởi tạo form: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void LoadProducts()
         {
             try
             {
-                // Sử dụng view ProductsWithDiscounts để hiển thị sản phẩm có giảm giá
-                DataTable dt = discountRepository.GetProductsWithDiscounts();
-                dgv_Products.DataSource = dt;
-                ConfigureDataGridView();
+                DataTable dt = productRepository.GetAllProducts();
+                if (dt != null)
+                {
+                    dgv_Products.DataSource = dt;
+                    ConfigureDataGridView();
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi tải dữ liệu của hàng hóa: " + ex.Message);
+                MessageBox.Show($"Lỗi tải dữ liệu sản phẩm: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         

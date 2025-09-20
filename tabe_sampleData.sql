@@ -195,6 +195,70 @@ INSERT INTO Discounts (ProductID, DiscountType, DiscountValue, StartDate, EndDat
 GO
 
 
+use [Minimart_SalesDB]
+go
+
+-- Drop Employees table if it exists (for re-running)
+if object_id('dbo.Employees', 'U') is not null drop table dbo.Employees;
+go
+
+-- Create Employees table
+create table Employees (
+    EmployeeID int primary key identity(1, 1),
+    EmployeeName nvarchar(100) not null,
+    Phone varchar(20) not null unique,
+    Address nvarchar(255) null,
+    Position nvarchar(20) not null check(Position in ('manager', 'saler')),  -- Position: manager or saler
+    HireDate datetime not null default(getdate()),  -- Hire date
+    Salary decimal(18, 2) null check(Salary >= 0)  -- Salary (optional)
+);
+go
+
+-- Insert sample data for Employees
+INSERT INTO Employees (EmployeeName, Phone, Address, Position, HireDate, Salary) VALUES
+(N'Admin Chính', '0987654321', N'1 Đường ABC, Hà Nội', 'manager', '2025-01-01', 20000000),
+(N'Nhân viên bán hàng 1', '0987654322', N'2 Đường DEF, TP.HCM', 'saler', '2025-02-01', 10000000),
+(N'Nhân viên bán hàng 2', '0987654323', N'3 Đường GHI, Đà Nẵng', 'saler', '2025-03-01', 10000000);
+GO
+
+-- Add EmployeeID column to Account (if not already added)
+if not exists (select * from sys.columns where object_id = object_id('dbo.Account') and name = 'EmployeeID')
+begin
+    alter table dbo.Account
+    add EmployeeID int null;
+end
+go
+
+-- Add foreign key from Account to Employees (if not already added)
+if not exists (select * from sys.foreign_keys where name = 'FK_Account_Employees_EmployeeID')
+begin
+    alter table dbo.Account
+    add constraint FK_Account_Employees_EmployeeID foreign key (EmployeeID) references dbo.Employees(EmployeeID);
+end
+go
+
+-- Update existing Account rows with EmployeeID (links to the new Employees)
+UPDATE Account SET EmployeeID = 1 WHERE Username = 'admin';  -- Link to manager
+UPDATE Account SET EmployeeID = 2 WHERE Username = 'saler001';  -- Link to saler
+UPDATE Account SET EmployeeID = 3 WHERE Username = 'saler002';  -- Link to saler
+GO
+
+-- Now add the CHECK constraint (after updates, so no violation)
+if not exists (select * from sys.check_constraints where name = 'CK_Account_Role_ID')
+begin
+    alter table dbo.Account
+    add constraint CK_Account_Role_ID check (
+        (Role in ('manager', 'saler') and EmployeeID is not null and CustomerID is null) or
+        (Role = 'customer' and CustomerID is not null and EmployeeID is null)
+    );
+end
+go
+
+-- Verification queries
+select count(*) as EmployeesCount from Employees;
+select * from Employees;  -- View employee info
+select * from Account;  -- View accounts after linking (check EmployeeID column)
+
 use Minimart_SalesDB
 select count(*) as ProductsCount from Products;
 select count(*) as CustomersCount from Customers;

@@ -32,8 +32,8 @@ namespace Sale_Management.Forms
 
 		private void btnLogin_Click(object sender, EventArgs e)
 		{
-			string username = txtUsername.Text.Trim();
-			string password = txtPassword.Text;
+			string username = txtUsername?.Text?.Trim() ?? "";
+			string password = txtPassword?.Text ?? "";
 
 			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
 			{
@@ -43,8 +43,19 @@ namespace Sale_Management.Forms
 
 			try
 			{
-				SqlParameter pUser = new SqlParameter("@Username", SqlDbType.NVarChar, 50) { Value = username };
-				SqlParameter pPass = new SqlParameter("@Password", SqlDbType.NVarChar, 255) { Value = password };
+				// Đảm bảo không có null values
+				string safeUsername = username ?? "";
+				string safePassword = password ?? "";
+				
+				// Debug: Kiểm tra giá trị
+				if (string.IsNullOrEmpty(safeUsername) || string.IsNullOrEmpty(safePassword))
+				{
+					MessageBox.Show("Username hoặc Password bị null sau khi xử lý", "Debug", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
+				}
+				
+				SqlParameter pUser = new SqlParameter("@Username", SqlDbType.NVarChar, 50) { Value = safeUsername };
+				SqlParameter pPass = new SqlParameter("@Password", SqlDbType.NVarChar, 255) { Value = safePassword };
 				DataTable dt = DatabaseConnection.ExecuteQuery("CheckLogin", CommandType.StoredProcedure, pUser, pPass);
 
 				if (dt.Rows.Count == 0)
@@ -73,25 +84,34 @@ namespace Sale_Management.Forms
                 // Route theo role
 				this.Hide();
 				Form mainForm = null;
-				if (role.Equals("manager", StringComparison.OrdinalIgnoreCase))
+				
+				try
 				{
-					mainForm = new AdminForm();
-				}
-				else if (role.Equals("saler", StringComparison.OrdinalIgnoreCase))
-				{
-					mainForm = new SalerForm();
-				}
-                else if (role.Equals("customer", StringComparison.OrdinalIgnoreCase))
-                {
-                    mainForm = new CustomerForm(username);
-                }
-				else
-				{
-					mainForm = new ProductForm();
-				}
+					if (role.Equals("manager", StringComparison.OrdinalIgnoreCase))
+					{
+						mainForm = new AdminForm(safeUsername, role ?? "");
+					}
+					else if (role.Equals("saler", StringComparison.OrdinalIgnoreCase))
+					{
+						mainForm = new SalerForm(safeUsername, role ?? "");
+					}
+					else if (role.Equals("customer", StringComparison.OrdinalIgnoreCase))
+					{
+						mainForm = new CustomerForm(safeUsername);
+					}
+					else
+					{
+						mainForm = new ProductForm();
+					}
 
-				mainForm.FormClosed += (s, args) => this.Close();
-				mainForm.Show();
+					mainForm.FormClosed += (s, args) => this.Close();
+					mainForm.Show();
+				}
+				catch (Exception formEx)
+				{
+					MessageBox.Show($"Lỗi khi tạo form: {formEx.Message}\nUsername: '{safeUsername}'\nRole: '{role}'", "Lỗi Form", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					this.Show(); // Hiển thị lại login form
+				}
 			}
 			catch (Exception ex)
 			{

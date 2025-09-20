@@ -7,28 +7,57 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Sale_Management.Forms;
 
 namespace Sale_Management
 {
     public partial class AdminForm : Form
     {
-        public AdminForm()
-        {
-            InitializeComponent();
+        private string currentUsername;
+        private string currentRole;
 
-            ShowFormInPanel(new Forms.ProductForm());
+        public AdminForm(string username = null, string role = null)
+        {
+            try
+            {
+                InitializeComponent();
+                currentUsername = username ?? "";
+                currentRole = role ?? "";
+
+                // Không tự động load form nào, để user chọn từ menu
+                // Hiển thị thông báo chào mừng
+                Label welcomeLabel = new Label();
+                welcomeLabel.Text = $"Chào mừng {currentUsername}!\nVui lòng chọn chức năng từ menu.";
+                welcomeLabel.Font = new Font("Arial", 14, FontStyle.Bold);
+                welcomeLabel.TextAlign = ContentAlignment.MiddleCenter;
+                welcomeLabel.Dock = DockStyle.Fill;
+                panel_Container.Controls.Add(welcomeLabel);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khởi tạo AdminForm: {ex.Message}", "Lỗi", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void ShowFormInPanel(Form form)
         {
-            panel_Container.Controls.Clear();
-
-            form.TopLevel = false;
-            form.FormBorderStyle = FormBorderStyle.None;
-            form.Dock = DockStyle.Fill;
-
-            panel_Container.Controls.Add(form);
-            form.Show();
+            try
+            {
+                if (form != null)
+                {
+                    panel_Container.Controls.Clear();
+                    form.TopLevel = false;
+                    form.FormBorderStyle = FormBorderStyle.None;
+                    form.Dock = DockStyle.Fill;
+                    panel_Container.Controls.Add(form);
+                    form.Show();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi hiển thị form: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void msi_Product_Click(object sender, EventArgs e)
@@ -56,6 +85,24 @@ namespace Sale_Management
         private void msi_Discount_Click(object sender, EventArgs e)
         {
             ShowFormInPanel(new Forms.AdminDiscountForm());
+        }
+
+        private void msi_AccountInfo_Click(object sender, EventArgs e)
+        {
+            ShowFormInPanel(new Forms.AccountInfoForm(currentUsername, currentRole));
+        }
+
+        private void msi_Logout_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận", 
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            
+            if (result == DialogResult.Yes)
+            {
+                this.Hide();
+                LoginForm loginForm = new LoginForm();
+                loginForm.Show();
+            }
         }
 
     }

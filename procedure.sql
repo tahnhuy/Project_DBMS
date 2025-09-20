@@ -903,6 +903,41 @@ begin
 end
 go
 
+-- ========== Account Info Procedures ==========
+create or alter procedure GetAccountInfo
+    @Username nvarchar(50)
+as
+begin
+    set nocount on;
+    select 
+        a.Username,
+        a.Role,
+        a.CreatedDate,
+        a.EmployeeID,
+        a.CustomerID
+    from dbo.Account a
+    where a.Username = @Username;
+end
+go
+
+create or alter procedure GetEmployeeInfo
+    @EmployeeID int
+as
+begin
+    set nocount on;
+    select 
+        EmployeeID,
+        EmployeeName,
+        Phone,
+        Address,
+        Position,
+        HireDate,
+        Salary
+    from dbo.Employees
+    where EmployeeID = @EmployeeID;
+end
+go
+
 -- ========== Sales Management Procedures ==========
 create or alter procedure GetAllSales
 as
