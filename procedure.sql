@@ -997,7 +997,8 @@ go
 create or alter procedure CreateSale
     @CustomerID int = null,
     @TotalAmount decimal(18,2),
-    @PaymentMethod nvarchar(50) = null
+    @PaymentMethod nvarchar(50) = null,
+    @CreatedBy nvarchar(50) = 'system'
 as
 begin
     set nocount on;
@@ -1008,6 +1009,10 @@ begin
         values (@CustomerID, getdate(), @TotalAmount, @PaymentMethod);
         
         set @SaleID = SCOPE_IDENTITY();
+        
+        -- Tạo transaction với CreatedBy từ tham số
+        insert into dbo.Transactions (TransactionType, Amount, Description, TransactionDate, CreatedBy, ReferenceID, ReferenceType)
+        values ('income', @TotalAmount, N'Thu tiền từ bán hàng - Hóa đơn #' + cast(@SaleID as nvarchar(20)), getdate(), @CreatedBy, @SaleID, 'sale');
         
         select 'SUCCESS' as [Result], N'Tạo hóa đơn thành công' as [Message], @SaleID as SaleID;
     end try

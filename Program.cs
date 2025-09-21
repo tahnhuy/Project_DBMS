@@ -17,10 +17,25 @@ namespace Sale_Management
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AdminForm("admin", "manager"));
-            //Application.Run(new LoginForm());
-            //Application.Run(new CustomerForm("customer001"));
-            //Application.Run(new SalerForm("saler001", "saler"));
+
+            bool shouldContinue = true;
+
+            do
+            {
+                using (LoginForm loginForm = new LoginForm())
+                {
+                    if (loginForm.ShowDialog() == DialogResult.OK)
+                    {
+                        // LoginForm sẽ tự động mở form chính và đóng khi logout
+                        // Không cần xử lý gì thêm ở đây
+                    }
+                    else
+                    {
+                        // Người dùng hủy đăng nhập hoặc đóng form
+                        shouldContinue = false;
+                    }
+                }
+            } while (shouldContinue);
         }
     }
 }

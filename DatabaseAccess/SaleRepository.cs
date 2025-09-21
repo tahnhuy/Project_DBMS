@@ -50,7 +50,7 @@ namespace Sale_Management.DatabaseAccess
             }
         }
 
-        public int CreateSale(int? customerId, decimal totalAmount, string paymentMethod)
+        public int CreateSale(int? customerId, decimal totalAmount, string paymentMethod, string createdBy = "system")
         {
             try
             {
@@ -58,7 +58,8 @@ namespace Sale_Management.DatabaseAccess
                 {
                     new SqlParameter("@CustomerID", SqlDbType.Int) { Value = customerId ?? (object)DBNull.Value },
                     new SqlParameter("@TotalAmount", SqlDbType.Decimal) { Value = totalAmount },
-                    new SqlParameter("@PaymentMethod", SqlDbType.NVarChar, 50) { Value = paymentMethod ?? (object)DBNull.Value }
+                    new SqlParameter("@PaymentMethod", SqlDbType.NVarChar, 50) { Value = paymentMethod ?? (object)DBNull.Value },
+                    new SqlParameter("@CreatedBy", SqlDbType.NVarChar, 50) { Value = createdBy ?? "system" }
                 };
 
                 DataTable result = DatabaseConnection.ExecuteQuery("CreateSale", CommandType.StoredProcedure, parameters);

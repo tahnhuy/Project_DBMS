@@ -82,7 +82,6 @@ namespace Sale_Management.Forms
 				}
 
                 // Route theo role
-				this.Hide();
 				Form mainForm = null;
 				
 				try
@@ -104,13 +103,21 @@ namespace Sale_Management.Forms
 						mainForm = new ProductForm();
 					}
 
-					mainForm.FormClosed += (s, args) => this.Close();
-					mainForm.Show();
+					// Khi form chính đóng, đóng luôn LoginForm để quay lại vòng lặp
+					mainForm.FormClosed += (s, args) => {
+						this.DialogResult = DialogResult.OK;
+						this.Close();
+					};
+					
+					// Đóng LoginForm và hiển thị form chính
+					this.DialogResult = DialogResult.OK;
+					this.Hide();
+					mainForm.ShowDialog();
 				}
 				catch (Exception formEx)
 				{
 					MessageBox.Show($"Lỗi khi tạo form: {formEx.Message}\nUsername: '{safeUsername}'\nRole: '{role}'", "Lỗi Form", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					this.Show(); // Hiển thị lại login form
+					// Không cần hiển thị lại login form vì nó vẫn đang hiển thị
 				}
 			}
 			catch (Exception ex)

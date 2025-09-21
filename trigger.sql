@@ -169,7 +169,9 @@ end
 go
 
 -- ========== TRIGGER 5: Tự động tạo giao dịch khi có bán hàng ==========
--- Trigger này tự động tạo transaction khi có sale mới
+-- Trigger này đã được vô hiệu hóa vì việc tạo transaction đã được xử lý trong stored procedure CreateSale
+-- để có thể truyền CreatedBy từ application
+/*
 create or alter trigger TR_Sales_CreateTransaction
 on dbo.Sales
 after insert
@@ -190,6 +192,7 @@ begin
     from inserted i
     where i.TotalAmount > 0;
 end
+*/
 go
 
 -- ========== TRIGGER 6: Kiểm tra ràng buộc giảm giá ==========

@@ -128,9 +128,24 @@ namespace Sale_Management.Forms
             
             if (result == DialogResult.Yes)
             {
-                this.Hide();
-                LoginForm loginForm = new LoginForm();
-                loginForm.Show();
+                // Đóng tất cả form con trước
+                var formsToClose = new List<Form>();
+                foreach (Form form in Application.OpenForms)
+                {
+                    if (form != this && !(form is LoginForm))
+                    {
+                        formsToClose.Add(form);
+                    }
+                }
+                
+                // Đóng tất cả form con
+                foreach (Form form in formsToClose)
+                {
+                    form.Close();
+                }
+                
+                // Đóng form chính - sẽ trigger FormClosed event và quay lại LoginForm
+                this.Close();
             }
         }
     }

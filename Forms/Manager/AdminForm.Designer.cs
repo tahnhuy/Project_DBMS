@@ -36,8 +36,6 @@
             this.msi_AccManage = new System.Windows.Forms.ToolStripMenuItem();
             this.msi_createAcc = new System.Windows.Forms.ToolStripMenuItem();
             this.tàiKhoảnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.thôngTinTàiKhoảnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.đăngXuấtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.panel_Container = new System.Windows.Forms.Panel();
             this.menuStrip1.SuspendLayout();
@@ -63,60 +61,44 @@
             // msi_Product
             // 
             this.msi_Product.Name = "msi_Product";
-            this.msi_Product.Size = new System.Drawing.Size(141, 38);
+            this.msi_Product.Size = new System.Drawing.Size(141, 36);
             this.msi_Product.Text = "Sản phẩm";
             this.msi_Product.Click += new System.EventHandler(this.msi_Product_Click);
             // 
             // msi_Customer
             // 
             this.msi_Customer.Name = "msi_Customer";
-            this.msi_Customer.Size = new System.Drawing.Size(160, 38);
+            this.msi_Customer.Size = new System.Drawing.Size(160, 36);
             this.msi_Customer.Text = "Khách hàng";
             this.msi_Customer.Click += new System.EventHandler(this.kháchHàngToolStripMenuItem_Click);
             // 
             // msi_Discount
             // 
             this.msi_Discount.Name = "msi_Discount";
-            this.msi_Discount.Size = new System.Drawing.Size(128, 38);
+            this.msi_Discount.Size = new System.Drawing.Size(128, 36);
             this.msi_Discount.Text = "Giảm giá";
             this.msi_Discount.Click += new System.EventHandler(this.msi_Discount_Click);
             // 
             // msi_AccManage
             // 
             this.msi_AccManage.Name = "msi_AccManage";
-            this.msi_AccManage.Size = new System.Drawing.Size(217, 38);
+            this.msi_AccManage.Size = new System.Drawing.Size(217, 36);
             this.msi_AccManage.Text = "Quản lí tài khoản";
             this.msi_AccManage.Click += new System.EventHandler(this.msi_AccManage_Click);
             // 
             // msi_createAcc
             // 
             this.msi_createAcc.Name = "msi_createAcc";
-            this.msi_createAcc.Size = new System.Drawing.Size(179, 38);
+            this.msi_createAcc.Size = new System.Drawing.Size(179, 36);
             this.msi_createAcc.Text = "Tạo tài khoản";
             this.msi_createAcc.Click += new System.EventHandler(this.msi_createAcc_Click);
             // 
             // tàiKhoảnToolStripMenuItem
             // 
-            this.tàiKhoảnToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.thôngTinTàiKhoảnToolStripMenuItem,
-            this.đăngXuấtToolStripMenuItem});
             this.tàiKhoảnToolStripMenuItem.Name = "tàiKhoảnToolStripMenuItem";
-            this.tàiKhoảnToolStripMenuItem.Size = new System.Drawing.Size(135, 38);
+            this.tàiKhoảnToolStripMenuItem.Size = new System.Drawing.Size(135, 36);
             this.tàiKhoảnToolStripMenuItem.Text = "Tài khoản";
-            // 
-            // thôngTinTàiKhoảnToolStripMenuItem
-            // 
-            this.thôngTinTàiKhoảnToolStripMenuItem.Name = "thôngTinTàiKhoảnToolStripMenuItem";
-            this.thôngTinTàiKhoảnToolStripMenuItem.Size = new System.Drawing.Size(256, 44);
-            this.thôngTinTàiKhoảnToolStripMenuItem.Text = "Thông tin tài khoản";
-            this.thôngTinTàiKhoảnToolStripMenuItem.Click += new System.EventHandler(this.msi_AccountInfo_Click);
-            // 
-            // đăngXuấtToolStripMenuItem
-            // 
-            this.đăngXuấtToolStripMenuItem.Name = "đăngXuấtToolStripMenuItem";
-            this.đăngXuấtToolStripMenuItem.Size = new System.Drawing.Size(256, 44);
-            this.đăngXuấtToolStripMenuItem.Text = "Đăng xuất";
-            this.đăngXuấtToolStripMenuItem.Click += new System.EventHandler(this.msi_Logout_Click);
+            this.tàiKhoảnToolStripMenuItem.Click += new System.EventHandler(this.tàiKhoảnToolStripMenuItem_Click);
             // 
             // contextMenuStrip1
             // 
@@ -156,8 +138,6 @@
         private System.Windows.Forms.ToolStripMenuItem msi_Discount;
         private System.Windows.Forms.ToolStripMenuItem msi_createAcc;
         private System.Windows.Forms.ToolStripMenuItem tàiKhoảnToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem thôngTinTàiKhoảnToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem đăngXuấtToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.Panel panel_Container;
         private System.Windows.Forms.ToolStripMenuItem msi_AccManage;

@@ -51,24 +51,39 @@ namespace Sale_Management.Forms
 
         private void msi_CreateInvoice_Click(object sender, EventArgs e)
         {
-            ShowFormInPanel(new SalerInvoiceForm());
+            ShowFormInPanel(new SalerInvoiceForm(currentUsername));
         }
 
-        private void msi_AccountInfo_Click(object sender, EventArgs e)
+        private void tàiKhoảnToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowFormInPanel(new AccountInfoForm(currentUsername, currentRole));
         }
 
-        private void msi_Logout_Click(object sender, EventArgs e)
+        private void btn_Logout_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận", 
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             
             if (result == DialogResult.Yes)
             {
-                this.Hide();
-                LoginForm loginForm = new LoginForm();
-                loginForm.Show();
+                // Đóng tất cả form con trước
+                var formsToClose = new List<Form>();
+                foreach (Form form in Application.OpenForms)
+                {
+                    if (form != this && !(form is LoginForm))
+                    {
+                        formsToClose.Add(form);
+                    }
+                }
+                
+                // Đóng tất cả form con
+                foreach (Form form in formsToClose)
+                {
+                    form.Close();
+                }
+                
+                // Đóng form chính - sẽ trigger FormClosed event và quay lại LoginForm
+                this.Close();
             }
         }
     }

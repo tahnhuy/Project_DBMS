@@ -14,12 +14,15 @@ namespace Sale_Management.Forms
     public partial class SalerInvoiceForm : Form
     {
         private List<InvoiceItem> invoiceItems = new List<InvoiceItem>();
+        private string currentUsername;
 
-        public SalerInvoiceForm()
+        public SalerInvoiceForm(string username = null)
         {
             InitializeComponent();
+            currentUsername = username ?? "system";
             LoadProducts();
             LoadCustomers();
+            LoadPaymentMethods();
         }
 
         private void LoadProducts()
@@ -55,6 +58,26 @@ namespace Sale_Management.Forms
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi khi tải khách hàng: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LoadPaymentMethods()
+        {
+            try
+            {
+                // Thêm các phương thức thanh toán phổ biến
+                cmb_PaymentMethod.Items.Add("Tiền mặt");
+                cmb_PaymentMethod.Items.Add("Chuyển khoản");
+                cmb_PaymentMethod.Items.Add("Thẻ tín dụng");
+                cmb_PaymentMethod.Items.Add("Ví điện tử");
+                cmb_PaymentMethod.Items.Add("Thanh toán khi nhận hàng");
+                
+                // Chọn mặc định là "Tiền mặt"
+                cmb_PaymentMethod.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải phương thức thanh toán: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -158,10 +181,11 @@ namespace Sale_Management.Forms
             {
                 string customerId = cmb_Customer.SelectedValue.ToString();
                 decimal totalAmount = invoiceItems.Sum(x => x.Price * x.Quantity);
+                string paymentMethod = cmb_PaymentMethod.SelectedItem?.ToString() ?? "Tiền mặt";
 
                 // Tạo hóa đơn
                 SaleRepository saleRepo = new SaleRepository();
-                int saleId = saleRepo.CreateSale(int.Parse(customerId), totalAmount, "Tiền mặt");
+                int saleId = saleRepo.CreateSale(int.Parse(customerId), totalAmount, paymentMethod, currentUsername);
                 
                 if (saleId > 0)
                 {
@@ -201,11 +225,61 @@ namespace Sale_Management.Forms
             txt_Quantity.Text = "";
             cmb_Customer.SelectedIndex = -1;
             cmb_Product.SelectedIndex = -1;
+            cmb_PaymentMethod.SelectedIndex = 0; // Reset về "Tiền mặt"
         }
 
         private void btn_Clear_Click(object sender, EventArgs e)
         {
             ClearForm();
+        }
+
+        private void btn_RemoveSelected_Click(object sender, EventArgs e)
+        {
+            if (dgv_InvoiceItems.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn hàng cần xóa", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                // Lấy tên sản phẩm của hàng được chọn
+                string productName = dgv_InvoiceItems.SelectedRows[0].Cells["Tên_sản_phẩm"].Value.ToString();
+                
+                // Xác nhận xóa
+                DialogResult result = MessageBox.Show($"Bạn có chắc chắn muốn xóa sản phẩm '{productName}'?", "Xác nhận xóa", 
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                
+                if (result == DialogResult.Yes)
+                {
+                    // Tìm và xóa item khỏi danh sách
+                    var itemToRemove = invoiceItems.FirstOrDefault(x => x.ProductName == productName);
+                    if (itemToRemove != null)
+                    {
+                        invoiceItems.Remove(itemToRemove);
+                        UpdateInvoiceGrid();
+                        CalculateTotal();
+                        MessageBox.Show("Đã xóa sản phẩm thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xóa sản phẩm: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btn_ViewHistory_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SalerInvoiceHistoryForm historyForm = new SalerInvoiceHistoryForm();
+                historyForm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở lịch sử hóa đơn: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 
