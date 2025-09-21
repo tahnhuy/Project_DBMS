@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sale_Management.Forms;
+using Sale_Management.Forms.Manager;
 
 namespace Sale_Management
 {
@@ -17,6 +18,8 @@ namespace Sale_Management
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            //Application.Run(new AdminForm("admin", "manager"));
+            //Application.Run(new StatisticsForm("admin")); // Test line - commented out
 
             bool shouldContinue = true;
 

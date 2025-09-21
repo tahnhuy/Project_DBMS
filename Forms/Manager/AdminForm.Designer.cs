@@ -35,6 +35,7 @@
             this.msi_Discount = new System.Windows.Forms.ToolStripMenuItem();
             this.msi_AccManage = new System.Windows.Forms.ToolStripMenuItem();
             this.msi_createAcc = new System.Windows.Forms.ToolStripMenuItem();
+            this.msi_Statistics = new System.Windows.Forms.ToolStripMenuItem();
             this.tàiKhoảnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.panel_Container = new System.Windows.Forms.Panel();
@@ -51,6 +52,7 @@
             this.msi_Discount,
             this.msi_AccManage,
             this.msi_createAcc,
+            this.msi_Statistics,
             this.tàiKhoảnToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -92,6 +94,13 @@
             this.msi_createAcc.Size = new System.Drawing.Size(179, 36);
             this.msi_createAcc.Text = "Tạo tài khoản";
             this.msi_createAcc.Click += new System.EventHandler(this.msi_createAcc_Click);
+            // 
+            // msi_Statistics
+            // 
+            this.msi_Statistics.Name = "msi_Statistics";
+            this.msi_Statistics.Size = new System.Drawing.Size(120, 36);
+            this.msi_Statistics.Text = "Thống kê";
+            this.msi_Statistics.Click += new System.EventHandler(this.msi_Statistics_Click);
             // 
             // tàiKhoảnToolStripMenuItem
             // 
@@ -137,6 +146,7 @@
         private System.Windows.Forms.ToolStripMenuItem msi_Customer;
         private System.Windows.Forms.ToolStripMenuItem msi_Discount;
         private System.Windows.Forms.ToolStripMenuItem msi_createAcc;
+        private System.Windows.Forms.ToolStripMenuItem msi_Statistics;
         private System.Windows.Forms.ToolStripMenuItem tàiKhoảnToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.Panel panel_Container;

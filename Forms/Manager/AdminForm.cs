@@ -651,5 +651,30 @@ namespace Sale_Management
             }
         }
 
+        private void msi_Statistics_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Debug: Hiển thị role hiện tại
+                MessageBox.Show($"Role hiện tại: '{currentRole}'", "Debug Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
+                // Kiểm tra quyền admin hoặc manager
+                string roleLower = currentRole?.ToLower() ?? "";
+                if (roleLower != "admin" && roleLower != "manager")
+                {
+                    MessageBox.Show("Chỉ có Admin và Manager mới có thể truy cập chức năng thống kê!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Mở form thống kê
+                Forms.Manager.StatisticsForm statisticsForm = new Forms.Manager.StatisticsForm(currentUsername);
+                ShowFormInPanel(statisticsForm);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi mở form thống kê: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
     }
 }
