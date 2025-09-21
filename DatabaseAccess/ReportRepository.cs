@@ -4,10 +4,10 @@ using System.Data.SqlClient;
 
 namespace Sale_Management.DatabaseAccess
 {
-    public class ReportRepository
+    public static class ReportRepository
     {
         // Lấy doanh thu theo ngày
-        public decimal GetDailyRevenue(DateTime date)
+        public static decimal GetDailyRevenue(DateTime date)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace Sale_Management.DatabaseAccess
         }
 
         // Lấy doanh thu theo tháng
-        public decimal GetMonthlyRevenue(int year, int month)
+        public static decimal GetMonthlyRevenue(int year, int month)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace Sale_Management.DatabaseAccess
         }
 
         // Lấy thống kê tổng quan
-        public DataTable GetDashboardStats()
+        public static DataTable GetDashboardStats()
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Sale_Management.DatabaseAccess
         }
 
         // Lấy chi tiết chương trình giảm giá đang hoạt động
-        public DataTable GetActiveDiscountsDetail()
+        public static DataTable GetActiveDiscountsDetail()
         {
             try
             {
@@ -83,7 +83,7 @@ namespace Sale_Management.DatabaseAccess
         }
 
         // Lấy tóm tắt giao dịch
-        public DataTable GetTransactionSummary()
+        public static DataTable GetTransactionSummary()
         {
             try
             {
@@ -96,7 +96,7 @@ namespace Sale_Management.DatabaseAccess
         }
 
         // Lấy tóm tắt tài khoản
-        public DataTable GetAccountSummary()
+        public static DataTable GetAccountSummary()
         {
             try
             {
@@ -109,7 +109,7 @@ namespace Sale_Management.DatabaseAccess
         }
 
         // Tính tổng chi phí theo loại
-        public decimal GetExpenseByType(string transactionType, DateTime? startDate = null, DateTime? endDate = null)
+        public static decimal GetExpenseByType(string transactionType, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace Sale_Management.DatabaseAccess
         }
 
         // Tính điểm tích lũy từ số tiền
-        public int CalculateLoyaltyPoints(decimal amount)
+        public static int CalculateLoyaltyPoints(decimal amount)
         {
             try
             {
@@ -159,7 +159,7 @@ namespace Sale_Management.DatabaseAccess
         }
 
         // Tính tỷ lệ giảm giá
-        public decimal CalculateDiscountPercentage(decimal originalPrice, decimal discountedPrice)
+        public static decimal CalculateDiscountPercentage(decimal originalPrice, decimal discountedPrice)
         {
             try
             {
@@ -184,7 +184,7 @@ namespace Sale_Management.DatabaseAccess
         }
 
         // Validate số điện thoại Việt Nam
-        public bool IsValidVietnamesePhone(string phone)
+        public static bool IsValidVietnamesePhone(string phone)
         {
             try
             {
@@ -208,7 +208,7 @@ namespace Sale_Management.DatabaseAccess
         }
 
         // Format tiền Việt Nam
-        public string FormatVietnamMoney(decimal amount)
+        public static string FormatVietnamMoney(decimal amount)
         {
             try
             {
@@ -228,6 +228,26 @@ namespace Sale_Management.DatabaseAccess
             catch (Exception ex)
             {
                 throw new Exception("Lỗi khi format tiền: " + ex.Message);
+            }
+        }
+
+        // Lấy báo cáo doanh thu theo sản phẩm
+        public static DataTable GetProductRevenueReport(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                string query = "SELECT * FROM dbo.GetProductRevenueReport(@StartDate, @EndDate)";
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@StartDate", SqlDbType.DateTime) { Value = startDate },
+                    new SqlParameter("@EndDate", SqlDbType.DateTime) { Value = endDate }
+                };
+
+                return DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy báo cáo doanh thu sản phẩm: " + ex.Message);
             }
         }
     }

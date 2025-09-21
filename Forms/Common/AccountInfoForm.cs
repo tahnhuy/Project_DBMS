@@ -121,6 +121,183 @@ namespace Sale_Management.Forms
             }
         }
 
+        private void btnChangePassword_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Tạo form đổi mật khẩu đơn giản
+                Form changePasswordForm = new Form();
+                changePasswordForm.Text = "Đổi mật khẩu";
+                changePasswordForm.Size = new Size(350, 200);
+                changePasswordForm.StartPosition = FormStartPosition.CenterParent;
+                changePasswordForm.FormBorderStyle = FormBorderStyle.FixedDialog;
+                changePasswordForm.MaximizeBox = false;
+                changePasswordForm.MinimizeBox = false;
+
+                Label lblOldPassword = new Label();
+                lblOldPassword.Text = "Mật khẩu cũ:";
+                lblOldPassword.Location = new Point(20, 20);
+                lblOldPassword.Size = new Size(100, 20);
+
+                TextBox txtOldPassword = new TextBox();
+                txtOldPassword.Location = new Point(130, 18);
+                txtOldPassword.Size = new Size(180, 20);
+                txtOldPassword.PasswordChar = '*';
+
+                Label lblNewPassword = new Label();
+                lblNewPassword.Text = "Mật khẩu mới:";
+                lblNewPassword.Location = new Point(20, 50);
+                lblNewPassword.Size = new Size(100, 20);
+
+                TextBox txtNewPassword = new TextBox();
+                txtNewPassword.Location = new Point(130, 48);
+                txtNewPassword.Size = new Size(180, 20);
+                txtNewPassword.PasswordChar = '*';
+
+                Label lblConfirmPassword = new Label();
+                lblConfirmPassword.Text = "Xác nhận:";
+                lblConfirmPassword.Location = new Point(20, 80);
+                lblConfirmPassword.Size = new Size(100, 20);
+
+                TextBox txtConfirmPassword = new TextBox();
+                txtConfirmPassword.Location = new Point(130, 78);
+                txtConfirmPassword.Size = new Size(180, 20);
+                txtConfirmPassword.PasswordChar = '*';
+
+                Button btnOK = new Button();
+                btnOK.Text = "OK";
+                btnOK.Location = new Point(130, 120);
+                btnOK.Size = new Size(80, 30);
+                btnOK.DialogResult = DialogResult.OK;
+
+                Button btnCancel = new Button();
+                btnCancel.Text = "Hủy";
+                btnCancel.Location = new Point(220, 120);
+                btnCancel.Size = new Size(80, 30);
+                btnCancel.DialogResult = DialogResult.Cancel;
+
+                changePasswordForm.Controls.AddRange(new Control[] { 
+                    lblOldPassword, txtOldPassword, 
+                    lblNewPassword, txtNewPassword, 
+                    lblConfirmPassword, txtConfirmPassword, 
+                    btnOK, btnCancel 
+                });
+
+                if (changePasswordForm.ShowDialog() == DialogResult.OK)
+                {
+                    if (string.IsNullOrEmpty(txtOldPassword.Text) || 
+                        string.IsNullOrEmpty(txtNewPassword.Text) || 
+                        string.IsNullOrEmpty(txtConfirmPassword.Text))
+                    {
+                        MessageBox.Show("Vui lòng nhập đầy đủ thông tin!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    if (txtNewPassword.Text != txtConfirmPassword.Text)
+                    {
+                        MessageBox.Show("Mật khẩu xác nhận không khớp!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // Validate password format
+                    if (!SecurityHelper.ValidatePassword(txtNewPassword.Text))
+                    {
+                        MessageBox.Show("Mật khẩu không hợp lệ (ít nhất 6 ký tự)!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    bool success = SecurityHelper.ChangePassword(currentUsername, txtOldPassword.Text, txtNewPassword.Text);
+                    if (success)
+                    {
+                        MessageBox.Show("Đổi mật khẩu thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi đổi mật khẩu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnViewActivity_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataTable activityData = AccountRepository.GetAccountActivity(currentUsername);
+                
+                if (activityData.Rows.Count == 0)
+                {
+                    MessageBox.Show("Không có hoạt động nào được ghi nhận.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Tạo form hiển thị hoạt động
+                Form activityForm = new Form();
+                activityForm.Text = "Hoạt động tài khoản - " + currentUsername;
+                activityForm.Size = new Size(800, 500);
+                activityForm.StartPosition = FormStartPosition.CenterParent;
+
+                DataGridView dgvActivity = new DataGridView();
+                dgvActivity.DataSource = activityData;
+                dgvActivity.Dock = DockStyle.Fill;
+                dgvActivity.ReadOnly = true;
+                dgvActivity.AllowUserToAddRows = false;
+                dgvActivity.AllowUserToDeleteRows = false;
+
+                activityForm.Controls.Add(dgvActivity);
+                activityForm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi xem hoạt động: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnBackupAccount_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataTable backupData = AccountRepository.BackupAccounts();
+                
+                SaveFileDialog saveDialog = new SaveFileDialog();
+                saveDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+                saveDialog.FileName = $"AccountBackup_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+                
+                if (saveDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Export to CSV
+                    using (System.IO.StreamWriter writer = new System.IO.StreamWriter(saveDialog.FileName, false, System.Text.Encoding.UTF8))
+                    {
+                        // Write headers
+                        for (int i = 0; i < backupData.Columns.Count; i++)
+                        {
+                            writer.Write(backupData.Columns[i].ColumnName);
+                            if (i < backupData.Columns.Count - 1)
+                                writer.Write(",");
+                        }
+                        writer.WriteLine();
+
+                        // Write data
+                        foreach (DataRow row in backupData.Rows)
+                        {
+                            for (int i = 0; i < backupData.Columns.Count; i++)
+                            {
+                                writer.Write(row[i].ToString());
+                                if (i < backupData.Columns.Count - 1)
+                                    writer.Write(",");
+                            }
+                            writer.WriteLine();
+                        }
+                    }
+                    MessageBox.Show("Backup tài khoản thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi backup tài khoản: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void btnLogout_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận", 
