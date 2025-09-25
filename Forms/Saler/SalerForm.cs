@@ -22,6 +22,7 @@ namespace Sale_Management.Forms
             currentUsername = username ?? "";
             currentRole = role ?? "";
             
+            
             // Hiển thị form mặc định khi khởi động
             ShowFormInPanel(new SalerProductForm());
         }
@@ -33,7 +34,6 @@ namespace Sale_Management.Forms
             form.TopLevel = false;
             form.FormBorderStyle = FormBorderStyle.None;
             form.Dock = DockStyle.Fill;
-
             panel_Container.Controls.Add(form);
             form.Show();
         }
@@ -45,7 +45,8 @@ namespace Sale_Management.Forms
 
         private void msi_Customer_Click(object sender, EventArgs e)
         {
-            ShowFormInPanel(new SalerCustomerViewForm());
+            //ShowFormInPanel(new SalerCustomerViewForm());
+            ShowFormInPanel(new CustomerManageForm());
         }
 
 

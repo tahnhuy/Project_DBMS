@@ -17,7 +17,7 @@ if len(@sql) > 0 exec sp_executesql @sql;
 go
 
 -- ========== VIEW 1: Products with their discounted prices (đã có từ procedure.sql) ==========
-create or alter view ProductsWithDiscounts
+/*create or alter view ProductsWithDiscounts
 as
 select 
     p.ProductID,
@@ -39,7 +39,9 @@ left join dbo.Discounts d on p.ProductID = d.ProductID
     and d.IsActive = 1 
     and getdate() >= d.StartDate 
     and getdate() <= d.EndDate;
-go
+go*/
+
+--select * from ProductsWithDiscounts
 
 -- ========== VIEW 2: Sales Summary with Customer Details ==========
 create or alter view SalesSummary
@@ -64,6 +66,7 @@ group by s.SaleID, s.SaleDate, s.TotalAmount, s.PaymentMethod,
 go
 
 -- ========== VIEW 3: Product Sales Statistics ==========
+/*
 create or alter view ProductSalesStats
 as
 select 
@@ -83,10 +86,11 @@ from dbo.Products p
 left join dbo.SaleDetails sd on p.ProductID = sd.ProductID
 left join dbo.Sales s on sd.SaleID = s.SaleID
 group by p.ProductID, p.ProductName, p.Price, p.StockQuantity, p.Unit;
-go
+go 
+*/
 
 -- ========== VIEW 4: Customer Purchase Summary ==========
-create or alter view CustomerPurchaseSummary
+/*create or alter view CustomerPurchaseSummary
 as
 select 
     c.CustomerID,
@@ -108,8 +112,14 @@ left join dbo.SaleDetails sd on s.SaleID = sd.SaleID
 group by c.CustomerID, c.CustomerName, c.Phone, c.Address, c.LoyaltyPoints;
 go
 
+use Minimart_SalesDB;
+go
+
+select * from CustomerPurchaseSummary
+*/
+
 -- ========== VIEW 5: Monthly Sales Report ==========
-create or alter view MonthlySalesReport
+/*create or alter view MonthlySalesReport
 as
 select 
     year(s.SaleDate) as SalesYear,
@@ -123,10 +133,10 @@ select
 from dbo.Sales s
 inner join dbo.SaleDetails sd on s.SaleID = sd.SaleID
 group by year(s.SaleDate), month(s.SaleDate), datename(month, s.SaleDate);
-go
+go*/
 
 -- ========== VIEW 6: Daily Sales Report ==========
-create or alter view DailySalesReport
+/*create or alter view DailySalesReport
 as
 select 
     cast(s.SaleDate as date) as SalesDate,
@@ -140,6 +150,7 @@ from dbo.Sales s
 inner join dbo.SaleDetails sd on s.SaleID = sd.SaleID
 group by cast(s.SaleDate as date);
 go
+*/
 
 -- ========== VIEW 7: Low Stock Products ==========
 create or alter view LowStockProducts
@@ -151,17 +162,12 @@ select
     p.StockQuantity,
     p.Unit,
     case 
-        when p.StockQuantity = 0 then 'Hết hàng'
-        when p.StockQuantity <= 5 then 'Rất thấp'
-        when p.StockQuantity <= 10 then 'Thấp'
-        else 'Bình thường'
+        when p.StockQuantity = 0 then N'Hết hàng'
+        when p.StockQuantity <= 5 then N'Rất thấp'
+        when p.StockQuantity <= 10 then N'Thấp'
+        else N'Bình thường'
     end as StockStatus,
-    isnull(sum(sd.Quantity), 0) as TotalSold,
-    case 
-        when sum(sd.Quantity) > 0 and p.StockQuantity > 0 
-        then p.StockQuantity / (sum(sd.Quantity) / 30.0)
-        else null 
-    end as EstimatedDaysRemaining
+    isnull(sum(sd.Quantity), 0) as TotalSold
 from dbo.Products p
 left join dbo.SaleDetails sd on p.ProductID = sd.ProductID
 left join dbo.Sales s on sd.SaleID = s.SaleID 
@@ -169,6 +175,7 @@ left join dbo.Sales s on sd.SaleID = s.SaleID
 where p.StockQuantity <= 20
 group by p.ProductID, p.ProductName, p.Price, p.StockQuantity, p.Unit;
 go
+
 
 -- ========== VIEW 8: Active Discounts Detail ==========
 create or alter view ActiveDiscountsDetail
@@ -202,6 +209,8 @@ where d.IsActive = 1
   and getdate() <= d.EndDate;
 go
 
+-- select * from ActiveDiscountsDetail
+
 -- ========== VIEW 9: Transaction Summary ==========
 create or alter view TransactionSummary
 as
@@ -223,6 +232,7 @@ select
     end as ReferenceDescription
 from dbo.Transactions t;
 go
+
 
 -- ========== VIEW 10: Account Management Summary ==========
 create or alter view AccountSummary
@@ -251,6 +261,8 @@ left join (
     group by t.CreatedBy
 ) trans_count on a.Username = trans_count.CreatedBy;
 go
+
+select * from AccountSummary
 
 print N'✅ Đã tạo thành công tất cả các view cần thiết!'
 print N'📋 Danh sách view đã tạo:'

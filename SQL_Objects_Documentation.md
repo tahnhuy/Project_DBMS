@@ -6,10 +6,13 @@ Hệ thống quản lý bán hàng minimart bao gồm:
 - **42 Stored Procedures** - Xử lý logic nghiệp vụ
 - **10 Views** - Tổng hợp và báo cáo dữ liệu  
 - **17 Functions** - Tính toán và xử lý dữ liệu
-- **8 Triggers** - Tự động hóa và ràng buộc dữ liệu
+- **7 Triggers** - Tự động hóa và ràng buộc dữ liệu
 - **3 Database Roles** - Phân quyền bảo mật
 
-**Tỷ lệ sử dụng: 100%** - Tất cả database objects đều được tích hợp hoàn toàn vào C# project
+Tỷ lệ sử dụng hiện tại:
+- Stored Procedures: 100%
+- Functions: 100%
+- Views: 5/10 được sử dụng trong Forms (5 còn lại có sẵn để mở rộng)
 
 ---
 
@@ -923,150 +926,30 @@ public DataTable GetSalesByCustomerUsername(string username)
 
 ## 👁️ VIEWS (10 views)
 
-### 📊 1. ProductsWithDiscounts
-**Chức năng:** Hiển thị sản phẩm kèm giá sau giảm  
-**SQL:**
-```sql
-CREATE VIEW ProductsWithDiscounts AS
-SELECT 
-    p.ProductID, p.ProductName, p.Price as OriginalPrice,
-    dbo.GetDiscountedPrice(p.ProductID, p.Price) as DiscountedPrice,
-    CASE WHEN dbo.GetDiscountedPrice(p.ProductID, p.Price) < p.Price THEN 1 ELSE 0 END as HasDiscount,
-    p.StockQuantity, p.Unit, d.DiscountType, d.DiscountValue,
-    d.StartDate as DiscountStartDate, d.EndDate as DiscountEndDate
-FROM dbo.Products p
-LEFT JOIN dbo.Discounts d ON p.ProductID = d.ProductID 
-    AND d.IsActive = 1 AND GETDATE() BETWEEN d.StartDate AND d.EndDate
-```
-**C# Code:**
-```csharp
-// File: DatabaseAccess/ProductRepository.cs - Line 216-226
-public DataTable GetProductsWithDiscounts()
-{
-    return DatabaseConnection.ExecuteQuery("SELECT * FROM ProductsWithDiscounts", CommandType.Text, null);
-}
+Tình trạng sử dụng hiện tại trong code và Forms sau khi dọn dẹp:
 
-// File: DatabaseAccess/DiscountRepository.cs - Line 49-59
-public DataTable GetProductsWithDiscounts()
-{
-    return DatabaseConnection.ExecuteQuery("SELECT * FROM ProductsWithDiscounts", CommandType.Text, null);
-}
-```
 
-### 📈 2. SalesSummary
-**Chức năng:** Tóm tắt hóa đơn với thông tin khách hàng  
-**C# Code:**
-```csharp
-// File: DatabaseAccess/SaleRepository.cs - Line 170-180
-public DataTable GetSalesSummary()
-{
-    return DatabaseConnection.ExecuteQuery("SELECT * FROM SalesSummary ORDER BY SaleDate DESC", CommandType.Text, null);
-}
-```
 
-### 📊 3. ProductSalesStats
-**Chức năng:** Thống kê bán hàng theo sản phẩm  
-**C# Code:**
-```csharp
-// File: DatabaseAccess/ProductRepository.cs - Line 229-239
-public DataTable GetProductSalesStats()
-{
-    return DatabaseConnection.ExecuteQuery("SELECT * FROM ProductSalesStats", CommandType.Text, null);
-}
-```
+- SalesSummary
+  - Chức năng: Tóm tắt hóa đơn với thông tin khách hàng
+  - Trạng thái: Đang dùng qua `SaleRepository.GetSalesSummary()`; hiển thị ở `Saler\SalerInvoiceHistoryForm`.
 
-### 👥 4. CustomerPurchaseSummary
-**Chức năng:** Tóm tắt mua hàng của khách hàng  
-**C# Code:**
-```csharp
-// File: DatabaseAccess/CustomerRepository.cs - Line 233-243
-public DataTable GetCustomerPurchaseSummary()
-{
-    return DatabaseConnection.ExecuteQuery("SELECT * FROM CustomerPurchaseSummary", CommandType.Text, null);
-}
 
-// Lấy theo ID cụ thể
-// File: DatabaseAccess/CustomerRepository.cs - Line 246-261
-public DataTable GetCustomerPurchaseSummaryById(int customerId)
-{
-    string query = "SELECT * FROM CustomerPurchaseSummary WHERE CustomerID = @CustomerID";
-    // ...
-}
-```
+- LowStockProducts
+  - Chức năng: Danh sách sản phẩm sắp hết hàng
+  - Trạng thái: Đang dùng qua `ProductRepository.GetLowStockProducts()`; hiển thị ở `Manager\StatisticsForm`.
 
-### 📅 5. MonthlySalesReport
-**Chức năng:** Báo cáo bán hàng theo tháng  
-**C# Code:**
-```csharp
-// File: DatabaseAccess/SaleRepository.cs - Line 196-206
-public DataTable GetMonthlySalesReport()
-{
-    return DatabaseConnection.ExecuteQuery("SELECT * FROM MonthlySalesReport ORDER BY SalesYear DESC, SalesMonth DESC", CommandType.Text, null);
-}
+- ActiveDiscountsDetail
+  - Chức năng: Chi tiết chương trình giảm giá đang hoạt động
+  - Trạng thái: Đang dùng qua `ReportRepository.GetActiveDiscountsDetail()`; hiển thị ở `Manager\StatisticsForm`.
 
-// Lấy theo tháng cụ thể
-// File: DatabaseAccess/SaleRepository.cs - Line 227-243
-public DataTable GetMonthlySalesReportByMonth(int year, int month)
-```
+- TransactionSummary
+  - Chức năng: Tóm tắt giao dịch với mô tả chi tiết
+  - Trạng thái: Đang dùng qua `ReportRepository.GetTransactionSummary()`; hiển thị ở `Manager\AdminForm` và `Manager\StatisticsForm`.
 
-### 📅 6. DailySalesReport
-**Chức năng:** Báo cáo bán hàng theo ngày  
-**C# Code:**
-```csharp
-// File: DatabaseAccess/SaleRepository.cs - Line 183-193
-public DataTable GetDailySalesReport()
-{
-    return DatabaseConnection.ExecuteQuery("SELECT * FROM DailySalesReport ORDER BY SalesDate DESC", CommandType.Text, null);
-}
-
-// Lấy theo ngày cụ thể
-// File: DatabaseAccess/SaleRepository.cs - Line 209-224
-public DataTable GetDailySalesReportByDate(DateTime date)
-```
-
-### ⚠️ 7. LowStockProducts
-**Chức năng:** Danh sách sản phẩm sắp hết hàng  
-**C# Code:**
-```csharp
-// File: DatabaseAccess/ProductRepository.cs - Line 242-252
-public DataTable GetLowStockProducts()
-{
-    return DatabaseConnection.ExecuteQuery("SELECT * FROM LowStockProducts", CommandType.Text, null);
-}
-```
-
-### 🎯 8. ActiveDiscountsDetail
-**Chức năng:** Chi tiết chương trình giảm giá đang hoạt động  
-**C# Code:**
-```csharp
-// File: DatabaseAccess/ReportRepository.cs - Line 73-83
-public DataTable GetActiveDiscountsDetail()
-{
-    return DatabaseConnection.ExecuteQuery("SELECT * FROM ActiveDiscountsDetail", CommandType.Text, null);
-}
-```
-
-### 💼 9. TransactionSummary
-**Chức năng:** Tóm tắt giao dịch với mô tả chi tiết  
-**C# Code:**
-```csharp
-// File: DatabaseAccess/ReportRepository.cs - Line 86-96
-public DataTable GetTransactionSummary()
-{
-    return DatabaseConnection.ExecuteQuery("SELECT * FROM TransactionSummary ORDER BY TransactionDate DESC", CommandType.Text, null);
-}
-```
-
-### 👤 10. AccountSummary
-**Chức năng:** Tóm tắt tài khoản với thống kê giao dịch  
-**C# Code:**
-```csharp
-// File: DatabaseAccess/ReportRepository.cs - Line 99-109
-public DataTable GetAccountSummary()
-{
-    return DatabaseConnection.ExecuteQuery("SELECT * FROM AccountSummary ORDER BY CreatedDate DESC", CommandType.Text, null);
-}
-```
+- AccountSummary
+  - Chức năng: Tóm tắt tài khoản với thống kê giao dịch
+  - Trạng thái: Đang dùng qua `ReportRepository.GetAccountSummary()`; hiển thị ở `Manager\AdminForm` và `Manager\StatisticsForm`.
 
 ---
 
@@ -1417,7 +1300,7 @@ public decimal GetExpenseByType(string transactionType, DateTime? startDate = nu
 
 ---
 
-## ⚡ TRIGGERS (8 triggers)
+## ⚡ TRIGGERS (7 triggers)
 
 ### 🧮 1. TR_SaleDetails_UpdateTotalAmount
 **Chức năng:** Tự động cập nhật tổng tiền hóa đơn khi thêm/sửa/xóa chi tiết  
@@ -1498,24 +1381,6 @@ END
 - Validate định dạng SĐT Việt Nam (10-11 số, bắt đầu bằng 0)
 - Chuẩn hóa: loại bỏ khoảng trắng, ký tự đặc biệt
 
-### 📊 8. TR_Products_PriceHistory
-**Chức năng:** Ghi log lịch sử thay đổi giá sản phẩm  
-**Bảng:** Products  
-**Sự kiện:** AFTER UPDATE  
-**Logic:** Khi có thay đổi giá, ghi vào bảng ProductPriceHistory (OldPrice, NewPrice, ChangeDate, ChangedBy)
-
-**Bảng ProductPriceHistory được tạo tự động:**
-```sql
-CREATE TABLE ProductPriceHistory (
-    HistoryID int IDENTITY(1,1) PRIMARY KEY,
-    ProductID int NOT NULL,
-    OldPrice decimal(18,2),
-    NewPrice decimal(18,2),
-    ChangeDate datetime NOT NULL DEFAULT(GETDATE()),
-    ChangedBy nvarchar(50),
-    ChangeReason nvarchar(255)
-);
-```
 
 ---
 
@@ -1541,11 +1406,11 @@ CREATE TABLE ProductPriceHistory (
 6. **Parameter validation** đầy đủ với SqlParameter[]
 
 ### 📊 Thống kê sử dụng:
-- **42 Stored Procedures** - 100% được sử dụng trong C#
-- **10 Views** - 100% được sử dụng trong C#
-- **17 Functions** - 100% được sử dụng trong C#
-- **8 Triggers** - Tự động, không cần code C#
-- **3 Database Roles** - Được sử dụng trong SecurityHelper.cs
+- 42 Stored Procedures - 100% được sử dụng trong C#
+- 10 Views - 5 đang được sử dụng trong Forms (5 không dùng)
+- 17 Functions - 100% được sử dụng trong C#
+- 7 Triggers - Tự động, không cần code C#
+- 3 Database Roles - Được sử dụng trong SecurityHelper.cs
 
 ### 🎯 Chi tiết sử dụng trong C#:
 
@@ -1562,10 +1427,8 @@ CREATE TABLE ProductPriceHistory (
 - `GetTopSellingProducts` - Line 190-207 (GetTopSellingProducts method)
 - `IsStockAvailable` - Line 164-187 (IsStockAvailable method)
 
-**Views được sử dụng:**
-- `ProductsWithDiscounts` - Line 243-253 (GetProductsWithDiscounts method)
-- `ProductSalesStats` - Line 256-266 (GetProductSalesStats method)
-- `LowStockProducts` - Line 269-279 (GetLowStockProducts method)
+**Views đang được sử dụng:**
+- `LowStockProducts` (GetLowStockProducts method)
 
 #### 📁 **DatabaseAccess/CustomerRepository.cs** (263 dòng)
 **Stored Procedures được sử dụng:**
@@ -1584,8 +1447,8 @@ CREATE TABLE ProductPriceHistory (
 - `SearchCustomers` - Line 201-219 (SearchCustomersAdvanced method)
 - `GetCustomerPurchaseHistory` - Line 219-237 (GetCustomerPurchaseHistory method)
 
-**Views được sử dụng:**
-- `CustomerPurchaseSummary` - Line 237-250 (GetCustomerPurchaseSummary method)
+**Views đang được sử dụng:**
+- (Không có view nào)
 
 #### 📁 **DatabaseAccess/SaleRepository.cs** (245 dòng)
 **Stored Procedures được sử dụng:**
@@ -1597,10 +1460,8 @@ CREATE TABLE ProductPriceHistory (
 - `UpdateSale` - Line 125-152 (UpdateSale method)
 - `DeleteSale` - Line 152-177 (DeleteSale method)
 
-**Views được sử dụng:**
-- `SalesSummary` - Line 175-185 (GetSalesSummary method)
-- `DailySalesReport` - Line 188-201 (GetDailySalesReport method)
-- `MonthlySalesReport` - Line 201-214 (GetMonthlySalesReport method)
+**Views đang được sử dụng:**
+- `SalesSummary` (GetSalesSummary method)
 
 #### 📁 **DatabaseAccess/AccountRepository.cs** (195 dòng)
 **Stored Procedures được sử dụng:**
@@ -1636,8 +1497,8 @@ CREATE TABLE ProductPriceHistory (
 **Functions được sử dụng:**
 - `GetDiscountedPrice` - Line 156-179 (GetDiscountedPrice method)
 
-**Views được sử dụng:**
-- `ProductsWithDiscounts` - Line 49-59 (GetProductsWithDiscounts method)
+**Views đang được sử dụng:**
+- (Không có view nào)
 
 #### 📁 **DatabaseAccess/ReportRepository.cs** (255 dòng)
 **Functions được sử dụng:**
@@ -1853,8 +1714,8 @@ Mọi SQL object đều có code C# tương ứng, đảm bảo hệ thống ho�
 |-------------|---------|--------------|-------|---------|
 | **Stored Procedures** | 42 | 42 | 100% | Tất cả được gọi qua CommandType.StoredProcedure |
 | **Functions** | 17 | 17 | 100% | Tất cả được gọi qua CommandType.Text |
-| **Views** | 10 | 10 | 100% | Tất cả được truy vấn qua CommandType.Text |
-| **Triggers** | 8 | 8 | 100% | Tự động chạy, không cần code C# |
+| **Views** | 10 | 5 | 50% | 5 view chưa gắn UI; sẵn sàng tích hợp khi cần |
+| **Triggers** | 7 | 7 | 100% | Tự động chạy, không cần code C# |
 | **Database Roles** | 3 | 3 | 100% | Được sử dụng trong SecurityHelper.cs |
 
 ### 🏆 **THÀNH TỰU ĐẠT ĐƯỢC:**
@@ -1890,7 +1751,7 @@ Sale_Management/
     ├── procedure.sql         # 42 Stored Procedures
     ├── function.sql          # 17 Functions
     ├── view.sql             # 10 Views
-    ├── trigger.sql          # 8 Triggers
+    ├── trigger.sql          # 7 Triggers
     └── role.sql             # 3 Database Roles
 ```
 

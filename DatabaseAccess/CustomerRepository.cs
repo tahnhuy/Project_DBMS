@@ -229,35 +229,6 @@ namespace Sale_Management.DatabaseAccess
             }
         }
 
-        // Lấy tóm tắt mua hàng của khách hàng
-        public DataTable GetCustomerPurchaseSummary()
-        {
-            try
-            {
-                return DatabaseConnection.ExecuteQuery("SELECT * FROM CustomerPurchaseSummary", CommandType.Text, null);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy tóm tắt mua hàng khách hàng: " + ex.Message);
-            }
-        }
-
-        // Lấy tóm tắt mua hàng của một khách hàng cụ thể
-        public DataTable GetCustomerPurchaseSummaryById(int customerId)
-        {
-            try
-            {
-                string query = "SELECT * FROM CustomerPurchaseSummary WHERE CustomerID = @CustomerID";
-                SqlParameter[] parameters = new SqlParameter[]
-                {
-                    new SqlParameter("@CustomerID", SqlDbType.Int) { Value = customerId }
-                };
-                return DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy tóm tắt mua hàng khách hàng: " + ex.Message);
-            }
-        }
+        
     }
 }

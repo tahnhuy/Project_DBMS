@@ -239,31 +239,7 @@ namespace Sale_Management.DatabaseAccess
             }
         }
 
-        // Lấy danh sách sản phẩm với giá giảm
-        public DataTable GetProductsWithDiscounts()
-        {
-            try
-            {
-                return DatabaseConnection.ExecuteQuery("SELECT * FROM ProductsWithDiscounts", CommandType.Text, null);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy danh sách sản phẩm có giảm giá: " + ex.Message);
-            }
-        }
-
-        // Lấy thống kê bán hàng theo sản phẩm  
-        public DataTable GetProductSalesStats()
-        {
-            try
-            {
-                return DatabaseConnection.ExecuteQuery("SELECT * FROM ProductSalesStats", CommandType.Text, null);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy thống kê bán hàng sản phẩm: " + ex.Message);
-            }
-        }
+        
 
         // Lấy danh sách sản phẩm sắp hết hàng
         public DataTable GetLowStockProducts()

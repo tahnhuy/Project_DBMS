@@ -9,6 +9,8 @@ namespace Sale_Management.Forms.Manager
     public partial class StatisticsForm : Form
     {
         private string currentUsername;
+        
+        
 
         public StatisticsForm(string username)
         {
@@ -24,7 +26,8 @@ namespace Sale_Management.Forms.Manager
 
             // Form properties
             this.Text = "Thống kê và Báo cáo";
-            this.Size = new Size(1200, 800);
+            this.Size = new Size(880, 700);
+            this.MinimumSize = new Size(900, 600);
             this.StartPosition = FormStartPosition.CenterParent;
             this.FormBorderStyle = FormBorderStyle.Sizable;
 
@@ -35,36 +38,43 @@ namespace Sale_Management.Forms.Manager
 
             // Tab 1: Dashboard Overview
             TabPage dashboardTab = new TabPage("Tổng quan");
+            dashboardTab.AutoScroll = true;
             CreateDashboardTab(dashboardTab);
             mainTabControl.TabPages.Add(dashboardTab);
 
             // Tab 2: Revenue Reports
             TabPage revenueTab = new TabPage("Báo cáo doanh thu");
+            revenueTab.AutoScroll = true;
             CreateRevenueTab(revenueTab);
             mainTabControl.TabPages.Add(revenueTab);
 
             // Tab 3: Product Statistics
             TabPage productTab = new TabPage("Thống kê sản phẩm");
+            productTab.AutoScroll = true;
             CreateProductTab(productTab);
             mainTabControl.TabPages.Add(productTab);
 
             // Tab 4: Customer Statistics
             TabPage customerTab = new TabPage("Thống kê khách hàng");
+            customerTab.AutoScroll = true;
             CreateCustomerTab(customerTab);
             mainTabControl.TabPages.Add(customerTab);
 
             // Tab 5: Transaction Reports
             TabPage transactionTab = new TabPage("Báo cáo giao dịch");
+            transactionTab.AutoScroll = true;
             CreateTransactionTab(transactionTab);
             mainTabControl.TabPages.Add(transactionTab);
 
             // Tab 6: Account Reports
             TabPage accountTab = new TabPage("Báo cáo tài khoản");
+            accountTab.AutoScroll = true;
             CreateAccountTab(accountTab);
             mainTabControl.TabPages.Add(accountTab);
 
             // Tab 7: Discount Reports
             TabPage discountTab = new TabPage("Báo cáo giảm giá");
+            discountTab.AutoScroll = true;
             CreateDiscountTab(discountTab);
             mainTabControl.TabPages.Add(discountTab);
 
@@ -76,37 +86,43 @@ namespace Sale_Management.Forms.Manager
         {
             Panel panel = new Panel();
             panel.Dock = DockStyle.Fill;
+            panel.AutoScroll = true;
+            
 
             // Title
             Label titleLabel = new Label();
             titleLabel.Text = "THỐNG KÊ TỔNG QUAN";
-            titleLabel.Font = new Font("Arial", 16, FontStyle.Bold);
-            titleLabel.Location = new Point(20, 20);
-            titleLabel.Size = new Size(300, 30);
+            titleLabel.Font = new Font("Arial", 18, FontStyle.Bold);
+            titleLabel.Location = new Point(30, 20);
+            titleLabel.Size = new Size(400, 36);
             titleLabel.ForeColor = Color.DarkBlue;
 
             // Refresh button
             Button btnRefresh = new Button();
             btnRefresh.Text = "Làm mới";
-            btnRefresh.Location = new Point(1000, 20);
+            btnRefresh.Location = new Point(700, 24);
             btnRefresh.Size = new Size(100, 30);
             btnRefresh.Click += (s, e) => LoadDashboardStats();
 
             // Dashboard DataGridView
             DataGridView dgvDashboard = new DataGridView();
             dgvDashboard.Name = "dgvDashboard";
-            dgvDashboard.Location = new Point(20, 60);
-            dgvDashboard.Size = new Size(1080, 300);
+            dgvDashboard.Location = new Point(30, 80);
+            dgvDashboard.Size = new Size(760, 360);
             dgvDashboard.ReadOnly = true;
             dgvDashboard.AllowUserToAddRows = false;
             dgvDashboard.AllowUserToDeleteRows = false;
-            dgvDashboard.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvDashboard.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dgvDashboard.ScrollBars = ScrollBars.Both;
+            dgvDashboard.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            
 
             // Revenue Summary Panel
             Panel revenuePanel = new Panel();
-            revenuePanel.Location = new Point(20, 380);
-            revenuePanel.Size = new Size(1080, 200);
+            revenuePanel.Location = new Point(30, 450);
+            revenuePanel.Size = new Size(700, 160);
             revenuePanel.BorderStyle = BorderStyle.FixedSingle;
+            revenuePanel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 
             Label revenueTitle = new Label();
             revenueTitle.Text = "TÓM TẮT DOANH THU";
@@ -142,14 +158,14 @@ namespace Sale_Management.Forms.Manager
 
             Button btnCalculateToday = new Button();
             btnCalculateToday.Text = "Tính doanh thu hôm nay";
-            btnCalculateToday.Location = new Point(20, 100);
-            btnCalculateToday.Size = new Size(150, 30);
+            btnCalculateToday.Location = new Point(20, 120);
+            btnCalculateToday.Size = new Size(180, 30);
             btnCalculateToday.Click += (s, e) => CalculateTodayRevenue();
 
             Button btnCalculateMonthly = new Button();
             btnCalculateMonthly.Text = "Tính doanh thu tháng";
-            btnCalculateMonthly.Location = new Point(180, 100);
-            btnCalculateMonthly.Size = new Size(150, 30);
+            btnCalculateMonthly.Location = new Point(210, 120);
+            btnCalculateMonthly.Size = new Size(160, 30);
             btnCalculateMonthly.Click += (s, e) => CalculateMonthlyRevenue();
 
             revenuePanel.Controls.AddRange(new Control[] { 
@@ -169,6 +185,8 @@ namespace Sale_Management.Forms.Manager
         {
             Panel panel = new Panel();
             panel.Dock = DockStyle.Fill;
+            panel.AutoScroll = true;
+            
 
             Label titleLabel = new Label();
             titleLabel.Text = "BÁO CÁO DOANH THU THEO SẢN PHẨM";
@@ -209,11 +227,14 @@ namespace Sale_Management.Forms.Manager
             DataGridView dgvRevenue = new DataGridView();
             dgvRevenue.Name = "dgvRevenue";
             dgvRevenue.Location = new Point(20, 100);
-            dgvRevenue.Size = new Size(1080, 500);
+            dgvRevenue.Size = new Size(800, 400);
             dgvRevenue.ReadOnly = true;
             dgvRevenue.AllowUserToAddRows = false;
             dgvRevenue.AllowUserToDeleteRows = false;
-            dgvRevenue.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvRevenue.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dgvRevenue.ScrollBars = ScrollBars.Both;
+            dgvRevenue.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            
 
             panel.Controls.AddRange(new Control[] { 
                 titleLabel, lblStartDate, dtpStartDate, lblEndDate, dtpEndDate, 
@@ -227,6 +248,8 @@ namespace Sale_Management.Forms.Manager
         {
             Panel panel = new Panel();
             panel.Dock = DockStyle.Fill;
+            panel.AutoScroll = true;
+            
 
             Label titleLabel = new Label();
             titleLabel.Text = "THỐNG KÊ SẢN PHẨM";
@@ -256,11 +279,14 @@ namespace Sale_Management.Forms.Manager
             DataGridView dgvProducts = new DataGridView();
             dgvProducts.Name = "dgvProducts";
             dgvProducts.Location = new Point(20, 100);
-            dgvProducts.Size = new Size(1080, 500);
+            dgvProducts.Size = new Size(800, 400);
             dgvProducts.ReadOnly = true;
             dgvProducts.AllowUserToAddRows = false;
             dgvProducts.AllowUserToDeleteRows = false;
-            dgvProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dgvProducts.ScrollBars = ScrollBars.Both;
+            dgvProducts.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            
 
             panel.Controls.AddRange(new Control[] { 
                 titleLabel, btnLoadProductStats, btnLoadTopProducts, btnLoadLowStock, dgvProducts 
@@ -273,6 +299,8 @@ namespace Sale_Management.Forms.Manager
         {
             Panel panel = new Panel();
             panel.Dock = DockStyle.Fill;
+            panel.AutoScroll = true;
+            
 
             Label titleLabel = new Label();
             titleLabel.Text = "THỐNG KÊ KHÁCH HÀNG";
@@ -290,11 +318,14 @@ namespace Sale_Management.Forms.Manager
             DataGridView dgvCustomers = new DataGridView();
             dgvCustomers.Name = "dgvCustomers";
             dgvCustomers.Location = new Point(20, 100);
-            dgvCustomers.Size = new Size(1080, 500);
+            dgvCustomers.Size = new Size(800, 400);
             dgvCustomers.ReadOnly = true;
             dgvCustomers.AllowUserToAddRows = false;
             dgvCustomers.AllowUserToDeleteRows = false;
-            dgvCustomers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvCustomers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dgvCustomers.ScrollBars = ScrollBars.Both;
+            dgvCustomers.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            
 
             panel.Controls.AddRange(new Control[] { 
                 titleLabel, btnLoadCustomerStats, dgvCustomers 
@@ -307,6 +338,8 @@ namespace Sale_Management.Forms.Manager
         {
             Panel panel = new Panel();
             panel.Dock = DockStyle.Fill;
+            panel.AutoScroll = true;
+            
 
             Label titleLabel = new Label();
             titleLabel.Text = "BÁO CÁO GIAO DỊCH";
@@ -324,11 +357,14 @@ namespace Sale_Management.Forms.Manager
             DataGridView dgvTransactions = new DataGridView();
             dgvTransactions.Name = "dgvTransactions";
             dgvTransactions.Location = new Point(20, 100);
-            dgvTransactions.Size = new Size(1080, 500);
+            dgvTransactions.Size = new Size(800, 400);
             dgvTransactions.ReadOnly = true;
             dgvTransactions.AllowUserToAddRows = false;
             dgvTransactions.AllowUserToDeleteRows = false;
-            dgvTransactions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvTransactions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dgvTransactions.ScrollBars = ScrollBars.Both;
+            dgvTransactions.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            
 
             panel.Controls.AddRange(new Control[] { 
                 titleLabel, btnLoadTransactions, dgvTransactions 
@@ -341,6 +377,8 @@ namespace Sale_Management.Forms.Manager
         {
             Panel panel = new Panel();
             panel.Dock = DockStyle.Fill;
+            panel.AutoScroll = true;
+            
 
             Label titleLabel = new Label();
             titleLabel.Text = "BÁO CÁO TÀI KHOẢN";
@@ -358,11 +396,14 @@ namespace Sale_Management.Forms.Manager
             DataGridView dgvAccounts = new DataGridView();
             dgvAccounts.Name = "dgvAccounts";
             dgvAccounts.Location = new Point(20, 100);
-            dgvAccounts.Size = new Size(1080, 500);
+            dgvAccounts.Size = new Size(800, 400);
             dgvAccounts.ReadOnly = true;
             dgvAccounts.AllowUserToAddRows = false;
             dgvAccounts.AllowUserToDeleteRows = false;
-            dgvAccounts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvAccounts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dgvAccounts.ScrollBars = ScrollBars.Both;
+            dgvAccounts.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            
 
             panel.Controls.AddRange(new Control[] { 
                 titleLabel, btnLoadAccounts, dgvAccounts 
@@ -375,6 +416,8 @@ namespace Sale_Management.Forms.Manager
         {
             Panel panel = new Panel();
             panel.Dock = DockStyle.Fill;
+            panel.AutoScroll = true;
+            
 
             Label titleLabel = new Label();
             titleLabel.Text = "BÁO CÁO GIẢM GIÁ";
@@ -392,11 +435,16 @@ namespace Sale_Management.Forms.Manager
             DataGridView dgvDiscounts = new DataGridView();
             dgvDiscounts.Name = "dgvDiscounts";
             dgvDiscounts.Location = new Point(20, 100);
-            dgvDiscounts.Size = new Size(1080, 500);
+            dgvDiscounts.Size = new Size(800, 400);
             dgvDiscounts.ReadOnly = true;
             dgvDiscounts.AllowUserToAddRows = false;
             dgvDiscounts.AllowUserToDeleteRows = false;
-            dgvDiscounts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvDiscounts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dgvDiscounts.ScrollBars = ScrollBars.Both;
+            dgvDiscounts.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            
+
+            
 
             panel.Controls.AddRange(new Control[] { 
                 titleLabel, btnLoadDiscounts, dgvDiscounts 
@@ -415,6 +463,7 @@ namespace Sale_Management.Forms.Manager
                 TabPage dashboardTab = mainTab.TabPages[0];
                 DataGridView dgvDashboard = dashboardTab.Controls.Find("dgvDashboard", true)[0] as DataGridView;
                 dgvDashboard.DataSource = dashboardData;
+                dgvDashboard.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             }
             catch (Exception ex)
             {
@@ -471,6 +520,8 @@ namespace Sale_Management.Forms.Manager
 
                 DataTable revenueData = ReportRepository.GetProductRevenueReport(dtpStartDate.Value, dtpEndDate.Value);
                 dgvRevenue.DataSource = revenueData;
+                dgvRevenue.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+                
             }
             catch (Exception ex)
             {
@@ -489,6 +540,8 @@ namespace Sale_Management.Forms.Manager
                 ProductRepository productRepo = new ProductRepository();
                 DataTable productData = productRepo.GetAllProducts();
                 dgvProducts.DataSource = productData;
+                dgvProducts.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+                
             }
             catch (Exception ex)
             {
@@ -507,6 +560,8 @@ namespace Sale_Management.Forms.Manager
                 ProductRepository productRepo = new ProductRepository();
                 DataTable topProductsData = productRepo.GetTopSellingProducts(10);
                 dgvProducts.DataSource = topProductsData;
+                dgvProducts.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+                
             }
             catch (Exception ex)
             {
@@ -525,6 +580,7 @@ namespace Sale_Management.Forms.Manager
                 ProductRepository productRepo = new ProductRepository();
                 DataTable lowStockData = productRepo.GetLowStockProducts();
                 dgvProducts.DataSource = lowStockData;
+                dgvProducts.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             }
             catch (Exception ex)
             {
@@ -543,6 +599,8 @@ namespace Sale_Management.Forms.Manager
                 CustomerRepository customerRepo = new CustomerRepository();
                 DataTable customerData = customerRepo.GetAllCustomers();
                 dgvCustomers.DataSource = customerData;
+                dgvCustomers.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+                
             }
             catch (Exception ex)
             {
@@ -560,6 +618,8 @@ namespace Sale_Management.Forms.Manager
 
                 DataTable transactionData = ReportRepository.GetTransactionSummary();
                 dgvTransactions.DataSource = transactionData;
+                dgvTransactions.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+                
             }
             catch (Exception ex)
             {
@@ -577,6 +637,8 @@ namespace Sale_Management.Forms.Manager
 
                 DataTable accountData = ReportRepository.GetAccountSummary();
                 dgvAccounts.DataSource = accountData;
+                dgvAccounts.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+                
             }
             catch (Exception ex)
             {
@@ -594,6 +656,8 @@ namespace Sale_Management.Forms.Manager
 
                 DataTable discountData = ReportRepository.GetActiveDiscountsDetail();
                 dgvDiscounts.DataSource = discountData;
+                dgvDiscounts.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+                
             }
             catch (Exception ex)
             {

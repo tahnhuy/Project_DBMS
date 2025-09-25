@@ -19,6 +19,7 @@ namespace Sale_Management.Forms
         {
             InitializeComponent();
             _username = username;
+            
         }
 
         private void CustomerForm_Load(object sender, EventArgs e)

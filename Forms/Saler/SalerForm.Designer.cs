@@ -48,45 +48,45 @@ namespace Sale_Management.Forms
             this.tàiKhoảnToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1548, 40);
+            this.menuStrip1.Size = new System.Drawing.Size(1548, 42);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // sảnPhẩmToolStripMenuItem
             // 
             this.sảnPhẩmToolStripMenuItem.Name = "sảnPhẩmToolStripMenuItem";
-            this.sảnPhẩmToolStripMenuItem.Size = new System.Drawing.Size(141, 36);
+            this.sảnPhẩmToolStripMenuItem.Size = new System.Drawing.Size(141, 38);
             this.sảnPhẩmToolStripMenuItem.Text = "Sản phẩm";
             this.sảnPhẩmToolStripMenuItem.Click += new System.EventHandler(this.msi_Product_Click);
             // 
             // kháchHàngToolStripMenuItem
             // 
             this.kháchHàngToolStripMenuItem.Name = "kháchHàngToolStripMenuItem";
-            this.kháchHàngToolStripMenuItem.Size = new System.Drawing.Size(160, 36);
+            this.kháchHàngToolStripMenuItem.Size = new System.Drawing.Size(160, 38);
             this.kháchHàngToolStripMenuItem.Text = "Khách hàng";
             this.kháchHàngToolStripMenuItem.Click += new System.EventHandler(this.msi_Customer_Click);
             // 
             // hóaĐơnToolStripMenuItem
             // 
             this.hóaĐơnToolStripMenuItem.Name = "hóaĐơnToolStripMenuItem";
-            this.hóaĐơnToolStripMenuItem.Size = new System.Drawing.Size(126, 36);
+            this.hóaĐơnToolStripMenuItem.Size = new System.Drawing.Size(126, 38);
             this.hóaĐơnToolStripMenuItem.Text = "Hóa đơn";
             this.hóaĐơnToolStripMenuItem.Click += new System.EventHandler(this.msi_CreateInvoice_Click);
             // 
             // tàiKhoảnToolStripMenuItem
             // 
             this.tàiKhoảnToolStripMenuItem.Name = "tàiKhoảnToolStripMenuItem";
-            this.tàiKhoảnToolStripMenuItem.Size = new System.Drawing.Size(135, 36);
+            this.tàiKhoảnToolStripMenuItem.Size = new System.Drawing.Size(135, 38);
             this.tàiKhoảnToolStripMenuItem.Text = "Tài khoản";
             this.tàiKhoảnToolStripMenuItem.Click += new System.EventHandler(this.tàiKhoảnToolStripMenuItem_Click);
             // 
             // panel_Container
             // 
             this.panel_Container.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_Container.Location = new System.Drawing.Point(0, 40);
+            this.panel_Container.Location = new System.Drawing.Point(0, 42);
             this.panel_Container.Margin = new System.Windows.Forms.Padding(6);
             this.panel_Container.Name = "panel_Container";
-            this.panel_Container.Size = new System.Drawing.Size(1548, 977);
+            this.panel_Container.Size = new System.Drawing.Size(1548, 975);
             this.panel_Container.TabIndex = 1;
             // 
             // SalerForm

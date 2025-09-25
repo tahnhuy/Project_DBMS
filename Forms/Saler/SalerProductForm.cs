@@ -26,9 +26,21 @@ namespace Sale_Management.Forms
                 ProductRepository productRepo = new ProductRepository();
                 DataTable dt = productRepo.GetAllProducts();
                 dgv_Products.DataSource = dt;
+                ConfigureDataGridView();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ConfigureDataGridView()
+        {
+            try
+            {
+                if (dgv_Products == null) return;
                 
-                // Định dạng cột
-                if (dgv_Products.Columns.Count > 0)
+                if (dgv_Products.Columns != null && dgv_Products.Columns.Count > 0)
                 {
                     // Kiểm tra từng cột có tồn tại không trước khi thiết lập
                     if (dgv_Products.Columns.Contains("ProductID"))
@@ -48,7 +60,7 @@ namespace Sale_Management.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Lỗi khi thiết lập DataGridView: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -57,19 +69,97 @@ namespace Sale_Management.Forms
             LoadProducts();
         }
 
-        private void btn_Edit_Click(object sender, EventArgs e)
+        // Tìm kiếm sản phẩm theo tên
+        private void SearchProductsByName(string searchText)
         {
-            if (dgv_Products.SelectedRows.Count > 0)
+            try
             {
-                string productId = dgv_Products.SelectedRows[0].Cells[0].Value.ToString();
-                SalerProductEditForm editForm = new SalerProductEditForm(productId);
-                editForm.ShowDialog();
-                LoadProducts(); // Refresh sau khi edit
+                ProductRepository productRepo = new ProductRepository();
+                DataTable dt;
+                if (string.IsNullOrWhiteSpace(searchText))
+                {
+                    dt = productRepo.GetAllProducts();
+                }
+                else
+                {
+                    dt = productRepo.GetProductByName(searchText);
+                }
+                
+                dgv_Products.DataSource = dt;
+                ConfigureDataGridView();
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Vui lòng chọn sản phẩm cần chỉnh sửa", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Lỗi tìm kiếm sản phẩm: " + ex.Message);
             }
         }
+
+        // Tìm kiếm sản phẩm theo ID
+        private void SearchProductsByID(string searchText)
+        {
+            try
+            {
+                ProductRepository productRepo = new ProductRepository();
+                DataTable dt;
+                if (string.IsNullOrWhiteSpace(searchText))
+                {
+                    dt = productRepo.GetAllProducts();
+                }
+                else
+                {
+                    if (int.TryParse(searchText, out int productId))
+                    {
+                        dt = productRepo.GetProductById(productId);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Vui lòng nhập ID hợp lệ (số nguyên)", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+
+                dgv_Products.DataSource = dt;
+                ConfigureDataGridView();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi tìm kiếm sản phẩm: " + ex.Message);
+            }
+        }
+
+        private void txt_nameSearch_TextChanged(object sender, EventArgs e)
+        {
+            SearchProductsByName(txt_nameSearch.Text.Trim());
+
+            if (txt_nameSearch.Focused)
+            {
+                txt_idSearch.Text = string.Empty;
+            }
+        }
+
+        private void txt_idSearch_TextChanged(object sender, EventArgs e)
+        {
+            SearchProductsByID(txt_idSearch.Text);
+
+            if (txt_idSearch.Focused)
+            {
+                txt_nameSearch.Text = string.Empty;
+            }
+        }
+
+        //private void btn_Edit_Click(object sender, EventArgs e)
+        //{
+        //    if (dgv_Products.SelectedRows.Count > 0)
+        //    {
+        //        string productId = dgv_Products.SelectedRows[0].Cells[0].Value.ToString();
+        //        SalerProductEditForm editForm = new SalerProductEditForm(productId);
+        //        editForm.ShowDialog();
+        //        LoadProducts(); // Refresh sau khi edit
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Vui lòng chọn sản phẩm cần chỉnh sửa", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //    }
+        //}
     }
 }

@@ -180,68 +180,7 @@ namespace Sale_Management.DatabaseAccess
             }
         }
 
-        // Lấy báo cáo bán hàng theo ngày
-        public DataTable GetDailySalesReport()
-        {
-            try
-            {
-                return DatabaseConnection.ExecuteQuery("SELECT * FROM DailySalesReport ORDER BY SalesDate DESC", CommandType.Text, null);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy báo cáo bán hàng theo ngày: " + ex.Message);
-            }
-        }
-
-        // Lấy báo cáo bán hàng theo tháng
-        public DataTable GetMonthlySalesReport()
-        {
-            try
-            {
-                return DatabaseConnection.ExecuteQuery("SELECT * FROM MonthlySalesReport ORDER BY SalesYear DESC, SalesMonth DESC", CommandType.Text, null);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy báo cáo bán hàng theo tháng: " + ex.Message);
-            }
-        }
-
-        // Lấy báo cáo bán hàng cho một ngày cụ thể
-        public DataTable GetDailySalesReportByDate(DateTime date)
-        {
-            try
-            {
-                string query = "SELECT * FROM DailySalesReport WHERE SalesDate = @Date";
-                SqlParameter[] parameters = new SqlParameter[]
-                {
-                    new SqlParameter("@Date", SqlDbType.Date) { Value = date.Date }
-                };
-                return DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy báo cáo bán hàng theo ngày: " + ex.Message);
-            }
-        }
-
-        // Lấy báo cáo bán hàng cho một tháng cụ thể
-        public DataTable GetMonthlySalesReportByMonth(int year, int month)
-        {
-            try
-            {
-                string query = "SELECT * FROM MonthlySalesReport WHERE SalesYear = @Year AND SalesMonth = @Month";
-                SqlParameter[] parameters = new SqlParameter[]
-                {
-                    new SqlParameter("@Year", SqlDbType.Int) { Value = year },
-                    new SqlParameter("@Month", SqlDbType.Int) { Value = month }
-                };
-                return DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy báo cáo bán hàng theo tháng: " + ex.Message);
-            }
-        }
+        
     }
 }
 

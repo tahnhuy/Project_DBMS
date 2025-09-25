@@ -24,6 +24,7 @@ namespace Sale_Management
                 InitializeComponent();
                 currentUsername = username ?? "";
                 currentRole = role ?? "";
+                
 
                 // Không tự động load form nào, để user chọn từ menu
                 // Hiển thị thông báo chào mừng
@@ -655,10 +656,7 @@ namespace Sale_Management
         {
             try
             {
-                // Debug: Hiển thị role hiện tại
-                MessageBox.Show($"Role hiện tại: '{currentRole}'", "Debug Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                
-                // Kiểm tra quyền admin hoặc manager
+                // Khôi phục kiểm tra quyền admin/manager trước khi mở thống kê
                 string roleLower = currentRole?.ToLower() ?? "";
                 if (roleLower != "admin" && roleLower != "manager")
                 {
@@ -666,9 +664,10 @@ namespace Sale_Management
                     return;
                 }
 
-                // Mở form thống kê
+                // Mở form thống kê với kích thước lớn (cửa sổ riêng)
                 Forms.Manager.StatisticsForm statisticsForm = new Forms.Manager.StatisticsForm(currentUsername);
-                ShowFormInPanel(statisticsForm);
+                statisticsForm.StartPosition = FormStartPosition.CenterScreen;
+                statisticsForm.Show();
             }
             catch (Exception ex)
             {

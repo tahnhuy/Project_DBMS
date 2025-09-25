@@ -284,10 +284,11 @@ return
         (select count(*) from dbo.Customers) as TotalCustomers,
         (select count(*) from dbo.Sales where cast(SaleDate as date) = cast(getdate() as date)) as TodaySales,
         (select isnull(sum(TotalAmount), 0) from dbo.Sales where cast(SaleDate as date) = cast(getdate() as date)) as TodayRevenue,
-        (select count(*) from dbo.Products where StockQuantity < 10) as LowStockProducts,
+        (select count(*) from dbo.Products where StockQuantity <= 20) as LowStockProducts,
         (select count(*) from dbo.Discounts where IsActive = 1 and getdate() between StartDate and EndDate) as ActiveDiscounts
 );
 go
+
 
 -- ========== FUNCTION 15: Format tiền Việt Nam ==========
 create or alter function dbo.FormatVietnamMoney(@Amount decimal(18,2))
