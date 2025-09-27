@@ -145,16 +145,7 @@ namespace Sale_Management.Forms
         {
             try
             {
-                DataTable dt;
-                if (string.IsNullOrWhiteSpace(searchText))
-                { 
-                    dt = DatabaseConnection.ExecuteQuery("GetAllProducts", CommandType.StoredProcedure, null);
-                }
-                else
-                {
-                    dt = productRepository.GetProductByName(searchText);
-                }
-                
+                DataTable dt = productRepository.GetAllProducts(searchText);
                 dgv_Products.DataSource = dt;
                 ConfigureDataGridView();
             }
@@ -260,7 +251,7 @@ namespace Sale_Management.Forms
                     if (success)
                     {
                         MessageBox.Show("Xóa sản phẩm thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadProducts(); // Tải lại danh sách sản phẩm
+                        LoadProducts(); // Reload the product list
                     }
                 }
                 catch (Exception ex)
@@ -305,7 +296,7 @@ namespace Sale_Management.Forms
                     if (success)
                     {
                         MessageBox.Show("Xóa sản phẩm thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadProducts(); // Tải lại danh sách sản phẩm
+                        LoadProducts(); // Reload the product list
                     }
                 }
                 catch (Exception ex)

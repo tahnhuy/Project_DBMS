@@ -63,24 +63,8 @@ namespace Sale_Management.Forms
                 string newPassword = string.IsNullOrWhiteSpace(textBox2.Text) ? null : textBox2.Text;
                 string newRole = comboBox1.SelectedItem?.ToString();
 
-                DataTable result = AccountRepository.UpdateAccount(_username, newPassword, newRole);
-
-                if (result.Rows.Count > 0)
-                {
-                    string resultStatus = result.Rows[0]["Result"].ToString();
-                    string message = result.Rows[0]["Message"].ToString();
-
-                    if (resultStatus == "SUCCESS")
-                    {
-                        MessageBox.Show(message, "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        this.DialogResult = DialogResult.OK;
-                        this.Close();
-                    }
-                    else
-                    {
-                        MessageBox.Show(message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
+                MessageBox.Show("Chức năng chỉnh sửa tài khoản đã được tắt.", 
+                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {

@@ -55,19 +55,8 @@
     <Compile Include="DatabaseAccess\SecurityHelper.cs" />
     <Compile Include="DatabaseAccess\SecurityUsageGuide.cs" />
     <Compile Include="DatabaseAccess\ReportRepository.cs" />
+    <Compile Include="DatabaseAccess\SaleDetailItem.cs" />
     <!-- Common Forms -->
-    <Compile Include="Forms\Common\AccountCreateForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Common\AccountCreateForm.Designer.cs">
-      <DependentUpon>AccountCreateForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Common\AccountForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Common\AccountForm.Designer.cs">
-      <DependentUpon>AccountForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\Common\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -81,30 +70,12 @@
       <DependentUpon>AccountInfoForm.cs</DependentUpon>
     </Compile>
     <!-- Customer Forms -->
-    <Compile Include="Forms\Customer\CustomerEditForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Customer\CustomerEditForm.Designer.cs">
-      <DependentUpon>CustomerEditForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Customer\CustomerForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Customer\CustomerForm.Designer.cs">
-      <DependentUpon>CustomerForm.cs</DependentUpon>
-    </Compile>
     <!-- Manager Forms -->
     <Compile Include="Forms\Manager\AccountManageEditForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\Manager\AccountManageEditForm.Designer.cs">
       <DependentUpon>AccountManageEditForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Manager\AccountManageForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Manager\AccountManageForm.Designer.cs">
-      <DependentUpon>AccountManageForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Manager\AdminForm.cs">
       <SubType>Form</SubType>
@@ -197,23 +168,11 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\Common\AccountCreateForm.resx">
-      <DependentUpon>AccountCreateForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Common\AccountForm.resx">
-      <DependentUpon>AccountForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Common\LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Common\AccountInfoForm.resx">
       <DependentUpon>AccountInfoForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Customer\CustomerForm.resx">
-      <DependentUpon>CustomerForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Manager\AccountManageForm.resx">
-      <DependentUpon>AccountManageForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Manager\CustomerManageForm.resx">
       <DependentUpon>CustomerManageForm.cs</DependentUpon>

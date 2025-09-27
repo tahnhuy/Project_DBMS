@@ -1,16 +1,30 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Collections.Generic;
 
 namespace Sale_Management.DatabaseAccess
 {
     public class CustomerRepository
     {
-        public DataTable GetAllCustomers()
+        public DataTable GetAllCustomers(string searchQuery = null)
         {
             try
             {
-                return DatabaseConnection.ExecuteQuery("GetAllCustomers", CommandType.StoredProcedure, null);
+                if (string.IsNullOrEmpty(searchQuery))
+                {
+                    // Gọi stored procedure GetAllCustomers
+                    return DatabaseConnection.ExecuteQuery("GetAllCustomers", CommandType.StoredProcedure);
+                }
+                else
+                {
+                    // Gọi stored procedure GetCustomerByName với search query
+                    SqlParameter[] parameters = new SqlParameter[]
+                    {
+                        new SqlParameter("@CustomerName", SqlDbType.NVarChar, 100) { Value = searchQuery }
+                    };
+                    return DatabaseConnection.ExecuteQuery("GetCustomerByName", CommandType.StoredProcedure, parameters);
+                }
             }
             catch (Exception ex)
             {
@@ -30,7 +44,7 @@ namespace Sale_Management.DatabaseAccess
             }
             catch (Exception ex)
             {
-                throw new Exception("Lỗi khi lấy khách hàng theo ID: " + ex.Message);
+                throw new Exception("Lỗi khi lấy thông tin khách hàng: " + ex.Message);
             }
         }
 
@@ -40,39 +54,38 @@ namespace Sale_Management.DatabaseAccess
             {
                 SqlParameter[] parameters = new SqlParameter[]
                 {
-                    new SqlParameter("@CustomerName", SqlDbType.NVarChar, 100) { Value = customerName ?? (object)DBNull.Value }
+                    new SqlParameter("@CustomerName", SqlDbType.NVarChar, 100) { Value = customerName }
                 };
                 return DatabaseConnection.ExecuteQuery("GetCustomerByName", CommandType.StoredProcedure, parameters);
             }
             catch (Exception ex)
             {
-                throw new Exception("Lỗi khi lấy khách hàng theo tên: " + ex.Message);
+                throw new Exception("Lỗi khi tìm kiếm khách hàng: " + ex.Message);
             }
         }
 
-        public bool AddCustomer(string customerName, string phone, string address, int loyaltyPoints)
+        public int AddCustomer(string customerName, string phone, string address, int loyaltyPoints = 0)
         {
             try
             {
                 SqlParameter[] parameters = new SqlParameter[]
                 {
                     new SqlParameter("@CustomerName", SqlDbType.NVarChar, 100) { Value = customerName },
-                    new SqlParameter("@Phone", SqlDbType.NVarChar, 20) { Value = (object)phone ?? DBNull.Value },
-                    new SqlParameter("@Address", SqlDbType.NVarChar, 200) { Value = (object)address ?? DBNull.Value },
+                    new SqlParameter("@Phone", SqlDbType.NVarChar, 20) { Value = phone },
+                    new SqlParameter("@Address", SqlDbType.NVarChar, 200) { Value = address },
                     new SqlParameter("@LoyaltyPoints", SqlDbType.Int) { Value = loyaltyPoints }
                 };
 
                 DataTable result = DatabaseConnection.ExecuteQuery("AddCustomer", CommandType.StoredProcedure, parameters);
-
-                if (result.Rows.Count > 0)
+                
+                if (result.Rows.Count > 0 && result.Rows[0]["Result"].ToString() == "SUCCESS")
                 {
-                    string resultStatus = result.Rows[0]["Result"].ToString();
-                    if (resultStatus == "SUCCESS")
-                        return true;
-                    else
-                        throw new Exception(result.Rows[0]["Message"].ToString());
+                    return Convert.ToInt32(result.Rows[0]["CustomerID"]);
                 }
-                return false;
+                else
+                {
+                    throw new Exception("Không thể thêm khách hàng mới");
+                }
             }
             catch (Exception ex)
             {
@@ -80,7 +93,7 @@ namespace Sale_Management.DatabaseAccess
             }
         }
 
-        public bool UpdateCustomer(int customerId, string customerName, string phone, string address, int loyaltyPoints)
+        public bool UpdateCustomer(int customerId, string customerName, string phone, string address, int loyaltyPoints = 0)
         {
             try
             {
@@ -88,22 +101,14 @@ namespace Sale_Management.DatabaseAccess
                 {
                     new SqlParameter("@CustomerID", SqlDbType.Int) { Value = customerId },
                     new SqlParameter("@CustomerName", SqlDbType.NVarChar, 100) { Value = customerName },
-                    new SqlParameter("@Phone", SqlDbType.NVarChar, 20) { Value = (object)phone ?? DBNull.Value },
-                    new SqlParameter("@Address", SqlDbType.NVarChar, 200) { Value = (object)address ?? DBNull.Value },
+                    new SqlParameter("@Phone", SqlDbType.NVarChar, 20) { Value = phone },
+                    new SqlParameter("@Address", SqlDbType.NVarChar, 200) { Value = address },
                     new SqlParameter("@LoyaltyPoints", SqlDbType.Int) { Value = loyaltyPoints }
                 };
 
                 DataTable result = DatabaseConnection.ExecuteQuery("UpdateCustomer", CommandType.StoredProcedure, parameters);
-
-                if (result.Rows.Count > 0)
-                {
-                    string resultStatus = result.Rows[0]["Result"].ToString();
-                    if (resultStatus == "SUCCESS")
-                        return true;
-                    else
-                        throw new Exception(result.Rows[0]["Message"].ToString());
-                }
-                return false;
+                
+                return result.Rows.Count > 0 && result.Rows[0]["Result"].ToString() == "SUCCESS";
             }
             catch (Exception ex)
             {
@@ -121,114 +126,30 @@ namespace Sale_Management.DatabaseAccess
                 };
 
                 DataTable result = DatabaseConnection.ExecuteQuery("DeleteCustomer", CommandType.StoredProcedure, parameters);
-
+                
                 if (result.Rows.Count > 0)
                 {
                     string resultStatus = result.Rows[0]["Result"].ToString();
+                    string message = result.Rows[0]["Message"].ToString();
+                    
                     if (resultStatus == "SUCCESS")
+                    {
                         return true;
+                    }
                     else
-                        throw new Exception(result.Rows[0]["Message"].ToString());
+                    {
+                        throw new Exception(message);
+                    }
                 }
-                return false;
+                else
+                {
+                    throw new Exception("Không có phản hồi từ server");
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception("Lỗi khi xóa khách hàng: " + ex.Message);
             }
         }
-
-        public DataTable GetCustomerByUsername(string username)
-        {
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("@Username", SqlDbType.NVarChar, 50) { Value = username }
-            };
-            return DatabaseConnection.ExecuteQuery("GetCustomerByUsername", CommandType.StoredProcedure, parameters);
-        }
-
-        public DataTable GetSalesByCustomerUsername(string username)
-        {
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("@Username", SqlDbType.NVarChar, 50) { Value = username }
-            };
-            return DatabaseConnection.ExecuteQuery("GetSalesByCustomerUsername", CommandType.StoredProcedure, parameters);
-        }
-
-        public bool UpdateCustomerByUsername(string username, string customerName, string phone, string address)
-        {
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("@Username", SqlDbType.NVarChar, 50) { Value = username },
-                new SqlParameter("@CustomerName", SqlDbType.NVarChar, 100) { Value = customerName },
-                new SqlParameter("@Phone", SqlDbType.NVarChar, 20) { Value = (object)phone ?? DBNull.Value },
-                new SqlParameter("@Address", SqlDbType.NVarChar, 200) { Value = (object)address ?? DBNull.Value }
-            };
-
-            DataTable result = DatabaseConnection.ExecuteQuery("UpdateCustomerByUsername", CommandType.StoredProcedure, parameters);
-            if (result.Rows.Count > 0)
-            {
-                string resultStatus = result.Rows[0]["Result"].ToString();
-                if (resultStatus == "SUCCESS")
-                    return true;
-                throw new Exception(result.Rows[0]["Message"].ToString());
-            }
-            return false;
-        }
-
-        public DataTable SearchCustomers(string searchTerm)
-        {
-            try
-            {
-                SqlParameter[] parameters = new SqlParameter[]
-                {
-                    new SqlParameter("@SearchTerm", SqlDbType.NVarChar, 100) { Value = searchTerm ?? (object)DBNull.Value }
-                };
-                return DatabaseConnection.ExecuteQuery("SearchCustomers", CommandType.StoredProcedure, parameters);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi tìm kiếm khách hàng: " + ex.Message);
-            }
-        }
-
-        // Sử dụng function mới để tìm kiếm đa điều kiện
-        public DataTable SearchCustomersAdvanced(string searchTerm)
-        {
-            try
-            {
-                string query = "SELECT * FROM dbo.SearchCustomers(@SearchTerm)";
-                SqlParameter[] parameters = new SqlParameter[]
-                {
-                    new SqlParameter("@SearchTerm", SqlDbType.NVarChar, 100) { Value = searchTerm ?? (object)DBNull.Value }
-                };
-                return DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi tìm kiếm khách hàng nâng cao: " + ex.Message);
-            }
-        }
-
-        // Lấy lịch sử mua hàng của khách hàng
-        public DataTable GetCustomerPurchaseHistory(int customerId)
-        {
-            try
-            {
-                string query = "SELECT * FROM dbo.GetCustomerPurchaseHistory(@CustomerID)";
-                SqlParameter[] parameters = new SqlParameter[]
-                {
-                    new SqlParameter("@CustomerID", SqlDbType.Int) { Value = customerId }
-                };
-                return DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy lịch sử mua hàng: " + ex.Message);
-            }
-        }
-
-        
     }
 }

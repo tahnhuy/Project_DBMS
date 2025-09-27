@@ -18,10 +18,7 @@ namespace Sale_Management
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new StatisticsForm("admin"));
-            //Application.Run(new AdminForm("admin", "manager"));
-            //Application.Run(new StatisticsForm("admin")); // Test line - commented out
-
+            Application.Run(new AdminForm("admin", "manager"));
             //bool shouldContinue = true;
 
             //do

@@ -112,7 +112,7 @@ go
 -- Trigger này đảm bảo LineTotal = Quantity * SalePrice
 create or alter trigger TR_SaleDetails_CalculateLineTotal
 on dbo.SaleDetails
-instead of insert, update
+instead of insert, update	
 as
 begin
     set nocount on;
@@ -280,7 +280,7 @@ go
 
 -- ========== TRIGGER 8: Audit log cho thay đổi giá sản phẩm ==========
 -- Trigger này ghi log khi có thay đổi giá sản phẩm
-if not exists (select * from sys.tables where name = 'ProductPriceHistory')
+/*if not exists (select * from sys.tables where name = 'ProductPriceHistory')
 begin
     create table ProductPriceHistory (
         HistoryID int identity(1,1) primary key,
@@ -317,6 +317,7 @@ begin
     end
 end
 go
+*/
 
 print N'✅ Đã tạo thành công tất cả các trigger cần thiết!'
 print N'📋 Danh sách trigger đã tạo:'

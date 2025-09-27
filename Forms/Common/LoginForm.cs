@@ -94,13 +94,10 @@ namespace Sale_Management.Forms
 					{
 						mainForm = new SalerForm(safeUsername, role ?? "");
 					}
-					else if (role.Equals("customer", StringComparison.OrdinalIgnoreCase))
-					{
-						mainForm = new CustomerForm(safeUsername);
-					}
 					else
 					{
-						mainForm = new ProductForm();
+						MessageBox.Show($"Vai trò '{role}' không được hỗ trợ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						return;
 					}
 
 					// Khi form chính đóng, đóng luôn LoginForm để quay lại vòng lặp

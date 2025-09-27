@@ -175,7 +175,7 @@ namespace Sale_Management.Forms
 					if (success)
 					{
 						MessageBox.Show("Xóa khách hàng thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						LoadCustomers();
+						LoadCustomers(); // Reload the customer list
 					}
 				}
 				catch (Exception ex)

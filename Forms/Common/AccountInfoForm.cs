@@ -221,81 +221,14 @@ namespace Sale_Management.Forms
 
         private void btnViewActivity_Click(object sender, EventArgs e)
         {
-            try
-            {
-                DataTable activityData = AccountRepository.GetAccountActivity(currentUsername);
-                
-                if (activityData.Rows.Count == 0)
-                {
-                    MessageBox.Show("Không có hoạt động nào được ghi nhận.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                // Tạo form hiển thị hoạt động
-                Form activityForm = new Form();
-                activityForm.Text = "Hoạt động tài khoản - " + currentUsername;
-                activityForm.Size = new Size(800, 500);
-                activityForm.StartPosition = FormStartPosition.CenterParent;
-
-                DataGridView dgvActivity = new DataGridView();
-                dgvActivity.DataSource = activityData;
-                dgvActivity.Dock = DockStyle.Fill;
-                dgvActivity.ReadOnly = true;
-                dgvActivity.AllowUserToAddRows = false;
-                dgvActivity.AllowUserToDeleteRows = false;
-
-                activityForm.Controls.Add(dgvActivity);
-                activityForm.ShowDialog();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi khi xem hoạt động: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            MessageBox.Show("Chức năng xem hoạt động tài khoản đã được tắt.", 
+                "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnBackupAccount_Click(object sender, EventArgs e)
         {
-            try
-            {
-                DataTable backupData = AccountRepository.BackupAccounts();
-                
-                SaveFileDialog saveDialog = new SaveFileDialog();
-                saveDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
-                saveDialog.FileName = $"AccountBackup_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
-                
-                if (saveDialog.ShowDialog() == DialogResult.OK)
-                {
-                    // Export to CSV
-                    using (System.IO.StreamWriter writer = new System.IO.StreamWriter(saveDialog.FileName, false, System.Text.Encoding.UTF8))
-                    {
-                        // Write headers
-                        for (int i = 0; i < backupData.Columns.Count; i++)
-                        {
-                            writer.Write(backupData.Columns[i].ColumnName);
-                            if (i < backupData.Columns.Count - 1)
-                                writer.Write(",");
-                        }
-                        writer.WriteLine();
-
-                        // Write data
-                        foreach (DataRow row in backupData.Rows)
-                        {
-                            for (int i = 0; i < backupData.Columns.Count; i++)
-                            {
-                                writer.Write(row[i].ToString());
-                                if (i < backupData.Columns.Count - 1)
-                                    writer.Write(",");
-                            }
-                            writer.WriteLine();
-                        }
-                    }
-                    MessageBox.Show("Backup tài khoản thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi khi backup tài khoản: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            MessageBox.Show("Chức năng sao lưu tài khoản đã được tắt.", 
+                "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnLogout_Click(object sender, EventArgs e)

@@ -45,22 +45,35 @@ namespace Sale_Management.DatabaseAccess
             return dt;
         }
 
-        public static int ExecuteNonQuery(string q, CommandType ct, params SqlParameter[] pa)
+        public static DataTable ExecuteQuery(string q, CommandType ct, SqlParameter[] pa, SqlConnection connection, SqlTransaction transaction)
         {
-            int affectedRows = 0;
-            using (SqlConnection conn = GetConnection())
+            DataTable dt = new DataTable();
+            using (SqlCommand cmd = new SqlCommand(q, connection, transaction))
             {
-                using (SqlCommand cmd = new SqlCommand(q, conn))
+                cmd.CommandType = ct;
+                if (pa != null)
                 {
-                    cmd.CommandType = ct;
-                    if (pa != null)
-                    {
-                        cmd.Parameters.AddRange(pa);
-                    }
-                    affectedRows = cmd.ExecuteNonQuery();
+                    cmd.Parameters.AddRange(pa);
+                }
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
                 }
             }
-            return affectedRows;
+            return dt;
+        }
+
+        public static int ExecuteNonQuery(string q, CommandType ct, SqlParameter[] pa, SqlConnection connection, SqlTransaction transaction)
+        {
+            using (SqlCommand cmd = new SqlCommand(q, connection, transaction))
+            {
+                cmd.CommandType = ct;
+                if (pa != null)
+                {
+                    cmd.Parameters.AddRange(pa);
+                }
+                return cmd.ExecuteNonQuery();
+            }
         }
     }
 }       

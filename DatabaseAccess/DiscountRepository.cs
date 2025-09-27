@@ -6,15 +6,15 @@ namespace Sale_Management.DatabaseAccess
 {
     public class DiscountRepository
     {
-        public DataTable GetAllDiscounts()
+        public DataTable GetActiveDiscounts()
         {
             try
             {
-                return DatabaseConnection.ExecuteQuery("GetAllDiscounts", CommandType.StoredProcedure, null);
+                return DatabaseConnection.ExecuteQuery("GetActiveDiscounts", CommandType.StoredProcedure, null);
             }
             catch (Exception ex)
             {
-                throw new Exception("Lỗi khi lấy danh sách chương trình giảm giá: " + ex.Message);
+                throw new Exception("Lỗi khi lấy danh sách chương trình giảm giá đang hoạt động: " + ex.Message);
             }
         }
 
@@ -34,30 +34,6 @@ namespace Sale_Management.DatabaseAccess
             }
         }
 
-        public DataTable GetActiveDiscounts()
-        {
-            try
-            {
-                return DatabaseConnection.ExecuteQuery("GetActiveDiscounts", CommandType.StoredProcedure, null);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy danh sách chương trình giảm giá đang hoạt động: " + ex.Message);
-            }
-        }
-
-        public DataTable GetProductsWithDiscounts()
-        {
-            try
-            {
-                // Sử dụng stored procedure GetAllProducts thay vì view
-                return DatabaseConnection.ExecuteQuery("GetAllProducts", CommandType.StoredProcedure, null);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy danh sách sản phẩm có giảm giá: " + ex.Message);
-            }
-        }
 
         public bool AddDiscount(int productId, string discountType, decimal discountValue, 
                               DateTime startDate, DateTime endDate, bool isActive, string createdBy)
@@ -127,33 +103,6 @@ namespace Sale_Management.DatabaseAccess
             }
         }
 
-        public bool DeleteDiscount(int discountId)
-        {
-            try
-            {
-                SqlParameter[] parameters = new SqlParameter[]
-                {
-                    new SqlParameter("@DiscountID", SqlDbType.Int) { Value = discountId }
-                };
-
-                DataTable result = DatabaseConnection.ExecuteQuery("DeleteDiscount", CommandType.StoredProcedure, parameters);
-
-                if (result.Rows.Count > 0)
-                {
-                    string resultStatus = result.Rows[0]["Result"].ToString();
-                    if (resultStatus == "SUCCESS")
-                        return true;
-                    else
-                        throw new Exception(result.Rows[0]["Message"].ToString());
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi xóa chương trình giảm giá: " + ex.Message);
-            }
-        }
-
         public decimal GetDiscountedPrice(int productId, decimal originalPrice)
         {
             try
@@ -176,6 +125,42 @@ namespace Sale_Management.DatabaseAccess
             catch (Exception ex)
             {
                 throw new Exception("Lỗi khi tính giá sau giảm: " + ex.Message);
+            }
+        }
+
+        public bool DeleteDiscount(int discountId)
+        {
+            try
+            {
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@DiscountID", SqlDbType.Int) { Value = discountId }
+                };
+
+                DataTable result = DatabaseConnection.ExecuteQuery("DeleteDiscount", CommandType.StoredProcedure, parameters);
+                
+                if (result.Rows.Count > 0)
+                {
+                    string resultStatus = result.Rows[0]["Result"].ToString();
+                    string message = result.Rows[0]["Message"].ToString();
+                    
+                    if (resultStatus == "SUCCESS")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        throw new Exception(message);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Không có phản hồi từ server");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi xóa chương trình giảm giá: " + ex.Message);
             }
         }
     }

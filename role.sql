@@ -87,6 +87,9 @@ GRANT EXECUTE ON dbo.AddSaleDetail TO MiniMart_Manager;
 GRANT EXECUTE ON dbo.UpdateSale TO MiniMart_Manager;
 GRANT EXECUTE ON dbo.DeleteSale TO MiniMart_Manager;
 
+GRANT EXECUTE ON dbo.GetEmployeeInfo  TO MiniMart_Manager;
+
+
 -- === STORED PROCEDURES - QUẢN LÝ GIẢM GIÁ ===
 GRANT EXECUTE ON dbo.GetAllDiscounts TO MiniMart_Manager;
 GRANT EXECUTE ON dbo.GetDiscountsByProduct TO MiniMart_Manager;
@@ -115,6 +118,10 @@ GRANT EXECUTE ON dbo.ValidateUsername TO MiniMart_Manager;
 GRANT EXECUTE ON dbo.ValidatePassword TO MiniMart_Manager;
 GRANT EXECUTE ON dbo.GetAccountsWithDetails TO MiniMart_Manager;
 GRANT EXECUTE ON dbo.BackupAccounts TO MiniMart_Manager;
+use Minimart_SalesDB
+go
+GRANT EXECUTE ON dbo.GetAccountInfo   TO MiniMart_Manager;
+
 
 -- === STORED PROCEDURES - GIAO DỊCH ===
 GRANT EXECUTE ON dbo.GetTransactionsByUsername TO MiniMart_Manager;

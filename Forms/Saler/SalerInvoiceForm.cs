@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,32 @@ namespace Sale_Management.Forms
             LoadProducts();
             LoadCustomers();
             LoadPaymentMethods();
+        }
+
+        private decimal GetDiscountedPrice(int productId, decimal originalPrice)
+        {
+            try
+            {
+                string query = "SELECT dbo.GetDiscountedPrice(@ProductID, @OriginalPrice) as DiscountedPrice";
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@ProductID", SqlDbType.Int) { Value = productId },
+                    new SqlParameter("@OriginalPrice", SqlDbType.Decimal) { Value = originalPrice }
+                };
+
+                DataTable result = DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
+                if (result.Rows.Count > 0)
+                {
+                    return Convert.ToDecimal(result.Rows[0]["DiscountedPrice"]);
+                }
+                return originalPrice; // Fallback to original price if function fails
+            }
+            catch (Exception ex)
+            {
+                // Log error and return original price
+                System.Diagnostics.Debug.WriteLine($"Error getting discounted price: {ex.Message}");
+                return originalPrice;
+            }
         }
 
         private void LoadProducts()
@@ -104,9 +131,12 @@ namespace Sale_Management.Forms
                     DataRow row = dt.Rows[0];
                     string productId = row["ProductID"].ToString();
                     string productName = row["ProductName"].ToString();
-                    decimal price = decimal.Parse(row["Price"].ToString());
+                    decimal originalPrice = decimal.Parse(row["Price"].ToString());
                     int availableQuantity = int.Parse(row["StockQuantity"].ToString());
                     string unit = row["Unit"].ToString();
+
+                    // Tính giá giảm sử dụng function GetDiscountedPrice
+                    decimal discountedPrice = GetDiscountedPrice(int.Parse(productId), originalPrice);
 
                     // Sử dụng function để kiểm tra tồn kho
                     ProductRepository productRepo2 = new ProductRepository();
@@ -128,7 +158,8 @@ namespace Sale_Management.Forms
                         {
                             ProductId = productId,
                             ProductName = productName,
-                            Price = price,
+                            Price = discountedPrice, // Sử dụng giá đã giảm
+                            OriginalPrice = originalPrice, // Lưu giá gốc để hiển thị
                             Quantity = quantity,
                             Unit = unit
                         });
@@ -150,7 +181,8 @@ namespace Sale_Management.Forms
             dgv_InvoiceItems.DataSource = invoiceItems.Select(x => new
             {
                 Tên_sản_phẩm = x.ProductName,
-                Giá = x.Price.ToString("N0"),
+                Giá_gốc = x.OriginalPrice.ToString("N0"),
+                Giá_giảm = x.Price.ToString("N0"),
                 Số_lượng = x.Quantity,
                 Đơn_vị = x.Unit,
                 Thành_tiền = (x.Price * x.Quantity).ToString("N0")
@@ -180,31 +212,34 @@ namespace Sale_Management.Forms
             try
             {
                 string customerId = cmb_Customer.SelectedValue.ToString();
-                decimal totalAmount = invoiceItems.Sum(x => x.Price * x.Quantity);
                 string paymentMethod = cmb_PaymentMethod.SelectedItem?.ToString() ?? "Tiền mặt";
 
-                // Tạo hóa đơn
+                // Convert InvoiceItem to SaleDetailItem
+                List<SaleDetailItem> saleDetails = new List<SaleDetailItem>();
+                foreach (var item in invoiceItems)
+                {
+                    saleDetails.Add(new SaleDetailItem(
+                        int.Parse(item.ProductId), 
+                        item.Quantity, 
+                        item.Price, 
+                        item.ProductName, 
+                        item.Unit
+                    ));
+                }
+
+                // Tạo hóa đơn với chi tiết trong một transaction
                 SaleRepository saleRepo = new SaleRepository();
-                int saleId = saleRepo.CreateSale(int.Parse(customerId), totalAmount, paymentMethod, currentUsername);
+                int saleId = saleRepo.CreateSaleWithDetails(
+                    int.Parse(customerId), 
+                    paymentMethod, 
+                    currentUsername, 
+                    saleDetails
+                );
                 
                 if (saleId > 0)
                 {
-                    // Thêm chi tiết hóa đơn
-                    bool success = true;
-                    foreach (var item in invoiceItems)
-                    {
-                        success &= saleRepo.AddSaleDetail(saleId, int.Parse(item.ProductId), item.Quantity, item.Price);
-                    }
-                
-                    if (success)
-                    {
-                        MessageBox.Show("Tạo hóa đơn thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        ClearForm();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Tạo hóa đơn thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    MessageBox.Show($"Tạo hóa đơn thành công! Mã hóa đơn: {saleId}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ClearForm();
                 }
                 else
                 {
@@ -288,6 +323,7 @@ namespace Sale_Management.Forms
         public string ProductId { get; set; }
         public string ProductName { get; set; }
         public decimal Price { get; set; }
+        public decimal OriginalPrice { get; set; }
         public int Quantity { get; set; }
         public string Unit { get; set; }
     }

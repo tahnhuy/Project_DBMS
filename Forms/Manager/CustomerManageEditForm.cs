@@ -84,7 +84,8 @@ namespace Sale_Management.Forms
                 }
                 else
                 {
-                    success = customerRepository.AddCustomer(name, phone, address, points);
+                    int newCustomerId = customerRepository.AddCustomer(name, phone, address, points);
+                    success = newCustomerId > 0;
                 }
                 if (success)
                 {

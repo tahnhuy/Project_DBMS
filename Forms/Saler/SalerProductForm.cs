@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -19,12 +20,49 @@ namespace Sale_Management.Forms
             LoadProducts();
         }
 
+        private decimal GetDiscountedPrice(int productId, decimal originalPrice)
+        {
+            try
+            {
+                string query = "SELECT dbo.GetDiscountedPrice(@ProductID, @OriginalPrice) as DiscountedPrice";
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@ProductID", SqlDbType.Int) { Value = productId },
+                    new SqlParameter("@OriginalPrice", SqlDbType.Decimal) { Value = originalPrice }
+                };
+
+                DataTable result = DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
+                if (result.Rows.Count > 0)
+                {
+                    return Convert.ToDecimal(result.Rows[0]["DiscountedPrice"]);
+                }
+                return originalPrice; // Fallback to original price if function fails
+            }
+            catch (Exception ex)
+            {
+                // Log error and return original price
+                System.Diagnostics.Debug.WriteLine($"Error getting discounted price: {ex.Message}");
+                return originalPrice;
+            }
+        }
+
         private void LoadProducts()
         {
             try
             {
                 ProductRepository productRepo = new ProductRepository();
                 DataTable dt = productRepo.GetAllProducts();
+                
+                // Thêm cột giá giảm
+                dt.Columns.Add("DiscountedPrice", typeof(decimal));
+                foreach (DataRow row in dt.Rows)
+                {
+                    int productId = Convert.ToInt32(row["ProductID"]);
+                    decimal originalPrice = Convert.ToDecimal(row["Price"]);
+                    decimal discountedPrice = GetDiscountedPrice(productId, originalPrice);
+                    row["DiscountedPrice"] = discountedPrice;
+                }
+                
                 dgv_Products.DataSource = dt;
                 ConfigureDataGridView();
             }
@@ -49,8 +87,13 @@ namespace Sale_Management.Forms
                         dgv_Products.Columns["ProductName"].HeaderText = "Tên sản phẩm";
                     if (dgv_Products.Columns.Contains("Price"))
                     {
-                        dgv_Products.Columns["Price"].HeaderText = "Giá";
+                        dgv_Products.Columns["Price"].HeaderText = "Giá gốc";
                         dgv_Products.Columns["Price"].DefaultCellStyle.Format = "N0";
+                    }
+                    if (dgv_Products.Columns.Contains("DiscountedPrice"))
+                    {
+                        dgv_Products.Columns["DiscountedPrice"].HeaderText = "Giá giảm";
+                        dgv_Products.Columns["DiscountedPrice"].DefaultCellStyle.Format = "N0";
                     }
                     if (dgv_Products.Columns.Contains("StockQuantity"))
                         dgv_Products.Columns["StockQuantity"].HeaderText = "Số lượng tồn";
@@ -75,14 +118,16 @@ namespace Sale_Management.Forms
             try
             {
                 ProductRepository productRepo = new ProductRepository();
-                DataTable dt;
-                if (string.IsNullOrWhiteSpace(searchText))
+                DataTable dt = productRepo.GetAllProducts(searchText);
+                
+                // Thêm cột giá giảm
+                dt.Columns.Add("DiscountedPrice", typeof(decimal));
+                foreach (DataRow row in dt.Rows)
                 {
-                    dt = productRepo.GetAllProducts();
-                }
-                else
-                {
-                    dt = productRepo.GetProductByName(searchText);
+                    int productId = Convert.ToInt32(row["ProductID"]);
+                    decimal originalPrice = Convert.ToDecimal(row["Price"]);
+                    decimal discountedPrice = GetDiscountedPrice(productId, originalPrice);
+                    row["DiscountedPrice"] = discountedPrice;
                 }
                 
                 dgv_Products.DataSource = dt;

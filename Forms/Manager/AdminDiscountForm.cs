@@ -148,7 +148,7 @@ namespace Sale_Management.Forms
         {
             try
             {
-                DataTable dt = discountRepository.GetAllDiscounts();
+                DataTable dt = discountRepository.GetActiveDiscounts();
                 Control[] dgvControls = this.Controls.Find("dgvDiscounts", true);
                 DataGridView dgv = dgvControls.Length > 0 ? dgvControls[0] as DataGridView : null;
                 if (dgv != null)
@@ -276,16 +276,18 @@ namespace Sale_Management.Forms
 
                 if (result == DialogResult.Yes)
                 {
-                    if (discountRepository.DeleteDiscount(discountId))
+                    try
                     {
-                        ApplyCurrentFilters();
-                        MessageBox.Show("Xóa chương trình giảm giá thành công!", "Thông báo", 
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        bool success = discountRepository.DeleteDiscount(discountId);
+                        if (success)
+                        {
+                            MessageBox.Show("Xóa chương trình giảm giá thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            LoadDiscounts(); // Reload the discount list
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        MessageBox.Show("Không thể xóa chương trình giảm giá!", "Lỗi", 
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Lỗi khi xóa chương trình giảm giá: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -324,7 +326,7 @@ namespace Sale_Management.Forms
         {
             try
             {
-                DataTable allDiscounts = discountRepository.GetAllDiscounts();
+                DataTable allDiscounts = discountRepository.GetActiveDiscounts();
                 DataView dv = allDiscounts.DefaultView;
 
                 // Lấy giá trị bộ lọc trạng thái

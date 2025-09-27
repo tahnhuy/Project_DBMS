@@ -343,6 +343,8 @@ begin
 end
 go
 
+use Minimart_SalesDB
+go
 create or alter procedure GetActiveDiscounts
 as
 begin
@@ -393,7 +395,7 @@ begin
             select 1 from dbo.Discounts 
             where ProductID = @ProductID 
               and IsActive = 1
-              and (
+              and (	
                   (@StartDate between StartDate and EndDate) or
                   (@EndDate between StartDate and EndDate) or
                   (StartDate between @StartDate and @EndDate) or
@@ -572,26 +574,6 @@ left join dbo.Discounts d on p.ProductID = d.ProductID
     and getdate() <= d.EndDate;
 go
 
--- Stored procedure để tìm kiếm khách hàng
-CREATE PROCEDURE SearchCustomers
-    @SearchTerm NVARCHAR(100)
-AS
-BEGIN
-    SET NOCOUNT ON;
-    
-    SELECT 
-        c.CustomerID,
-        c.CustomerName,
-        c.Phone,
-        c.Address,
-        c.LoyaltyPoints
-    FROM Customers c
-    WHERE c.CustomerName LIKE '%' + @SearchTerm + '%'
-       OR c.Phone LIKE '%' + @SearchTerm + '%'
-       OR c.Address LIKE '%' + @SearchTerm + '%'
-    ORDER BY c.CustomerName;
-END
-go
 
 -- ========== Account Management Procedures ==========
 create or alter procedure AddAccount
@@ -939,7 +921,7 @@ end
 go
 
 -- ========== Sales Management Procedures ==========
-create or alter procedure GetAllSales
+/*create or alter procedure GetAllSales
 as
 begin
     set nocount on;
@@ -955,6 +937,8 @@ begin
     order by s.SaleDate desc, s.SaleID desc;
 end
 go
+*/
+
 
 create or alter procedure GetSaleByID
     @SaleID int
@@ -1111,3 +1095,31 @@ print N'✅ Đã tạo thành công tất cả các stored procedure cần thi�
 print N'📋 Tổng cộng đã tạo 48 stored procedures cho hệ thống quản lý bán hàng'
 go
 
+CREATE OR ALTER VIEW ProductsWithDiscounts AS
+SELECT DISTINCT
+    p.ProductID,
+    p.ProductName,
+    p.Price AS OriginalPrice,
+    CASE 
+        WHEN d.DiscountType = 'percentage' THEN 
+            p.Price * (1 - d.DiscountValue / 100)
+        WHEN d.DiscountType = 'fixed' THEN 
+            p.Price - d.DiscountValue
+        ELSE p.Price
+    END AS DiscountedPrice,
+    CASE 
+        WHEN d.DiscountType = 'percentage' THEN d.DiscountValue
+        WHEN d.DiscountType = 'fixed' THEN (d.DiscountValue / p.Price) * 100
+        ELSE 0
+    END AS DiscountPercentage,
+    d.StartDate AS DiscountStartDate,
+    d.EndDate AS DiscountEndDate,
+    'Đang áp dụng' AS DiscountStatus
+FROM
+    Products p
+INNER JOIN Discounts d ON p.ProductID = d.ProductID
+WHERE 
+    d.StartDate <= GETDATE() 
+    AND d.EndDate >= GETDATE() 
+    AND d.DiscountValue > 0;  -- Chỉ lấy giảm giá có giá trị > 0
+GO
