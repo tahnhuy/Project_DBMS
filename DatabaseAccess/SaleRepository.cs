@@ -15,7 +15,7 @@ namespace Sale_Management.DatabaseAccess
                 {
                     new SqlParameter("@SaleID", SqlDbType.Int) { Value = saleId }
                 };
-                return DatabaseConnection.ExecuteQuery("GetSaleByID", CommandType.StoredProcedure, parameters);
+                return DatabaseConnection.ExecuteQuery("SELECT * FROM dbo.fnSales_ByID(@SaleID)", CommandType.Text, parameters);
             }
             catch (Exception ex)
             {
@@ -31,7 +31,7 @@ namespace Sale_Management.DatabaseAccess
                 {
                     new SqlParameter("@SaleID", SqlDbType.Int) { Value = saleId }
                 };
-                return DatabaseConnection.ExecuteQuery("GetSaleDetails", CommandType.StoredProcedure, parameters);
+                return DatabaseConnection.ExecuteQuery("SELECT * FROM dbo.fnSaleDetails_BySaleID(@SaleID)", CommandType.Text, parameters);
             }
             catch (Exception ex)
             {

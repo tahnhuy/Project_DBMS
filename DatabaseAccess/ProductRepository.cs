@@ -7,23 +7,11 @@ namespace Sale_Management.DatabaseAccess
 {
     public class ProductRepository
     {
-        public DataTable GetAllProducts(string searchQuery = null)
+        public DataTable GetAllProducts()
         {
             try
             {
-                if (string.IsNullOrEmpty(searchQuery))
-                {
-                    return DatabaseConnection.ExecuteQuery("GetAllProducts", CommandType.StoredProcedure, null);
-                }
-                else
-                {
-                    string query = "SELECT * FROM dbo.GetProductByName(@ProductName)";
-                    SqlParameter[] parameters = new SqlParameter[]
-                    {
-                        new SqlParameter("@ProductName", SqlDbType.NVarChar, 100) { Value = searchQuery ?? "" }
-                    };
-                    return DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
-                }
+                return DatabaseConnection.ExecuteQuery("SELECT * FROM dbo.fnProducts_All()", CommandType.Text, null);
             }
             catch (Exception ex)
             {
@@ -31,15 +19,32 @@ namespace Sale_Management.DatabaseAccess
             }
         }
 
+        public DataTable GetProductByName(string productName)
+        {
+            try
+            {
+                string query = "SELECT * FROM dbo.GetProductByName(@ProductName)";
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@ProductName", SqlDbType.NVarChar, 100) { Value = productName ?? string.Empty }
+                };
+                return DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi tìm kiếm sản phẩm theo tên: " + ex.Message);
+            }
+        }
+
         public DataTable GetProductById(int productId)
         {
             try
             {
-                string query = "SELECT * FROM dbo.GetProductByID(@ProductID)";
                 SqlParameter[] parameters = new SqlParameter[]
                 {
                     new SqlParameter("@ProductID", SqlDbType.Int) { Value = productId }
                 };
+                string query = "SELECT * FROM dbo.fnProducts_ByID(@ProductID)";
                 return DatabaseConnection.ExecuteQuery(query, CommandType.Text, parameters);
             }
             catch (Exception ex)

@@ -19,6 +19,7 @@ namespace Sale_Management
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AdminForm("admin", "manager"));
+            //Application.Run(new SalerForm("saler001", "saler"));
             //bool shouldContinue = true;
 
             //do

@@ -145,7 +145,15 @@ namespace Sale_Management.Forms
         {
             try
             {
-                DataTable dt = productRepository.GetAllProducts(searchText);
+                DataTable dt;
+                if (string.IsNullOrWhiteSpace(searchText))
+                {
+                    dt = productRepository.GetAllProducts();
+                }
+                else
+                {
+                    dt = productRepository.GetProductByName(searchText);
+                }
                 dgv_Products.DataSource = dt;
                 ConfigureDataGridView();
             }
@@ -173,11 +181,16 @@ namespace Sale_Management.Forms
                 DataTable dt;
                 if (string.IsNullOrWhiteSpace(searchText))
                 {
-                    dt = DatabaseConnection.ExecuteQuery("GetAllProducts", CommandType.StoredProcedure, null);
+                    dt = productRepository.GetAllProducts();
+                }
+                else if (int.TryParse(searchText, out int productId))
+                {
+                    dt = productRepository.GetProductById(productId);
                 }
                 else
                 {
-                    dt = productRepository.GetProductById(int.Parse(searchText));
+                    MessageBox.Show("Vui lòng nhập ID hợp lệ (số nguyên)", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
 
                 dgv_Products.DataSource = dt;

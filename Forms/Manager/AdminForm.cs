@@ -102,6 +102,27 @@ namespace Sale_Management
             }
         }
 
+        private void msi_AccManage_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Kiểm tra quyền admin/manager trước khi mở quản lý tài khoản
+                string roleLower = currentRole?.ToLower() ?? "";
+                if (roleLower != "admin" && roleLower != "manager")
+                {
+                    MessageBox.Show("Chỉ có Admin và Manager mới có thể quản lý tài khoản!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Mở AccountForm trong panel
+                ShowFormInPanel(new Forms.Manager.AccountForm());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi mở form quản lý tài khoản: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void tàiKhoảnToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowFormInPanel(new Forms.AccountInfoForm(currentUsername, currentRole));

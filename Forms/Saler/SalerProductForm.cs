@@ -118,7 +118,15 @@ namespace Sale_Management.Forms
             try
             {
                 ProductRepository productRepo = new ProductRepository();
-                DataTable dt = productRepo.GetAllProducts(searchText);
+                DataTable dt;
+                if (string.IsNullOrWhiteSpace(searchText))
+                {
+                    dt = productRepo.GetAllProducts();
+                }
+                else
+                {
+                    dt = productRepo.GetProductByName(searchText);
+                }
                 
                 // Thêm cột giá giảm
                 dt.Columns.Add("DiscountedPrice", typeof(decimal));
@@ -150,17 +158,14 @@ namespace Sale_Management.Forms
                 {
                     dt = productRepo.GetAllProducts();
                 }
+                else if (int.TryParse(searchText, out int productId))
+                {
+                    dt = productRepo.GetProductById(productId);
+                }
                 else
                 {
-                    if (int.TryParse(searchText, out int productId))
-                    {
-                        dt = productRepo.GetProductById(productId);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Vui lòng nhập ID hợp lệ (số nguyên)", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
+                    MessageBox.Show("Vui lòng nhập ID hợp lệ (số nguyên)", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
 
                 dgv_Products.DataSource = dt;

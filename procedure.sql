@@ -81,6 +81,24 @@ begin
 end
 go
 
+create or alter procedure GetProductByID
+    @ProductID int
+as
+begin
+    set nocount on;
+    select 
+        p.ProductID,
+        p.ProductName,
+        p.Price,
+        p.StockQuantity,
+        p.Unit,
+        dbo.GetDiscountedPrice(p.ProductID, p.Price) as DiscountedPrice,
+        case when dbo.GetDiscountedPrice(p.ProductID, p.Price) < p.Price then 1 else 0 end as HasDiscount
+    from dbo.Products p
+    where p.ProductID = @ProductID;
+end
+go
+
 create or alter procedure DeleteProduct
     @ProductID int
 as

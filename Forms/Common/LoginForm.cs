@@ -54,26 +54,15 @@ namespace Sale_Management.Forms
 					return;
 				}
 				
-				SqlParameter pUser = new SqlParameter("@Username", SqlDbType.NVarChar, 50) { Value = safeUsername };
-				SqlParameter pPass = new SqlParameter("@Password", SqlDbType.NVarChar, 255) { Value = safePassword };
-				DataTable dt = DatabaseConnection.ExecuteQuery("CheckLogin", CommandType.StoredProcedure, pUser, pPass);
+				DataTable dt = AccountRepository.CheckLogin(safeUsername, safePassword);
 
-				if (dt.Rows.Count == 0)
+				if (dt == null || dt.Rows.Count == 0)
 				{
-					MessageBox.Show("Không thể kết nối hoặc không có phản hồi từ máy chủ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show("Tên đăng nhập hoặc mật khẩu không đúng", "Đăng nhập thất bại", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return;
 				}
 
 				DataRow row = dt.Rows[0];
-				string result = row["Result"].ToString();
-				string message = row.Table.Columns.Contains("Message") ? row["Message"].ToString() : string.Empty;
-
-				if (result == "ERROR")
-				{
-					MessageBox.Show(string.IsNullOrEmpty(message) ? "Tên đăng nhập hoặc mật khẩu không đúng" : message, "Đăng nhập thất bại", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					return;
-				}
-
 				string role = row.Table.Columns.Contains("Role") ? row["Role"].ToString() : string.Empty;
 				if (string.IsNullOrEmpty(role))
 				{

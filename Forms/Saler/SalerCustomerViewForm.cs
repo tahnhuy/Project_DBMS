@@ -60,7 +60,7 @@ namespace Sale_Management.Forms
                 }
 
                 CustomerRepository customerRepo = new CustomerRepository();
-                DataTable dt = customerRepo.GetAllCustomers(searchTerm);
+                DataTable dt = customerRepo.GetCustomerByName(searchTerm);
                 dgv_Customers.DataSource = dt;
             }
             catch (Exception ex)

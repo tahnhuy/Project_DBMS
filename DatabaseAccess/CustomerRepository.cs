@@ -7,24 +7,12 @@ namespace Sale_Management.DatabaseAccess
 {
     public class CustomerRepository
     {
-        public DataTable GetAllCustomers(string searchQuery = null)
+        public DataTable GetAllCustomers()
         {
             try
             {
-                if (string.IsNullOrEmpty(searchQuery))
-                {
-                    // Gọi stored procedure GetAllCustomers
-                    return DatabaseConnection.ExecuteQuery("GetAllCustomers", CommandType.StoredProcedure);
-                }
-                else
-                {
-                    // Gọi stored procedure GetCustomerByName với search query
-                    SqlParameter[] parameters = new SqlParameter[]
-                    {
-                        new SqlParameter("@CustomerName", SqlDbType.NVarChar, 100) { Value = searchQuery }
-                    };
-                    return DatabaseConnection.ExecuteQuery("GetCustomerByName", CommandType.StoredProcedure, parameters);
-                }
+                // Dùng TVF fnCustomers_All
+                return DatabaseConnection.ExecuteQuery("SELECT * FROM dbo.fnCustomers_All()", CommandType.Text);
             }
             catch (Exception ex)
             {
@@ -40,7 +28,7 @@ namespace Sale_Management.DatabaseAccess
                 {
                     new SqlParameter("@CustomerID", SqlDbType.Int) { Value = customerId }
                 };
-                return DatabaseConnection.ExecuteQuery("GetCustomerByID", CommandType.StoredProcedure, parameters);
+                return DatabaseConnection.ExecuteQuery("SELECT * FROM dbo.fnCustomers_ByID(@CustomerID)", CommandType.Text, parameters);
             }
             catch (Exception ex)
             {
@@ -56,7 +44,7 @@ namespace Sale_Management.DatabaseAccess
                 {
                     new SqlParameter("@CustomerName", SqlDbType.NVarChar, 100) { Value = customerName }
                 };
-                return DatabaseConnection.ExecuteQuery("GetCustomerByName", CommandType.StoredProcedure, parameters);
+                return DatabaseConnection.ExecuteQuery("SELECT * FROM dbo.fnCustomers_ByName(@CustomerName)", CommandType.Text, parameters);
             }
             catch (Exception ex)
             {

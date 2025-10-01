@@ -10,7 +10,7 @@ namespace Sale_Management.DatabaseAccess
         {
             try
             {
-                return DatabaseConnection.ExecuteQuery("GetActiveDiscounts", CommandType.StoredProcedure, null);
+                return DatabaseConnection.ExecuteQuery("SELECT * FROM dbo.fnDiscounts_Active()", CommandType.Text, null);
             }
             catch (Exception ex)
             {
@@ -26,7 +26,7 @@ namespace Sale_Management.DatabaseAccess
                 {
                     new SqlParameter("@ProductID", SqlDbType.Int) { Value = productId }
                 };
-                return DatabaseConnection.ExecuteQuery("GetDiscountsByProduct", CommandType.StoredProcedure, parameters);
+                return DatabaseConnection.ExecuteQuery("SELECT * FROM dbo.fnDiscounts_ByProduct(@ProductID)", CommandType.Text, parameters);
             }
             catch (Exception ex)
             {

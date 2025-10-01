@@ -1,4 +1,4 @@
-﻿namespace Sale_Management.Forms
+﻿namespace Sale_Management.Forms.Manager
 {
     partial class AccountManageEditForm
     {
@@ -28,151 +28,284 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.txt_Username = new System.Windows.Forms.TextBox();
+            this.txt_Password = new System.Windows.Forms.TextBox();
+            this.txt_ConfirmPassword = new System.Windows.Forms.TextBox();
+            this.cmb_Role = new System.Windows.Forms.ComboBox();
+            this.btn_Update = new System.Windows.Forms.Button();
+            this.btn_Cancel = new System.Windows.Forms.Button();
+            this.btn_Clear = new System.Windows.Forms.Button();
+            this.chk_ShowPassword = new System.Windows.Forms.CheckBox();
+            this.lbl_Username = new System.Windows.Forms.Label();
+            this.lbl_Password = new System.Windows.Forms.Label();
+            this.lbl_ConfirmPassword = new System.Windows.Forms.Label();
+            this.lbl_Role = new System.Windows.Forms.Label();
+            this.lbl_FullName = new System.Windows.Forms.Label();
+            this.txt_FullName = new System.Windows.Forms.TextBox();
+            this.lbl_Phone = new System.Windows.Forms.Label();
+            this.txt_Phone = new System.Windows.Forms.TextBox();
+            this.lbl_Address = new System.Windows.Forms.Label();
+            this.txt_Address = new System.Windows.Forms.TextBox();
+            this.lbl_Position = new System.Windows.Forms.Label();
+            this.txt_Position = new System.Windows.Forms.TextBox();
+            this.lbl_Customer = new System.Windows.Forms.Label();
+            this.cmb_Customer = new System.Windows.Forms.ComboBox();
+            this.lbl_Employee = new System.Windows.Forms.Label();
+            this.cmb_Employee = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
-            // textBox1
+            // txt_Username
             // 
-            this.textBox1.Location = new System.Drawing.Point(150, 30);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(200, 20);
-            this.textBox1.TabIndex = 0;
+            this.txt_Username.Location = new System.Drawing.Point(150, 30);
+            this.txt_Username.Name = "txt_Username";
+            this.txt_Username.Size = new System.Drawing.Size(200, 20);
+            this.txt_Username.TabIndex = 0;
             // 
-            // textBox2
+            // txt_Password
             // 
-            this.textBox2.Location = new System.Drawing.Point(150, 80);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.PasswordChar = '*';
-            this.textBox2.Size = new System.Drawing.Size(200, 20);
-            this.textBox2.TabIndex = 1;
+            this.txt_Password.Location = new System.Drawing.Point(150, 180);
+            this.txt_Password.Name = "txt_Password";
+            this.txt_Password.PasswordChar = '*';
+            this.txt_Password.Size = new System.Drawing.Size(200, 20);
+            this.txt_Password.TabIndex = 4;
             // 
-            // textBox3
+            // txt_ConfirmPassword
             // 
-            this.textBox3.Location = new System.Drawing.Point(150, 130);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.PasswordChar = '*';
-            this.textBox3.Size = new System.Drawing.Size(200, 20);
-            this.textBox3.TabIndex = 2;
+            this.txt_ConfirmPassword.Location = new System.Drawing.Point(150, 210);
+            this.txt_ConfirmPassword.Name = "txt_ConfirmPassword";
+            this.txt_ConfirmPassword.PasswordChar = '*';
+            this.txt_ConfirmPassword.Size = new System.Drawing.Size(200, 20);
+            this.txt_ConfirmPassword.TabIndex = 5;
             // 
-            // comboBox1
+            // cmb_Role
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.cmb_Role.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_Role.FormattingEnabled = true;
+            this.cmb_Role.Items.AddRange(new object[] {
             "manager",
             "saler",
             "customer"});
-            this.comboBox1.Location = new System.Drawing.Point(150, 180);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(200, 21);
-            this.comboBox1.TabIndex = 3;
+            this.cmb_Role.Location = new System.Drawing.Point(150, 240);
+            this.cmb_Role.Name = "cmb_Role";
+            this.cmb_Role.Size = new System.Drawing.Size(200, 21);
+            this.cmb_Role.TabIndex = 6;
+            this.cmb_Role.SelectedIndexChanged += new System.EventHandler(this.cmb_Role_SelectedIndexChanged);
             // 
-            // button1
+            // btn_Update
             // 
-            this.button1.Location = new System.Drawing.Point(50, 250);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Cập nhật";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btn_Update.Location = new System.Drawing.Point(50, 350);
+            this.btn_Update.Name = "btn_Update";
+            this.btn_Update.Size = new System.Drawing.Size(75, 23);
+            this.btn_Update.TabIndex = 7;
+            this.btn_Update.Text = "Cập nhật";
+            this.btn_Update.UseVisualStyleBackColor = true;
+            this.btn_Update.Click += new System.EventHandler(this.btn_Update_Click);
             // 
-            // button2
+            // btn_Cancel
             // 
-            this.button2.Location = new System.Drawing.Point(150, 250);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Hủy";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.btn_Cancel.Location = new System.Drawing.Point(150, 350);
+            this.btn_Cancel.Name = "btn_Cancel";
+            this.btn_Cancel.Size = new System.Drawing.Size(75, 23);
+            this.btn_Cancel.TabIndex = 8;
+            this.btn_Cancel.Text = "Hủy";
+            this.btn_Cancel.UseVisualStyleBackColor = true;
+            this.btn_Cancel.Click += new System.EventHandler(this.btn_Cancel_Click);
             // 
-            // button3
+            // btn_Clear
             // 
-            this.button3.Location = new System.Drawing.Point(250, 250);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "Xóa";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.btn_Clear.Location = new System.Drawing.Point(250, 350);
+            this.btn_Clear.Name = "btn_Clear";
+            this.btn_Clear.Size = new System.Drawing.Size(75, 23);
+            this.btn_Clear.TabIndex = 9;
+            this.btn_Clear.Text = "Xóa";
+            this.btn_Clear.UseVisualStyleBackColor = true;
+            this.btn_Clear.Click += new System.EventHandler(this.btn_Clear_Click);
             // 
-            // checkBox1
+            // chk_ShowPassword
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(150, 210);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(109, 17);
-            this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "Hiển thị mật khẩu";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.chk_ShowPassword.AutoSize = true;
+            this.chk_ShowPassword.Location = new System.Drawing.Point(150, 280);
+            this.chk_ShowPassword.Name = "chk_ShowPassword";
+            this.chk_ShowPassword.Size = new System.Drawing.Size(109, 17);
+            this.chk_ShowPassword.TabIndex = 10;
+            this.chk_ShowPassword.Text = "Hiển thị mật khẩu";
+            this.chk_ShowPassword.UseVisualStyleBackColor = true;
+            this.chk_ShowPassword.CheckedChanged += new System.EventHandler(this.chk_ShowPassword_CheckedChanged);
             // 
-            // label1
+            // lbl_Username
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(50, 33);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 13);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "Tên đăng nhập:";
+            this.lbl_Username.AutoSize = true;
+            this.lbl_Username.Location = new System.Drawing.Point(50, 33);
+            this.lbl_Username.Name = "lbl_Username";
+            this.lbl_Username.Size = new System.Drawing.Size(81, 13);
+            this.lbl_Username.TabIndex = 11;
+            this.lbl_Username.Text = "Tên đăng nhập:";
             // 
-            // label2
+            // lbl_Password
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(50, 83);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(74, 13);
-            this.label2.TabIndex = 9;
-            this.label2.Text = "Mật khẩu mới:";
+            this.lbl_Password.AutoSize = true;
+            this.lbl_Password.Location = new System.Drawing.Point(50, 183);
+            this.lbl_Password.Name = "lbl_Password";
+            this.lbl_Password.Size = new System.Drawing.Size(74, 13);
+            this.lbl_Password.TabIndex = 12;
+            this.lbl_Password.Text = "Mật khẩu mới:";
             // 
-            // label3
+            // lbl_ConfirmPassword
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(50, 133);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(100, 13);
-            this.label3.TabIndex = 10;
-            this.label3.Text = "Xác nhận mật khẩu:";
+            this.lbl_ConfirmPassword.AutoSize = true;
+            this.lbl_ConfirmPassword.Location = new System.Drawing.Point(50, 213);
+            this.lbl_ConfirmPassword.Name = "lbl_ConfirmPassword";
+            this.lbl_ConfirmPassword.Size = new System.Drawing.Size(100, 13);
+            this.lbl_ConfirmPassword.TabIndex = 13;
+            this.lbl_ConfirmPassword.Text = "Xác nhận mật khẩu:";
             // 
-            // label4
+            // lbl_Role
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(50, 183);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(47, 13);
-            this.label4.TabIndex = 11;
-            this.label4.Text = "Vai trò:";
+            this.lbl_Role.AutoSize = true;
+            this.lbl_Role.Location = new System.Drawing.Point(50, 243);
+            this.lbl_Role.Name = "lbl_Role";
+            this.lbl_Role.Size = new System.Drawing.Size(47, 13);
+            this.lbl_Role.TabIndex = 14;
+            this.lbl_Role.Text = "Vai trò:";
             // 
-            // AccountEditForm
+            // lbl_FullName
+            // 
+            this.lbl_FullName.AutoSize = true;
+            this.lbl_FullName.Location = new System.Drawing.Point(50, 63);
+            this.lbl_FullName.Name = "lbl_FullName";
+            this.lbl_FullName.Size = new System.Drawing.Size(42, 13);
+            this.lbl_FullName.TabIndex = 15;
+            this.lbl_FullName.Text = "Họ tên:";
+            // 
+            // txt_FullName
+            // 
+            this.txt_FullName.Location = new System.Drawing.Point(150, 60);
+            this.txt_FullName.Name = "txt_FullName";
+            this.txt_FullName.ReadOnly = true;
+            this.txt_FullName.Size = new System.Drawing.Size(200, 20);
+            this.txt_FullName.TabIndex = 1;
+            // 
+            // lbl_Phone
+            // 
+            this.lbl_Phone.AutoSize = true;
+            this.lbl_Phone.Location = new System.Drawing.Point(50, 93);
+            this.lbl_Phone.Name = "lbl_Phone";
+            this.lbl_Phone.Size = new System.Drawing.Size(73, 13);
+            this.lbl_Phone.TabIndex = 16;
+            this.lbl_Phone.Text = "Số điện thoại:";
+            // 
+            // txt_Phone
+            // 
+            this.txt_Phone.Location = new System.Drawing.Point(150, 90);
+            this.txt_Phone.Name = "txt_Phone";
+            this.txt_Phone.ReadOnly = true;
+            this.txt_Phone.Size = new System.Drawing.Size(200, 20);
+            this.txt_Phone.TabIndex = 2;
+            // 
+            // lbl_Address
+            // 
+            this.lbl_Address.AutoSize = true;
+            this.lbl_Address.Location = new System.Drawing.Point(50, 123);
+            this.lbl_Address.Name = "lbl_Address";
+            this.lbl_Address.Size = new System.Drawing.Size(43, 13);
+            this.lbl_Address.TabIndex = 17;
+            this.lbl_Address.Text = "Địa chỉ:";
+            // 
+            // txt_Address
+            // 
+            this.txt_Address.Location = new System.Drawing.Point(150, 120);
+            this.txt_Address.Name = "txt_Address";
+            this.txt_Address.ReadOnly = true;
+            this.txt_Address.Size = new System.Drawing.Size(200, 20);
+            this.txt_Address.TabIndex = 3;
+            // 
+            // lbl_Position
+            // 
+            this.lbl_Position.AutoSize = true;
+            this.lbl_Position.Location = new System.Drawing.Point(50, 153);
+            this.lbl_Position.Name = "lbl_Position";
+            this.lbl_Position.Size = new System.Drawing.Size(50, 13);
+            this.lbl_Position.TabIndex = 18;
+            this.lbl_Position.Text = "Chức vụ:";
+            // 
+            // txt_Position
+            // 
+            this.txt_Position.Location = new System.Drawing.Point(150, 150);
+            this.txt_Position.Name = "txt_Position";
+            this.txt_Position.ReadOnly = true;
+            this.txt_Position.Size = new System.Drawing.Size(200, 20);
+            this.txt_Position.TabIndex = 4;
+            // 
+            // lbl_Customer
+            // 
+            this.lbl_Customer.AutoSize = true;
+            this.lbl_Customer.Location = new System.Drawing.Point(50, 310);
+            this.lbl_Customer.Name = "lbl_Customer";
+            this.lbl_Customer.Size = new System.Drawing.Size(65, 13);
+            this.lbl_Customer.TabIndex = 19;
+            this.lbl_Customer.Text = "Khách hàng:";
+            this.lbl_Customer.Visible = false;
+            // 
+            // cmb_Customer
+            // 
+            this.cmb_Customer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_Customer.FormattingEnabled = true;
+            this.cmb_Customer.Location = new System.Drawing.Point(150, 307);
+            this.cmb_Customer.Name = "cmb_Customer";
+            this.cmb_Customer.Size = new System.Drawing.Size(200, 21);
+            this.cmb_Customer.TabIndex = 20;
+            this.cmb_Customer.Visible = false;
+            // 
+            // lbl_Employee
+            // 
+            this.lbl_Employee.AutoSize = true;
+            this.lbl_Employee.Location = new System.Drawing.Point(50, 310);
+            this.lbl_Employee.Name = "lbl_Employee";
+            this.lbl_Employee.Size = new System.Drawing.Size(56, 13);
+            this.lbl_Employee.TabIndex = 21;
+            this.lbl_Employee.Text = "Nhân viên:";
+            this.lbl_Employee.Visible = false;
+            // 
+            // cmb_Employee
+            // 
+            this.cmb_Employee.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_Employee.FormattingEnabled = true;
+            this.cmb_Employee.Location = new System.Drawing.Point(150, 307);
+            this.cmb_Employee.Name = "cmb_Employee";
+            this.cmb_Employee.Size = new System.Drawing.Size(200, 21);
+            this.cmb_Employee.TabIndex = 22;
+            this.cmb_Employee.Visible = false;
+            // 
+            // AccountManageEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(400, 300);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Name = "AccountEditForm";
+            this.ClientSize = new System.Drawing.Size(400, 400);
+            this.Controls.Add(this.cmb_Employee);
+            this.Controls.Add(this.lbl_Employee);
+            this.Controls.Add(this.cmb_Customer);
+            this.Controls.Add(this.lbl_Customer);
+            this.Controls.Add(this.txt_Position);
+            this.Controls.Add(this.lbl_Position);
+            this.Controls.Add(this.txt_Address);
+            this.Controls.Add(this.lbl_Address);
+            this.Controls.Add(this.txt_Phone);
+            this.Controls.Add(this.lbl_Phone);
+            this.Controls.Add(this.txt_FullName);
+            this.Controls.Add(this.lbl_FullName);
+            this.Controls.Add(this.lbl_Role);
+            this.Controls.Add(this.lbl_ConfirmPassword);
+            this.Controls.Add(this.lbl_Password);
+            this.Controls.Add(this.lbl_Username);
+            this.Controls.Add(this.chk_ShowPassword);
+            this.Controls.Add(this.btn_Clear);
+            this.Controls.Add(this.btn_Cancel);
+            this.Controls.Add(this.btn_Update);
+            this.Controls.Add(this.cmb_Role);
+            this.Controls.Add(this.txt_ConfirmPassword);
+            this.Controls.Add(this.txt_Password);
+            this.Controls.Add(this.txt_Username);
+            this.Name = "AccountManageEditForm";
             this.Text = "Chỉnh sửa tài khoản";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -181,17 +314,29 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox txt_Username;
+        private System.Windows.Forms.TextBox txt_Password;
+        private System.Windows.Forms.TextBox txt_ConfirmPassword;
+        private System.Windows.Forms.ComboBox cmb_Role;
+        private System.Windows.Forms.Button btn_Update;
+        private System.Windows.Forms.Button btn_Cancel;
+        private System.Windows.Forms.Button btn_Clear;
+        private System.Windows.Forms.CheckBox chk_ShowPassword;
+        private System.Windows.Forms.Label lbl_Username;
+        private System.Windows.Forms.Label lbl_Password;
+        private System.Windows.Forms.Label lbl_ConfirmPassword;
+        private System.Windows.Forms.Label lbl_Role;
+        private System.Windows.Forms.Label lbl_FullName;
+        private System.Windows.Forms.TextBox txt_FullName;
+        private System.Windows.Forms.Label lbl_Phone;
+        private System.Windows.Forms.TextBox txt_Phone;
+        private System.Windows.Forms.Label lbl_Address;
+        private System.Windows.Forms.TextBox txt_Address;
+        private System.Windows.Forms.Label lbl_Position;
+        private System.Windows.Forms.TextBox txt_Position;
+        private System.Windows.Forms.Label lbl_Customer;
+        private System.Windows.Forms.ComboBox cmb_Customer;
+        private System.Windows.Forms.Label lbl_Employee;
+        private System.Windows.Forms.ComboBox cmb_Employee;
     }
 }

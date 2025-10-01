@@ -29,6 +29,10 @@ namespace Sale_Management.Forms
         private void InitializeComponent()
         {
             this.groupBox_CreateAccount = new System.Windows.Forms.GroupBox();
+            this.txt_CustomerID = new System.Windows.Forms.TextBox();
+            this.txt_EmployeeID = new System.Windows.Forms.TextBox();
+            this.lbl_CustomerID = new System.Windows.Forms.Label();
+            this.lbl_EmployeeID = new System.Windows.Forms.Label();
             this.btn_Clear = new System.Windows.Forms.Button();
             this.btn_Create = new System.Windows.Forms.Button();
             this.cmb_Role = new System.Windows.Forms.ComboBox();
@@ -44,6 +48,10 @@ namespace Sale_Management.Forms
             // 
             // groupBox_CreateAccount
             // 
+            this.groupBox_CreateAccount.Controls.Add(this.txt_CustomerID);
+            this.groupBox_CreateAccount.Controls.Add(this.txt_EmployeeID);
+            this.groupBox_CreateAccount.Controls.Add(this.lbl_CustomerID);
+            this.groupBox_CreateAccount.Controls.Add(this.lbl_EmployeeID);
             this.groupBox_CreateAccount.Controls.Add(this.btn_Clear);
             this.groupBox_CreateAccount.Controls.Add(this.btn_Create);
             this.groupBox_CreateAccount.Controls.Add(this.cmb_Role);
@@ -58,14 +66,58 @@ namespace Sale_Management.Forms
             this.groupBox_CreateAccount.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox_CreateAccount.Name = "groupBox_CreateAccount";
             this.groupBox_CreateAccount.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox_CreateAccount.Size = new System.Drawing.Size(533, 400);
+            this.groupBox_CreateAccount.Size = new System.Drawing.Size(533, 500);
             this.groupBox_CreateAccount.TabIndex = 0;
             this.groupBox_CreateAccount.TabStop = false;
             this.groupBox_CreateAccount.Text = "Tạo tài khoản mới";
             // 
+            // txt_CustomerID
+            // 
+            this.txt_CustomerID.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.txt_CustomerID.Location = new System.Drawing.Point(231, 310);
+            this.txt_CustomerID.Margin = new System.Windows.Forms.Padding(4);
+            this.txt_CustomerID.Name = "txt_CustomerID";
+            this.txt_CustomerID.Size = new System.Drawing.Size(265, 38);
+            this.txt_CustomerID.TabIndex = 10;
+            this.txt_CustomerID.Visible = false;
+            // 
+            // txt_EmployeeID
+            // 
+            this.txt_EmployeeID.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.txt_EmployeeID.Location = new System.Drawing.Point(231, 310);
+            this.txt_EmployeeID.Margin = new System.Windows.Forms.Padding(4);
+            this.txt_EmployeeID.Name = "txt_EmployeeID";
+            this.txt_EmployeeID.Size = new System.Drawing.Size(265, 38);
+            this.txt_EmployeeID.TabIndex = 11;
+            this.txt_EmployeeID.Visible = false;
+            // 
+            // lbl_CustomerID
+            // 
+            this.lbl_CustomerID.AutoSize = true;
+            this.lbl_CustomerID.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.lbl_CustomerID.Location = new System.Drawing.Point(100, 313);
+            this.lbl_CustomerID.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbl_CustomerID.Name = "lbl_CustomerID";
+            this.lbl_CustomerID.Size = new System.Drawing.Size(123, 31);
+            this.lbl_CustomerID.TabIndex = 12;
+            this.lbl_CustomerID.Text = "Customer ID:";
+            this.lbl_CustomerID.Visible = false;
+            // 
+            // lbl_EmployeeID
+            // 
+            this.lbl_EmployeeID.AutoSize = true;
+            this.lbl_EmployeeID.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.lbl_EmployeeID.Location = new System.Drawing.Point(100, 313);
+            this.lbl_EmployeeID.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbl_EmployeeID.Name = "lbl_EmployeeID";
+            this.lbl_EmployeeID.Size = new System.Drawing.Size(123, 31);
+            this.lbl_EmployeeID.TabIndex = 13;
+            this.lbl_EmployeeID.Text = "Employee ID:";
+            this.lbl_EmployeeID.Visible = false;
+            // 
             // btn_Clear
             // 
-            this.btn_Clear.Location = new System.Drawing.Point(304, 336);
+            this.btn_Clear.Location = new System.Drawing.Point(304, 436);
             this.btn_Clear.Margin = new System.Windows.Forms.Padding(4);
             this.btn_Clear.Name = "btn_Clear";
             this.btn_Clear.Size = new System.Drawing.Size(161, 55);
@@ -76,7 +128,7 @@ namespace Sale_Management.Forms
             // 
             // btn_Create
             // 
-            this.btn_Create.Location = new System.Drawing.Point(61, 336);
+            this.btn_Create.Location = new System.Drawing.Point(61, 436);
             this.btn_Create.Margin = new System.Windows.Forms.Padding(4);
             this.btn_Create.Name = "btn_Create";
             this.btn_Create.Size = new System.Drawing.Size(206, 55);
@@ -99,6 +151,7 @@ namespace Sale_Management.Forms
             this.cmb_Role.Name = "cmb_Role";
             this.cmb_Role.Size = new System.Drawing.Size(265, 39);
             this.cmb_Role.TabIndex = 7;
+            this.cmb_Role.SelectedIndexChanged += new System.EventHandler(this.cmb_Role_SelectedIndexChanged);
             // 
             // txt_ConfirmPassword
             // 
@@ -191,6 +244,10 @@ namespace Sale_Management.Forms
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox_CreateAccount;
+        private System.Windows.Forms.TextBox txt_CustomerID;
+        private System.Windows.Forms.TextBox txt_EmployeeID;
+        private System.Windows.Forms.Label lbl_CustomerID;
+        private System.Windows.Forms.Label lbl_EmployeeID;
         private System.Windows.Forms.Button btn_Clear;
         private System.Windows.Forms.Button btn_Create;
         private System.Windows.Forms.ComboBox cmb_Role;

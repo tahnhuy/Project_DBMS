@@ -13,9 +13,69 @@ namespace Sale_Management.Forms
 {
     public partial class AccountCreateForm : Form
     {
+        private AccountRepository accountRepository;
+        
         public AccountCreateForm()
         {
             InitializeComponent();
+            accountRepository = new AccountRepository();
+            SetupForm();
+        }
+
+        private void SetupForm()
+        {
+            try
+            {
+                // Thiết lập ComboBox vai trò
+                cmb_Role.Items.Clear();
+                cmb_Role.Items.Add("manager");
+                cmb_Role.Items.Add("saler");
+                cmb_Role.Items.Add("customer");
+                cmb_Role.SelectedIndex = 0;
+
+                // Load giá trị mặc định cho CustomerID và EmployeeID
+                LoadDefaultIDs();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi thiết lập form: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LoadDefaultIDs()
+        {
+            try
+            {
+                // Không cần load ID mặc định nữa vì stored procedure sẽ tự động tạo
+                // Chỉ cần clear các textbox
+                txt_CustomerID.Clear();
+                txt_EmployeeID.Clear();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi tải ID mặc định: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void cmb_Role_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (cmb_Role.SelectedItem != null)
+                {
+                    string role = cmb_Role.SelectedItem.ToString();
+                    
+                    // Ẩn tất cả các TextBox vì stored procedure sẽ tự động tạo Customer/Employee
+                    lbl_CustomerID.Visible = false;
+                    txt_CustomerID.Visible = false;
+                    lbl_EmployeeID.Visible = false;
+                    txt_EmployeeID.Visible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thay đổi vai trò: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btn_Create_Click(object sender, EventArgs e)
@@ -37,6 +97,13 @@ namespace Sale_Management.Forms
                     return;
                 }
 
+                if (txt_Password.Text.Length < 6)
+                {
+                    MessageBox.Show("Mật khẩu phải có ít nhất 6 ký tự!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txt_Password.Focus();
+                    return;
+                }
+
                 if (txt_Password.Text != txt_ConfirmPassword.Text)
                 {
                     MessageBox.Show("Mật khẩu xác nhận không khớp!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -51,31 +118,34 @@ namespace Sale_Management.Forms
                     return;
                 }
 
-                // Get creator username (you might want to get this from login session)
-                string creatorUsername = "admin"; // Default creator, should be from login session
+                string role = cmb_Role.SelectedItem.ToString();
 
-                // Create account
-                DataTable result = AccountRepository.AddAccount(
-                    creatorUsername,
+                // Check if username already exists
+                if (accountRepository.IsUsernameExists(txt_Username.Text.Trim()))
+                {
+                    MessageBox.Show("Tên đăng nhập đã được sử dụng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txt_Username.Focus();
+                    return;
+                }
+
+                // Create account - stored procedure sẽ tự động tạo Customer/Employee
+                bool success = accountRepository.AddAccount(
                     txt_Username.Text.Trim(),
                     txt_Password.Text,
-                    cmb_Role.SelectedItem.ToString()
+                    role,
+                    null, // CustomerID = null (stored procedure sẽ tự động tạo)
+                    null  // EmployeeID = null (stored procedure sẽ tự động tạo)
                 );
 
-                if (result.Rows.Count > 0)
+                if (success)
                 {
-                    string resultStatus = result.Rows[0]["Result"].ToString();
-                    string message = result.Rows[0]["Message"].ToString();
-
-                    if (resultStatus == "SUCCESS")
-                    {
-                        MessageBox.Show(message, "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        ClearForm();
-                    }
-                    else
-                    {
-                        MessageBox.Show(message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    MessageBox.Show("Tạo tài khoản thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Không thể tạo tài khoản. Vui lòng kiểm tra lại.\n\nChi tiết: Stored procedure trả về false", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
@@ -94,8 +164,18 @@ namespace Sale_Management.Forms
             txt_Username.Clear();
             txt_Password.Clear();
             txt_ConfirmPassword.Clear();
-            cmb_Role.SelectedIndex = -1;
+            cmb_Role.SelectedIndex = 0;
+            
+            // Reload default IDs
+            LoadDefaultIDs();
+            
             txt_Username.Focus();
+        }
+
+        private void btn_Cancel_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
     }
 }

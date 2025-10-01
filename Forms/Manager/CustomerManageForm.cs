@@ -26,7 +26,7 @@ namespace Sale_Management.Forms
         {
             try
             {
-                DataTable dt = DatabaseConnection.ExecuteQuery("GetAllCustomers", CommandType.StoredProcedure, null);
+                DataTable dt = customerRepository.GetAllCustomers();
                 dgv_Customers.DataSource = dt;
                 ConfigureDataGridView();
             } catch (Exception ex)
@@ -55,12 +55,13 @@ namespace Sale_Management.Forms
                 DataTable dt;
                 if (string.IsNullOrWhiteSpace(searchText))
                 {
-                    dt = DatabaseConnection.ExecuteQuery("GetAllCustomers", CommandType.StoredProcedure, null);
+                    dt = customerRepository.GetAllCustomers();
                 }
                 else
                 {
                     dt = customerRepository.GetCustomerByName(searchText);
                 }
+                
                 dgv_Customers.DataSource = dt;
             }
             catch (Exception ex)
@@ -91,14 +92,22 @@ namespace Sale_Management.Forms
             try
             {
                 DataTable dt;
-                if (string.IsNullOrWhiteSpace(id))
+                var trimmed = (id ?? string.Empty).Trim();
+                if (string.IsNullOrWhiteSpace(trimmed))
                 {
-                    dt = DatabaseConnection.ExecuteQuery("GetAllCustomers", CommandType.StoredProcedure, null);
+                    dt = customerRepository.GetAllCustomers();
+                }
+                else if (int.TryParse(trimmed, out int customerId))
+                {
+                    dt = customerRepository.GetCustomerById(customerId);
                 }
                 else
                 {
-                    dt = customerRepository.GetCustomerById(int.Parse(id));
+                    // Không phải số: hiển thị tất cả hoặc giữ nguyên bảng hiện tại
+                    MessageBox.Show("ID phải là số.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    dt = customerRepository.GetAllCustomers();
                 }
+                
                 dgv_Customers.DataSource = dt;
             }
             catch (Exception ex)

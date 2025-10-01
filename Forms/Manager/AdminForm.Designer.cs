@@ -50,6 +50,7 @@
             this.msi_Product,
             this.msi_Customer,
             this.msi_Discount,
+            this.msi_AccManage,
             this.msi_Statistics,
             this.tàiKhoảnToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -84,6 +85,7 @@
             this.msi_AccManage.Name = "msi_AccManage";
             this.msi_AccManage.Size = new System.Drawing.Size(217, 36);
             this.msi_AccManage.Text = "Quản lí tài khoản";
+            this.msi_AccManage.Click += new System.EventHandler(this.msi_AccManage_Click);
             // 
             // msi_createAcc
             // 

@@ -644,6 +644,27 @@ BEGIN
 END
 GO
 
+-- 23. GetProductByID
+use Minimart_SalesDB
+go
+create or alter procedure GetProductByID
+    @ProductID int
+as
+begin
+    set nocount on;
+    select 
+        p.ProductID,
+        p.ProductName,
+        p.Price,
+        p.StockQuantity,
+        p.Unit,
+        dbo.GetDiscountedPrice(p.ProductID, p.Price) as DiscountedPrice,
+        case when dbo.GetDiscountedPrice(p.ProductID, p.Price) < p.Price then 1 else 0 end as HasDiscount
+    from dbo.Products p
+    where p.ProductID = @ProductID;
+end
+go
+
 PRINT N'✅ Đã tạo thành công 22 stored procedures cần thiết!'
 PRINT N'📋 Tổng cộng:'
 PRINT N'   - Products: 4 procedures'
