@@ -82,12 +82,12 @@ namespace Sale_Management.DatabaseAccess
             try
             {
                 DataTable result = DatabaseConnection.ExecuteQuery("AddAccount", CommandType.StoredProcedure, parameters);
-                
+
                 if (result != null && result.Rows.Count > 0)
                 {
                     string resultStatus = result.Rows[0]["Result"].ToString();
                     string message = result.Rows[0]["Message"].ToString();
-                    
+
                     if (resultStatus == "SUCCESS")
                     {
                         return true;
@@ -118,7 +118,7 @@ namespace Sale_Management.DatabaseAccess
             };
 
             DataTable result = DatabaseConnection.ExecuteQuery("UpdateAccount", CommandType.StoredProcedure, parameters);
-            
+
             if (result != null && result.Rows.Count > 0)
             {
                 string resultStatus = result.Rows[0]["Result"].ToString();
@@ -135,7 +135,7 @@ namespace Sale_Management.DatabaseAccess
             };
 
             DataTable result = DatabaseConnection.ExecuteQuery("DeleteAccount", CommandType.StoredProcedure, parameters);
-            
+
             if (result != null && result.Rows.Count > 0)
             {
                 string resultStatus = result.Rows[0]["Result"].ToString();
@@ -184,15 +184,83 @@ namespace Sale_Management.DatabaseAccess
             SqlParameter[] parameters = {
                 new SqlParameter("@Username", SqlDbType.NVarChar, 50) { Value = username }
             };
-            
+
             DataTable result = DatabaseConnection.ExecuteQuery("SELECT COUNT(*) as Count FROM dbo.Account WHERE Username = @Username", CommandType.Text, parameters);
-            
+
             if (result != null && result.Rows.Count > 0)
             {
                 int count = Convert.ToInt32(result.Rows[0]["Count"]);
                 return count > 0;
             }
             return false;
+        }
+
+        // Xóa SQL Account (Login và User)
+        public bool DeleteSQLAccount(string username)
+        {
+            SqlParameter[] parameters = {
+                new SqlParameter("@Username", SqlDbType.NVarChar, 50) { Value = username }
+            };
+
+            try
+            {
+                DataTable result = DatabaseConnection.ExecuteQuery("DeleteSQLAccount", CommandType.StoredProcedure, parameters);
+
+                if (result != null && result.Rows.Count > 0)
+                {
+                    string resultStatus = result.Rows[0]["Result"].ToString();
+                    string message = result.Rows[0]["Message"].ToString();
+
+                    if (resultStatus == "SUCCESS")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        throw new Exception(message);
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi xóa SQL Account: {ex.Message}", ex);
+            }
+        }
+
+        // Tạo SQL Account (Login và User)
+        public bool CreateSQLAccount(string username, string password, string role)
+        {
+            SqlParameter[] parameters = {
+                new SqlParameter("@Username", SqlDbType.NVarChar, 50) { Value = username },
+                new SqlParameter("@Password", SqlDbType.NVarChar, 255) { Value = password },
+                new SqlParameter("@Role", SqlDbType.NVarChar, 20) { Value = role }
+            };
+
+            try
+            {
+                DataTable result = DatabaseConnection.ExecuteQuery("CreateSQLAccount", CommandType.StoredProcedure, parameters);
+
+                if (result != null && result.Rows.Count > 0)
+                {
+                    string resultStatus = result.Rows[0]["Result"].ToString();
+                    string message = result.Rows[0]["Message"].ToString();
+
+                    if (resultStatus == "SUCCESS")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        throw new Exception(message);
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Lỗi khi tạo SQL Account: {ex.Message}", ex);
+            }
         }
     }
 }

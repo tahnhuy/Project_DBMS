@@ -30,7 +30,6 @@ namespace Sale_Management.Forms
                 cmb_Role.Items.Clear();
                 cmb_Role.Items.Add("manager");
                 cmb_Role.Items.Add("saler");
-                cmb_Role.Items.Add("customer");
                 cmb_Role.SelectedIndex = 0;
 
                 // Load giá trị mặc định cho CustomerID và EmployeeID
@@ -139,7 +138,29 @@ namespace Sale_Management.Forms
 
                 if (success)
                 {
-                    MessageBox.Show("Tạo tài khoản thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Tạo SQL Account (Login và User) sau khi tạo Account thành công
+                    try
+                    {
+                        bool sqlSuccess = accountRepository.CreateSQLAccount(
+                            txt_Username.Text.Trim(),
+                            txt_Password.Text,
+                            role
+                        );
+                        
+                        if (sqlSuccess)
+                        {
+                            MessageBox.Show("Tạo tài khoản và SQL Account thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Tạo tài khoản thành công nhưng không thể tạo SQL Account.\n\nVui lòng kiểm tra quyền và cấu hình database.", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+                    catch (Exception sqlEx)
+                    {
+                        MessageBox.Show($"Tạo tài khoản thành công nhưng lỗi khi tạo SQL Account:\n{sqlEx.Message}\n\nVui lòng kiểm tra quyền và cấu hình database.", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }

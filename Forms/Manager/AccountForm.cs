@@ -119,9 +119,6 @@ namespace Sale_Management.Forms.Manager
                                     case "saler":
                                         row.DefaultCellStyle.BackColor = Color.LightGreen;
                                         break;
-                                    case "customer":
-                                        row.DefaultCellStyle.BackColor = Color.LightYellow;
-                                        break;
                                 }
                             }
                         }
@@ -144,7 +141,6 @@ namespace Sale_Management.Forms.Manager
                 cmb_SearchRole.Items.Add("Tất cả");
                 cmb_SearchRole.Items.Add("manager");
                 cmb_SearchRole.Items.Add("saler");
-                cmb_SearchRole.Items.Add("customer");
                 cmb_SearchRole.SelectedIndex = 0;
             }
             catch (Exception ex)
@@ -295,7 +291,24 @@ namespace Sale_Management.Forms.Manager
                     bool success = accountRepository.DeleteAccount(username);
                     if (success)
                     {
-                        MessageBox.Show("Xóa tài khoản thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        // Xóa SQL Account (Login và User) sau khi xóa Account thành công
+                        try
+                        {
+                            bool sqlSuccess = accountRepository.DeleteSQLAccount(username);
+                            if (sqlSuccess)
+                            {
+                                MessageBox.Show("Xóa tài khoản và SQL Account thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Xóa tài khoản thành công nhưng không thể xóa SQL Account.\n\nVui lòng kiểm tra quyền và cấu hình database.", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                        }
+                        catch (Exception sqlEx)
+                        {
+                            MessageBox.Show($"Xóa tài khoản thành công nhưng lỗi khi xóa SQL Account:\n{sqlEx.Message}\n\nVui lòng kiểm tra quyền và cấu hình database.", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        
                         LoadAccounts(); // Reload the account list
                     }
                     else

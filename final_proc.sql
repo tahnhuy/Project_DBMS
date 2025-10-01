@@ -824,22 +824,24 @@ BEGIN
             RETURN;
         END
         
-        -- Kiểm tra ràng buộc theo role và tạo Customer/Employee nếu cần
-        IF @Role = 'customer'
+        -- Kiểm tra ràng buộc theo role và tạo Employee nếu cần
+        IF @Role IN ('manager', 'saler')
         BEGIN
-            -- Tạo Customer mới với thông tin mặc định (không chỉ định CustomerID để để SQL tự động tạo)
-            INSERT INTO dbo.Customers (CustomerName, Phone, Address, LoyaltyPoints)
-            VALUES (N'Khách hàng mới', N'0000000000', N'Chưa cập nhật', 0);
+            -- Tạo số điện thoại duy nhất để tránh UNIQUE constraint
+            DECLARE @UniquePhone NVARCHAR(20);
+            DECLARE @PhoneCounter INT = 1;
             
-            -- Lấy CustomerID vừa được tạo
-            SET @CustomerID = SCOPE_IDENTITY();
-            SET @EmployeeID = NULL;
-        END
-        ELSE IF @Role IN ('manager', 'saler')
-        BEGIN
+            -- Tìm số điện thoại duy nhất
+            WHILE EXISTS (SELECT 1 FROM dbo.Employees WHERE Phone = '000000000' + CAST(@PhoneCounter AS NVARCHAR(10)))
+            BEGIN
+                SET @PhoneCounter = @PhoneCounter + 1;
+            END
+            
+            SET @UniquePhone = '000000000' + CAST(@PhoneCounter AS NVARCHAR(10));
+            
             -- Tạo Employee mới với thông tin mặc định (không chỉ định EmployeeID để để SQL tự động tạo)
             INSERT INTO dbo.Employees (EmployeeName, Phone, Address, Position, HireDate, Salary)
-            VALUES (N'Nhân viên mới', N'0000000000', N'Chưa cập nhật', 
+            VALUES (N'Nhân viên mới', @UniquePhone, N'Chưa cập nhật', 
                     CASE WHEN @Role = 'manager' THEN 'manager' ELSE 'saler' END, 
                     GETDATE(), 0);
             
@@ -902,9 +904,9 @@ BEGIN
         END
         
         -- Kiểm tra role nếu có cập nhật
-        IF @Role IS NOT NULL AND @Role NOT IN ('manager', 'saler', 'customer')
+        IF @Role IS NOT NULL AND @Role NOT IN ('manager', 'saler')
         BEGIN
-            SELECT 'ERROR' AS Result, N'Vai trò phải là manager, saler hoặc customer' AS Message;
+            SELECT 'ERROR' AS Result, N'Vai trò phải là manager hoặc saler' AS Message;
             ROLLBACK TRANSACTION;
             RETURN;
         END
@@ -916,30 +918,27 @@ BEGIN
         IF @Role IS NULL
             SET @Role = @CurrentRole;
         
-        -- Kiểm tra ràng buộc theo role và tạo Customer/Employee nếu cần
-        IF @Role = 'customer'
-        BEGIN
-            -- Nếu không có CustomerID thì tạo Customer mới
-            IF @CustomerID IS NULL
-            BEGIN
-                -- Tạo Customer mới với thông tin mặc định (không chỉ định CustomerID để để SQL tự động tạo)
-                INSERT INTO dbo.Customers (CustomerName, Phone, Address, LoyaltyPoints)
-                VALUES (N'Khách hàng mới', N'0000000000', N'Chưa cập nhật', 0);
-                
-                -- Lấy CustomerID vừa được tạo
-                SET @CustomerID = SCOPE_IDENTITY();
-            END
-            
-            SET @EmployeeID = NULL;
-        END
-        ELSE IF @Role IN ('manager', 'saler')
+        -- Kiểm tra ràng buộc theo role và tạo Employee nếu cần
+        IF @Role IN ('manager', 'saler')
         BEGIN
             -- Nếu không có EmployeeID thì tạo Employee mới
             IF @EmployeeID IS NULL
             BEGIN
+                -- Tạo số điện thoại duy nhất để tránh UNIQUE constraint
+                DECLARE @UniquePhone NVARCHAR(20);
+                DECLARE @PhoneCounter INT = 1;
+                
+                -- Tìm số điện thoại duy nhất
+                WHILE EXISTS (SELECT 1 FROM dbo.Employees WHERE Phone = '000000000' + CAST(@PhoneCounter AS NVARCHAR(10)))
+                BEGIN
+                    SET @PhoneCounter = @PhoneCounter + 1;
+                END
+                
+                SET @UniquePhone = '000000000' + CAST(@PhoneCounter AS NVARCHAR(10));
+                
                 -- Tạo Employee mới với thông tin mặc định (không chỉ định EmployeeID để để SQL tự động tạo)
                 INSERT INTO dbo.Employees (EmployeeName, Phone, Address, Position, HireDate, Salary)
-                VALUES (N'Nhân viên mới', N'0000000000', N'Chưa cập nhật', 
+                VALUES (N'Nhân viên mới', @UniquePhone, N'Chưa cập nhật', 
                         CASE WHEN @Role = 'manager' THEN 'manager' ELSE 'saler' END, 
                         GETDATE(), 0);
                 
@@ -1010,6 +1009,168 @@ BEGIN
         IF @@TRANCOUNT > 0
             ROLLBACK TRANSACTION;
         SELECT 'ERROR' AS Result, ERROR_MESSAGE() AS Message;
+    END CATCH
+END
+GO
+
+--------------------------------------------------------
+-- SQL ACCOUNT MANAGEMENT
+--------------------------------------------------------
+CREATE OR ALTER PROCEDURE CreateSQLAccount
+    @Username NVARCHAR(50),
+    @Password NVARCHAR(255),
+    @Role NVARCHAR(20)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @sqlString NVARCHAR(MAX);
+    
+    BEGIN TRY
+        -- Kiểm tra dữ liệu đầu vào
+        IF @Username IS NULL OR LTRIM(RTRIM(@Username)) = ''
+        BEGIN
+            SELECT 'ERROR' AS Result, N'Tên đăng nhập không được để trống' AS Message;
+            RETURN;
+        END
+        
+        IF @Password IS NULL OR LTRIM(RTRIM(@Password)) = ''
+        BEGIN
+            SELECT 'ERROR' AS Result, N'Mật khẩu không được để trống' AS Message;
+            RETURN;
+        END
+        
+        IF @Role IS NULL OR @Role NOT IN ('manager', 'saler')
+        BEGIN
+            SELECT 'ERROR' AS Result, N'Vai trò phải là manager hoặc saler' AS Message;
+            RETURN;
+        END
+        
+        -- Tạo Login (kiểm tra không tồn tại)
+        IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = @Username)
+        BEGIN
+            SET @sqlString = 'CREATE LOGIN [' + @Username + '] WITH PASSWORD = ''' + @Password + 
+                            ''', DEFAULT_DATABASE = [Minimart_SalesDB], CHECK_EXPIRATION = OFF, CHECK_POLICY = OFF';
+            EXEC (@sqlString);
+        END
+        ELSE
+        BEGIN
+            SELECT 'WARNING' AS Result, N'Login đã tồn tại: ' + @Username AS Message;
+            RETURN;
+        END
+
+        -- Tạo User (kiểm tra không tồn tại)
+        IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = @Username)
+        BEGIN
+            SET @sqlString = 'CREATE USER [' + @Username + '] FOR LOGIN [' + @Username + ']';
+            EXEC (@sqlString);
+        END
+        ELSE
+        BEGIN
+            SELECT 'WARNING' AS Result, N'User đã tồn tại: ' + @Username AS Message;
+            RETURN;
+        END
+
+        -- Gán vào Role tương ứng theo role trong bảng Account
+        IF (@Role = N'manager')
+        BEGIN
+            -- Kiểm tra role tồn tại trước khi gán
+            IF EXISTS (SELECT * FROM sys.database_principals WHERE name = 'MiniMart_Manager' AND type = 'R')
+            BEGIN
+                SET @sqlString = 'ALTER ROLE [MiniMart_Manager] ADD MEMBER [' + @Username + ']';
+                EXEC (@sqlString);
+            END
+            ELSE
+            BEGIN
+                SELECT 'ERROR' AS Result, N'Role MiniMart_Manager không tồn tại' AS Message;
+                RETURN;
+            END
+        END
+        ELSE IF (@Role = N'saler')
+        BEGIN
+            -- Kiểm tra role tồn tại trước khi gán
+            IF EXISTS (SELECT * FROM sys.database_principals WHERE name = 'MiniMart_Saler' AND type = 'R')
+            BEGIN
+                SET @sqlString = 'ALTER ROLE [MiniMart_Saler] ADD MEMBER [' + @Username + ']';
+                EXEC (@sqlString);
+            END
+            ELSE
+            BEGIN
+                SELECT 'ERROR' AS Result, N'Role MiniMart_Saler không tồn tại' AS Message;
+                RETURN;
+            END
+        END
+        
+        SELECT 'SUCCESS' AS Result, N'Tạo SQL Account thành công cho user: ' + @Username AS Message;
+        
+    END TRY
+    BEGIN CATCH
+        SELECT 'ERROR' AS Result, N'Lỗi khi tạo SQL Account: ' + ERROR_MESSAGE() AS Message;
+    END CATCH
+END
+GO
+
+CREATE OR ALTER PROCEDURE DeleteSQLAccount
+    @Username NVARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @sqlString NVARCHAR(MAX);
+    
+    BEGIN TRY
+        -- Kiểm tra dữ liệu đầu vào
+        IF @Username IS NULL OR LTRIM(RTRIM(@Username)) = ''
+        BEGIN
+            SELECT 'ERROR' AS Result, N'Tên đăng nhập không được để trống' AS Message;
+            RETURN;
+        END
+        
+        -- Xóa User khỏi Database Role trước
+        IF EXISTS (SELECT * FROM sys.database_principals WHERE name = @Username)
+        BEGIN
+            -- Xóa khỏi tất cả roles
+            DECLARE @roleName NVARCHAR(128);
+            DECLARE role_cursor CURSOR FOR
+                SELECT name FROM sys.database_principals 
+                WHERE type = 'R' AND name IN ('MiniMart_Manager', 'MiniMart_Saler');
+            
+            OPEN role_cursor;
+            FETCH NEXT FROM role_cursor INTO @roleName;
+            
+            WHILE @@FETCH_STATUS = 0
+            BEGIN
+                IF EXISTS (SELECT * FROM sys.database_role_members rm
+                          JOIN sys.database_principals r ON rm.role_principal_id = r.principal_id
+                          JOIN sys.database_principals m ON rm.member_principal_id = m.principal_id
+                          WHERE r.name = @roleName AND m.name = @Username)
+                BEGIN
+                    SET @sqlString = 'ALTER ROLE [' + @roleName + '] DROP MEMBER [' + @Username + ']';
+                    EXEC (@sqlString);
+                END
+                FETCH NEXT FROM role_cursor INTO @roleName;
+            END
+            
+            CLOSE role_cursor;
+            DEALLOCATE role_cursor;
+            
+            -- Xóa User
+            SET @sqlString = 'DROP USER [' + @Username + ']';
+            EXEC (@sqlString);
+        END
+        
+        -- Xóa Login
+        IF EXISTS (SELECT * FROM sys.server_principals WHERE name = @Username)
+        BEGIN
+            SET @sqlString = 'DROP LOGIN [' + @Username + ']';
+            EXEC (@sqlString);
+        END
+        
+        SELECT 'SUCCESS' AS Result, N'Xóa SQL Account thành công cho user: ' + @Username AS Message;
+        
+    END TRY
+    BEGIN CATCH
+        SELECT 'ERROR' AS Result, N'Lỗi khi xóa SQL Account: ' + ERROR_MESSAGE() AS Message;
     END CATCH
 END
 GO

@@ -2,7 +2,7 @@
 
 This document maps all actively used database objects that are actually called from C# repositories and forms. Read/list/detail queries now use TVFs. Create/update/delete actions remain stored procedures.
 
-**Project Status**: Reads via TVFs; mutations via stored procedures. Full Account management with automatic Customer/Employee creation.
+**Project Status**: Reads via TVFs; mutations via stored procedures. Full Account management for manager/saler with automatic Employee creation and SQL Login/User provisioning.
 
 ---
 
@@ -64,7 +64,13 @@ This document maps all actively used database objects that are actually called f
 15. DeleteAccount(@Username)
     - Repository: `AccountRepository.DeleteAccount(string username)`
     - Forms: `AccountForm`
-16. ChangePassword(@Username, @OldPassword, @NewPassword)
+16. CreateSQLAccount(@Username, @Password, @Role)
+    - Repository: `AccountRepository.CreateSQLAccount(...)`
+    - Trigger-equivalent: manual call right after AddAccount (from UI)
+17. DeleteSQLAccount(@Username)
+    - Repository: `AccountRepository.DeleteSQLAccount(string username)`
+    - Called after DeleteAccount (from UI)
+18. ChangePassword(@Username, @OldPassword, @NewPassword)
     - Repository: `AccountRepository.ChangePassword(...)`
     - Forms: `AccountInfoForm`
 
@@ -175,9 +181,9 @@ Uses the same mutation endpoints as Manager Role for sales (create, add detail, 
 - Functions: `fnDiscounts_Active`, `fnDiscounts_ByProduct`, `GetDiscountedPrice`
 
 ### AccountRepository.cs
-- Procedures: `AddAccount`, `UpdateAccount`, `DeleteAccount`, `ChangePassword`
+- Procedures: `AddAccount`, `UpdateAccount`, `DeleteAccount`, `CreateSQLAccount`, `DeleteSQLAccount`, `ChangePassword`
 - Functions: `fnAccounts_All`, `fnAccounts_ByUsername`, `fnAccounts_ByRole`, `fnAuth_User`
-- Helper Methods: `GetCustomerCount()`, `GetEmployeeCount()`, `IsUsernameExists()`
+- Helper Methods: `IsUsernameExists()`
 
 ### ReportRepository.cs
 - Functions: `GetDailyRevenue`, `GetMonthlyRevenue`
@@ -187,11 +193,11 @@ Uses the same mutation endpoints as Manager Role for sales (create, add detail, 
 
 ## Database Objects Summary
 
-### Stored Procedures (13)
+### Stored Procedures (15)
 - Products: AddProduct, UpdateProduct, DeleteProduct
 - Customers: AddCustomer, UpdateCustomer, DeleteCustomer
 - Sales: CreateSale, AddSaleDetail, UpdateSale
-- Accounts: AddAccount, UpdateAccount, DeleteAccount, ChangePassword
+- Accounts: AddAccount, UpdateAccount, DeleteAccount, CreateSQLAccount, DeleteSQLAccount, ChangePassword
 
 ### Scalar Functions (4)
 - GetDailyRevenue, GetMonthlyRevenue, GetDiscountedPrice, IsStockAvailable
@@ -206,20 +212,20 @@ Uses the same mutation endpoints as Manager Role for sales (create, add detail, 
 ### Database Views (2)
 - LowStockProducts, SalesSummary
 
-### Total Active Objects: 33
+### Total Active Objects: 35
 
 ---
 
 ## Notes
 
-- **Account Management**: Full CRUD operations for user accounts with automatic Customer/Employee creation
-- **Role-based Access**: Manager, Saler, and Customer roles with proper constraints
-- **Auto-creation**: Accounts automatically create linked Customer/Employee records with default values
-- **Transaction Safety**: All operations include comprehensive transaction management and rollback
-- **Search Functionality**: Most GetAll* methods support optional search parameters
-- **Error Handling**: All repository methods include comprehensive error handling with detailed messages
-- **Security**: Login authentication and password change functionality maintained for all roles
-- **Database Constraints**: Proper CHECK constraints ensure data integrity (Position values, Role validation)
+- **Account Management**: Full CRUD for user accounts. UI additionally provisions SQL Login/User via `CreateSQLAccount`/`DeleteSQLAccount`.
+- **Roles**: Only manager and saler are supported for accounts and SQL roles.
+- **Auto-creation**: Accounts automatically create linked Employee records (unique phone generator). No Customer linkage is created anymore.
+- **Transaction Safety**: All operations include comprehensive transaction management and rollback.
+- **Search Functionality**: Most GetAll* methods support optional search parameters.
+- **Error Handling**: Repository methods surface detailed messages from stored procedures.
+- **Security**: Database roles `MiniMart_Manager` and `MiniMart_Saler` are applied accordingly.
+- **Database Constraints**: CHECK constraints enforce valid `Position` values; UNIQUE `Phone` enforced with generated values.
 
 ---
 
