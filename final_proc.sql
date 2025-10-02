@@ -174,7 +174,8 @@ GO
 CREATE OR ALTER PROCEDURE AddCustomer
     @CustomerName NVARCHAR(100),
     @Phone NVARCHAR(20),
-    @Address NVARCHAR(255)
+    @Address NVARCHAR(255) = NULL,
+    @LoyaltyPoints INT = 0
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -205,10 +206,10 @@ BEGIN
         END
         
         INSERT INTO dbo.Customers (CustomerName, Phone, Address, LoyaltyPoints)
-        VALUES (@CustomerName, @Phone, @Address, 0);
+        VALUES (@CustomerName, @Phone, @Address, @LoyaltyPoints);
         
         COMMIT TRANSACTION;
-        SELECT 'SUCCESS' AS Result, N'Thêm khách hàng thành công' AS Message;
+        SELECT 'SUCCESS' AS Result, N'Thêm khách hàng thành công' AS Message, SCOPE_IDENTITY() AS CustomerID;
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0

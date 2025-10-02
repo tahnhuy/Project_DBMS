@@ -284,39 +284,22 @@ RETURN
 );
 GO
 
--- 15) fnAccounts_All()
 CREATE OR ALTER FUNCTION dbo.fnAccounts_All()
 RETURNS TABLE
 AS
 RETURN
 (
-    SELECT 
+    SELECT
         a.Username,
         a.Role,
         a.CreatedDate,
         a.CustomerID,
         a.EmployeeID,
-        CASE 
-            WHEN a.Role = 'customer' AND c.CustomerName IS NOT NULL THEN c.CustomerName
-            WHEN a.Role IN ('manager', 'saler') AND e.EmployeeName IS NOT NULL THEN e.EmployeeName
-            ELSE N'Không xác định'
-        END AS FullName,
-        CASE 
-            WHEN a.Role = 'customer' AND c.Phone IS NOT NULL THEN c.Phone
-            WHEN a.Role IN ('manager', 'saler') AND e.Phone IS NOT NULL THEN e.Phone
-            ELSE N'Không có'
-        END AS Phone,
-        CASE 
-            WHEN a.Role = 'customer' AND c.Address IS NOT NULL THEN c.Address
-            WHEN a.Role IN ('manager', 'saler') AND e.Address IS NOT NULL THEN e.Address
-            ELSE N'Không có'
-        END AS Address,
-        CASE 
-            WHEN a.Role IN ('manager', 'saler') THEN e.Position
-            ELSE N'Khách hàng'
-        END AS Position
+        ISNULL(e.EmployeeName, N'Không xác định') AS FullName,
+        ISNULL(e.Phone, N'Không có')               AS Phone,
+        ISNULL(e.Address, N'Không có')             AS Address,
+        ISNULL(e.Position, N'Không xác định')      AS Position
     FROM dbo.Account a
-    LEFT JOIN dbo.Customers c ON a.CustomerID = c.CustomerID
     LEFT JOIN dbo.Employees e ON a.EmployeeID = e.EmployeeID
 );
 GO
@@ -327,33 +310,17 @@ RETURNS TABLE
 AS
 RETURN
 (
-    SELECT 
+    SELECT
         a.Username,
         a.Role,
         a.CreatedDate,
         a.CustomerID,
         a.EmployeeID,
-        CASE 
-            WHEN a.Role = 'customer' AND c.CustomerName IS NOT NULL THEN c.CustomerName
-            WHEN a.Role IN ('manager', 'saler') AND e.EmployeeName IS NOT NULL THEN e.EmployeeName
-            ELSE N'Không xác định'
-        END AS FullName,
-        CASE 
-            WHEN a.Role = 'customer' AND c.Phone IS NOT NULL THEN c.Phone
-            WHEN a.Role IN ('manager', 'saler') AND e.Phone IS NOT NULL THEN e.Phone
-            ELSE N'Không có'
-        END AS Phone,
-        CASE 
-            WHEN a.Role = 'customer' AND c.Address IS NOT NULL THEN c.Address
-            WHEN a.Role IN ('manager', 'saler') AND e.Address IS NOT NULL THEN e.Address
-            ELSE N'Không có'
-        END AS Address,
-        CASE 
-            WHEN a.Role IN ('manager', 'saler') THEN e.Position
-            ELSE N'Khách hàng'
-        END AS Position
+        ISNULL(e.EmployeeName, N'Không xác định') AS FullName,
+        ISNULL(e.Phone, N'Không có')               AS Phone,
+        ISNULL(e.Address, N'Không có')             AS Address,
+        ISNULL(e.Position, N'Không xác định')      AS Position
     FROM dbo.Account a
-    LEFT JOIN dbo.Customers c ON a.CustomerID = c.CustomerID
     LEFT JOIN dbo.Employees e ON a.EmployeeID = e.EmployeeID
     WHERE a.Username = @Username
 );
@@ -365,33 +332,17 @@ RETURNS TABLE
 AS
 RETURN
 (
-    SELECT 
+    SELECT
         a.Username,
         a.Role,
         a.CreatedDate,
         a.CustomerID,
         a.EmployeeID,
-        CASE 
-            WHEN a.Role = 'customer' AND c.CustomerName IS NOT NULL THEN c.CustomerName
-            WHEN a.Role IN ('manager', 'saler') AND e.EmployeeName IS NOT NULL THEN e.EmployeeName
-            ELSE N'Không xác định'
-        END AS FullName,
-        CASE 
-            WHEN a.Role = 'customer' AND c.Phone IS NOT NULL THEN c.Phone
-            WHEN a.Role IN ('manager', 'saler') AND e.Phone IS NOT NULL THEN e.Phone
-            ELSE N'Không có'
-        END AS Phone,
-        CASE 
-            WHEN a.Role = 'customer' AND c.Address IS NOT NULL THEN c.Address
-            WHEN a.Role IN ('manager', 'saler') AND e.Address IS NOT NULL THEN e.Address
-            ELSE N'Không có'
-        END AS Address,
-        CASE 
-            WHEN a.Role IN ('manager', 'saler') THEN e.Position
-            ELSE N'Khách hàng'
-        END AS Position
+        ISNULL(e.EmployeeName, N'Không xác định') AS FullName,
+        ISNULL(e.Phone, N'Không có')               AS Phone,
+        ISNULL(e.Address, N'Không có')             AS Address,
+        ISNULL(e.Position, N'Không xác định')      AS Position
     FROM dbo.Account a
-    LEFT JOIN dbo.Customers c ON a.CustomerID = c.CustomerID
     LEFT JOIN dbo.Employees e ON a.EmployeeID = e.EmployeeID
     WHERE a.Role = @Role
 );
