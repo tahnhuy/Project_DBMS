@@ -250,10 +250,10 @@ namespace Sale_Management.DatabaseAccess
                     new SqlParameter("@Password", SqlDbType.NVarChar, 255) { Value = password }
                 };
 
-                DataTable result = DatabaseConnection.ExecuteQuery("ValidatePassword", CommandType.StoredProcedure, parameters);
+                DataTable result = DatabaseConnection.ExecuteQuery("SELECT dbo.ValidatePassword(@Password)", CommandType.Text, parameters);
                 if (result.Rows.Count > 0)
                 {
-                    return Convert.ToBoolean(result.Rows[0]["IsValid"]);
+                    return Convert.ToBoolean(result.Rows[0][0]);
                 }
                 return false;
             }

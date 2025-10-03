@@ -187,5 +187,52 @@ namespace Sale_Management.DatabaseAccess
                 throw new Exception("Lỗi khi xóa sản phẩm: " + ex.Message);
             }
         }
+
+        // Lấy danh sách sản phẩm đã xóa (IsDeleted = 1)
+        public DataTable GetDeletedProducts()
+        {
+            try
+            {
+                string query = "SELECT ProductID, ProductName, Price, StockQuantity, Unit FROM dbo.Products WHERE IsDeleted = 1";
+                return DatabaseConnection.ExecuteQuery(query, CommandType.Text, null);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy danh sách sản phẩm đã xóa: " + ex.Message);
+            }
+        }
+
+        // Khôi phục sản phẩm bằng Stored Procedure RestoreProduct
+        public bool RestoreProduct(int productId)
+        {
+            try
+            {
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@ProductID", SqlDbType.Int) { Value = productId }
+                };
+
+                DataTable result = DatabaseConnection.ExecuteQuery("RestoreProduct", CommandType.StoredProcedure, parameters);
+
+                if (result.Rows.Count > 0)
+                {
+                    string resultStatus = result.Rows[0]["Result"].ToString();
+                    string message = result.Rows[0]["Message"].ToString();
+                    if (resultStatus == "SUCCESS" || resultStatus == "WARNING")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        throw new Exception(message);
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi khôi phục sản phẩm: " + ex.Message);
+            }
+        }
     }
 }

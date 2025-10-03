@@ -156,5 +156,17 @@ namespace Sale_Management
             }
         }
 
+        private void msi_RestoreProduct_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ShowFormInPanel(new Forms.Manager.ProductRestoreForm());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi mở tab khôi phục sản phẩm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
     }
 }

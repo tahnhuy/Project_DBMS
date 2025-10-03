@@ -34,6 +34,7 @@
             this.msi_Customer = new System.Windows.Forms.ToolStripMenuItem();
             this.msi_Discount = new System.Windows.Forms.ToolStripMenuItem();
             this.msi_AccManage = new System.Windows.Forms.ToolStripMenuItem();
+            this.msi_RestoreProduct = new System.Windows.Forms.ToolStripMenuItem();
             this.msi_createAcc = new System.Windows.Forms.ToolStripMenuItem();
             this.msi_Statistics = new System.Windows.Forms.ToolStripMenuItem();
             this.tàiKhoảnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,6 +51,7 @@
             this.msi_Product,
             this.msi_Customer,
             this.msi_Discount,
+            this.msi_RestoreProduct,
             this.msi_AccManage,
             this.msi_Statistics,
             this.tàiKhoảnToolStripMenuItem});
@@ -86,6 +88,13 @@
             this.msi_AccManage.Size = new System.Drawing.Size(217, 36);
             this.msi_AccManage.Text = "Quản lí tài khoản";
             this.msi_AccManage.Click += new System.EventHandler(this.msi_AccManage_Click);
+            // 
+            // msi_RestoreProduct
+            // 
+            this.msi_RestoreProduct.Name = "msi_RestoreProduct";
+            this.msi_RestoreProduct.Size = new System.Drawing.Size(242, 36);
+            this.msi_RestoreProduct.Text = "Khôi phục sản phẩm";
+            this.msi_RestoreProduct.Click += new System.EventHandler(this.msi_RestoreProduct_Click);
             // 
             // msi_createAcc
             // 
@@ -149,6 +158,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.Panel panel_Container;
         private System.Windows.Forms.ToolStripMenuItem msi_AccManage;
+        private System.Windows.Forms.ToolStripMenuItem msi_RestoreProduct;
     }
 }
 

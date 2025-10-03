@@ -131,6 +131,9 @@
     <Compile Include="Forms\Manager\ProductForm.Designer.cs">
       <DependentUpon>ProductForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Manager\ProductRestoreForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\Manager\StatisticsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -192,6 +195,9 @@
     <EmbeddedResource Include="Forms\Manager\AccountForm.resx">
       <DependentUpon>AccountForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Manager\AccountManageEditForm.resx">
+      <DependentUpon>AccountManageEditForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Manager\CustomerManageForm.resx">
       <DependentUpon>CustomerManageForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -203,6 +209,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Manager\ProductForm.resx">
       <DependentUpon>ProductForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Manager\ProductRestoreForm.resx">
+      <DependentUpon>ProductRestoreForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Manager\StatisticsForm.resx">
       <DependentUpon>StatisticsForm.cs</DependentUpon>

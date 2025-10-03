@@ -10,69 +10,44 @@ This document maps all actively used database objects that are actually called f
 
 ### Stored Procedures (mutations)
 
-#### Products
-1. AddProduct(@ProductName, @Price, @StockQuantity, @Unit)
-   - Repository: `ProductRepository.AddProduct(...)`
-   - Forms: `ProductEditForm`
-2. UpdateProduct(@ProductID, @ProductName, @Price, @StockQuantity, @Unit)
-   - Repository: `ProductRepository.UpdateProduct(...)`
-   - Forms: `ProductEditForm`
-3. DeleteProduct(@ProductID)
-   - Repository: `ProductRepository.DeleteProduct(int productId)`
-   - Forms: `ProductForm`
-
-#### Customers
-4. AddCustomer(@CustomerName, @Phone, @Address, @LoyaltyPoints)
-   - Repository: `CustomerRepository.AddCustomer(...)`
-   - Forms: `CustomerManageEditForm`
-5. UpdateCustomer(@CustomerID, @CustomerName, @Phone, @Address, @LoyaltyPoints)
-   - Repository: `CustomerRepository.UpdateCustomer(...)`
-   - Forms: `CustomerManageEditForm`
-6. DeleteCustomer(@CustomerID)
-   - Repository: `CustomerRepository.DeleteCustomer(int customerId)`
-   - Forms: `CustomerManageForm`
-
-#### Discounts
-7. AddDiscount(@ProductID, @DiscountType, @DiscountValue, @StartDate, @EndDate, @IsActive, @CreatedBy)
-   - Repository: `DiscountRepository.AddDiscount(...)`
-   - Forms: `AdminDiscountForm`, `AdminDiscountEditForm`
-8. UpdateDiscount(@DiscountID, @ProductID, @DiscountType, @DiscountValue, @StartDate, @EndDate, @IsActive)
-   - Repository: `DiscountRepository.UpdateDiscount(...)`
-   - Forms: `AdminDiscountEditForm`
-9. DeleteDiscount(@DiscountID)
-   - Repository: `DiscountRepository.DeleteDiscount(int discountId)`
-   - Forms: `AdminDiscountForm`
-
-#### Sales
-10. CreateSale(@CustomerID, @TotalAmount, @PaymentMethod)
+#### Procedures WITH transactions
+- Products:
+  - DeleteProduct(@ProductID)
+    - Repository: `ProductRepository.DeleteProduct(int productId)`
+    - Forms: `ProductForm`
+- Sales:
+  - CreateSale(@CustomerID, @TotalAmount, @PaymentMethod)
     - Repository: `SaleRepository.CreateSaleWithDetails(...)`
     - Forms: `SalerInvoiceForm`
-11. AddSaleDetail(@SaleID, @ProductID, @Quantity, @SalePrice)
+  - AddSaleDetail(@SaleID, @ProductID, @Quantity, @SalePrice)
     - Repository: `SaleRepository.CreateSaleWithDetails()` (internal)
     - Forms: `SalerInvoiceForm`
-12. UpdateSale(@SaleID, @CustomerID, @TotalAmount, @PaymentMethod)
-    - Repository: `SaleRepository.CreateSaleWithDetails()` and `UpdateSale(...)`
+  - UpdateSale(@SaleID, @CustomerID, @TotalAmount, @PaymentMethod)
+    - Repository: `SaleRepository.CreateSaleWithDetails()` và `UpdateSale(...)`
     - Forms: `SalerInvoiceForm`
-
-#### Accounts
-13. AddAccount(@Username, @Password, @Role, @CustomerID, @EmployeeID)
+- Accounts:
+  - AddAccount(@Username, @Password, @Role, @CustomerID, @EmployeeID)
     - Repository: `AccountRepository.AddAccount(...)`
     - Forms: `AccountCreateForm`
-14. UpdateAccount(@Username, @Password, @Role, @CustomerID, @EmployeeID)
-    - Repository: `AccountRepository.UpdateAccount(...)`
-    - Forms: `AccountManageEditForm`
-15. DeleteAccount(@Username)
-    - Repository: `AccountRepository.DeleteAccount(string username)`
-    - Forms: `AccountForm`
-16. CreateSQLAccount(@Username, @Password, @Role)
-    - Repository: `AccountRepository.CreateSQLAccount(...)`
-    - Trigger-equivalent: manual call right after AddAccount (from UI)
-17. DeleteSQLAccount(@Username)
-    - Repository: `AccountRepository.DeleteSQLAccount(string username)`
-    - Called after DeleteAccount (from UI)
-18. ChangePassword(@Username, @OldPassword, @NewPassword)
-    - Repository: `AccountRepository.ChangePassword(...)`
-    - Forms: `AccountInfoForm`
+
+#### Procedures WITHOUT transactions
+- Products:
+  - AddProduct(@ProductName, @Price, @StockQuantity, @Unit)
+  - UpdateProduct(@ProductID, @ProductName, @Price, @StockQuantity, @Unit)
+- Customers:
+  - AddCustomer(@CustomerName, @Phone, @Address, @LoyaltyPoints)
+  - UpdateCustomer(@CustomerID, @CustomerName, @Phone, @Address, @LoyaltyPoints)
+  - DeleteCustomer(@CustomerID)
+- Discounts:
+  - AddDiscount(@ProductID, @DiscountType, @DiscountValue, @StartDate, @EndDate, @IsActive, @CreatedBy)
+  - UpdateDiscount(@DiscountID, @DiscountType, @DiscountValue, @StartDate, @EndDate, @IsActive)
+  - DeleteDiscount(@DiscountID)
+- Accounts:
+  - UpdateAccount(@Username, @Password, @Role, @CustomerID, @EmployeeID)
+  - DeleteAccount(@Username)
+  - ChangePassword(@Username, @OldPassword, @NewPassword)
+  - CreateSQLAccount(@Username, @Password, @Role)
+  - DeleteSQLAccount(@Username)
 
 ### Table-Valued Functions (reads)
 

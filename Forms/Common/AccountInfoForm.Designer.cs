@@ -29,6 +29,7 @@ namespace Sale_Management.Forms
         private void InitializeComponent()
         {
             this.groupBoxAccountInfo = new System.Windows.Forms.GroupBox();
+            this.btnChangePassword = new System.Windows.Forms.Button();
             this.lblSalaryValue = new System.Windows.Forms.Label();
             this.lblHireDateValue = new System.Windows.Forms.Label();
             this.lblPositionValue = new System.Windows.Forms.Label();
@@ -53,6 +54,7 @@ namespace Sale_Management.Forms
             // 
             // groupBoxAccountInfo
             // 
+            this.groupBoxAccountInfo.Controls.Add(this.btnChangePassword);
             this.groupBoxAccountInfo.Controls.Add(this.btnLogout);
             this.groupBoxAccountInfo.Controls.Add(this.lblSalaryValue);
             this.groupBoxAccountInfo.Controls.Add(this.lblHireDateValue);
@@ -262,6 +264,21 @@ namespace Sale_Management.Forms
             this.lblUsername.Size = new System.Drawing.Size(0, 31);
             this.lblUsername.TabIndex = 0;
             // 
+            // btnChangePassword
+            // 
+            this.btnChangePassword.BackColor = System.Drawing.Color.White;
+            this.btnChangePassword.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnChangePassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnChangePassword.ForeColor = System.Drawing.Color.Black;
+            this.btnChangePassword.Location = new System.Drawing.Point(875, 428);
+            this.btnChangePassword.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnChangePassword.Name = "btnChangePassword";
+            this.btnChangePassword.Size = new System.Drawing.Size(267, 94);
+            this.btnChangePassword.TabIndex = 18;
+            this.btnChangePassword.Text = "Đổi mật khẩu";
+            this.btnChangePassword.UseVisualStyleBackColor = false;
+            this.btnChangePassword.Click += new System.EventHandler(this.btnChangePassword_Click);
+            // 
             // btnLogout
             // 
             this.btnLogout.BackColor = System.Drawing.Color.White;
@@ -316,5 +333,6 @@ namespace Sale_Management.Forms
         private System.Windows.Forms.Label lblHireDateValue;
         private System.Windows.Forms.Label lblSalaryValue;
         private System.Windows.Forms.Button btnLogout;
+        private System.Windows.Forms.Button btnChangePassword;
     }
 }

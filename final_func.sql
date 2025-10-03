@@ -6,6 +6,29 @@
 USE Minimart_SalesDB;
 GO
 
+-- Password validation function
+USE Minimart_SalesDB;
+GO
+
+CREATE OR ALTER FUNCTION dbo.ValidatePassword
+(
+    @Password NVARCHAR(255)
+)
+RETURNS BIT
+AS
+BEGIN
+    DECLARE @IsValid BIT;
+
+    -- Kiểm tra điều kiện hợp lệ: độ dài phải từ 6 đến 255 ký tự
+    IF LEN(@Password) >= 6 AND LEN(@Password) <= 255
+        SET @IsValid = 1; -- Hợp lệ
+    ELSE
+        SET @IsValid = 0; -- Không hợp lệ
+
+    RETURN @IsValid;
+END
+GO
+
 /* ============================
    SCALAR FUNCTIONS (4)
    ============================ */
@@ -99,6 +122,40 @@ BEGIN
 END
 GO
 
+USE Minimart_SalesDB;
+GO
+
+-- 1. Hàm GetSalesGrowthRate_Monthly
+CREATE OR ALTER FUNCTION dbo.GetSalesGrowthRate_Monthly
+(
+    @CP_Year INT,   -- Năm của kỳ hiện tại
+    @CP_Month INT,  -- Tháng của kỳ hiện tại
+    @PP_Year INT,   -- Năm của kỳ gốc (thường là tháng trước)
+    @PP_Month INT   -- Tháng của kỳ gốc
+)
+RETURNS DECIMAL(18, 2)
+AS
+BEGIN
+    DECLARE @CP_Revenue DECIMAL(18, 2);
+    DECLARE @PP_Revenue DECIMAL(18, 2);
+    DECLARE @GrowthRate DECIMAL(18, 2) = 0.0;
+
+    -- Lấy doanh thu Kỳ Hiện Tại (CP)
+    SET @CP_Revenue = dbo.GetMonthlyRevenue(@CP_Year, @CP_Month);
+
+    -- Lấy doanh thu Kỳ Gốc (PP)
+    SET @PP_Revenue = dbo.GetMonthlyRevenue(@PP_Year, @PP_Month);
+
+    -- Tính toán tỷ lệ tăng trưởng
+    IF @PP_Revenue > 0
+        SET @GrowthRate = (@CP_Revenue - @PP_Revenue) / @PP_Revenue;
+    ELSE IF @CP_Revenue > 0 AND @PP_Revenue = 0
+        -- Trường hợp tăng trưởng vô hạn (từ 0 lên một con số dương)
+        SET @GrowthRate = 999.99; 
+    
+    RETURN @GrowthRate;
+END
+GO
 
 /* ============================
    TABLE-VALUED FUNCTIONS (11)
@@ -366,5 +423,118 @@ RETURN
         CASE WHEN dbo.GetDiscountedPrice(p.ProductID, p.Price) < p.Price THEN 1 ELSE 0 END AS HasDiscount
     FROM dbo.Products p
     WHERE p.ProductName COLLATE Vietnamese_CI_AI LIKE N'%' + @Name + N'%'
+);
+GO
+
+USE Minimart_SalesDB;
+GO
+
+-- 1. fnReport_TopSellingProducts
+CREATE OR ALTER FUNCTION dbo.fnReport_TopSellingProducts
+(
+    @StartDate DATE,
+    @EndDate DATE,
+    @TopN INT
+)
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT TOP (@TopN)
+        p.ProductID,
+        p.ProductName,
+        p.Unit,
+        SUM(sd.Quantity) AS TotalQuantitySold,
+        SUM(sd.LineTotal) AS TotalRevenue
+    FROM dbo.SaleDetails sd
+    INNER JOIN dbo.Sales s ON sd.SaleID = s.SaleID
+    INNER JOIN dbo.Products p ON sd.ProductID = p.ProductID
+    -- Lọc theo khoảng thời gian
+    WHERE CAST(s.SaleDate AS DATE) BETWEEN @StartDate AND @EndDate
+    -- Không tính các sản phẩm đã bị xóa (nếu bạn đã thêm IsDeleted)
+    -- AND p.IsDeleted = 0 
+    
+    GROUP BY
+        p.ProductID,
+        p.ProductName,
+        p.Unit
+    ORDER BY
+        TotalQuantitySold DESC, TotalRevenue DESC
+);
+GO
+
+USE Minimart_SalesDB;
+GO
+
+-- 2. fnReport_CustomerRanking
+CREATE OR ALTER FUNCTION dbo.fnReport_CustomerRanking
+(
+    @StartDate DATE,
+    @EndDate DATE
+)
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT
+        c.CustomerID,
+        c.CustomerName,
+        c.Phone,
+        c.LoyaltyPoints,
+        SUM(s.TotalAmount) AS TotalSpending,
+        -- Sử dụng ROW_NUMBER() để xếp hạng
+        ROW_NUMBER() OVER (ORDER BY SUM(s.TotalAmount) DESC) AS Ranking
+    FROM dbo.Customers c
+    INNER JOIN dbo.Sales s ON c.CustomerID = s.CustomerID
+    -- Lọc theo khoảng thời gian
+    WHERE CAST(s.SaleDate AS DATE) BETWEEN @StartDate AND @EndDate
+    
+    GROUP BY
+        c.CustomerID,
+        c.CustomerName,
+        c.Phone,
+        c.LoyaltyPoints
+);
+GO
+
+USE Minimart_SalesDB;
+GO
+
+CREATE OR ALTER FUNCTION dbo.fnReport_DailyProductSalesTrend
+(
+    @ProductID INT,
+    @StartDate DATE,
+    @EndDate DATE
+)
+RETURNS TABLE
+AS
+RETURN
+(
+    -- 1. Lấy tổng quan doanh thu hàng ngày của sản phẩm
+    WITH DailySales AS
+    (
+        SELECT
+            CAST(s.SaleDate AS DATE) AS SaleDay,
+            SUM(sd.Quantity) AS TotalQuantity,
+            SUM(sd.LineTotal) AS DailyRevenue
+        FROM dbo.Sales s
+        INNER JOIN dbo.SaleDetails sd ON s.SaleID = sd.SaleID
+        WHERE sd.ProductID = @ProductID
+          AND CAST(s.SaleDate AS DATE) BETWEEN @StartDate AND @EndDate
+        GROUP BY CAST(s.SaleDate AS DATE)
+    )
+    
+    -- 2. Áp dụng Window Functions để tính toán nâng cao
+    SELECT
+        ds.SaleDay,
+        ds.TotalQuantity,
+        ds.DailyRevenue,
+        -- Tính Doanh thu Lũy kế (Running Total)
+        SUM(ds.DailyRevenue) OVER (ORDER BY ds.SaleDay ROWS UNBOUNDED PRECEDING) AS CumulativeRevenue,
+        -- Tính Trung bình Trượt 7 ngày (7-Day Rolling Average)
+        AVG(ds.DailyRevenue) OVER (ORDER BY ds.SaleDay ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS RollingAverage7Day
+    FROM DailySales ds
+    -- Sắp xếp theo ngày
+    --ORDER BY ds.SaleDay
 );
 GO

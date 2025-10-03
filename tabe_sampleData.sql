@@ -31,6 +31,10 @@ create table Products (
 );
 go
 
+ALTER TABLE dbo.Products
+ADD IsDeleted BIT NOT NULL DEFAULT 0;
+GO
+
 -- Khach hang
 create table Customers (
 	CustomerID int primary key identity(1, 1),

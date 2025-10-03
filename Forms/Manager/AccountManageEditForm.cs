@@ -255,5 +255,10 @@ namespace Sale_Management.Forms.Manager
             txt_Password.PasswordChar = chk_ShowPassword.Checked ? '\0' : '*';
             txt_ConfirmPassword.PasswordChar = chk_ShowPassword.Checked ? '\0' : '*';
         }
+
+        private void txt_Password_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
